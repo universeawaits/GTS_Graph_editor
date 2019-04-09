@@ -61,8 +61,8 @@ public class DrawableNode {
         // Node moving
         shape.setOnMouseDragged(e -> {
             if (e.getButton().equals(MouseButton.PRIMARY)) {
-                shape.setTranslateX(e.getSceneX());
-                shape.setTranslateY(e.getSceneY());
+                shape.setX(e.getX());
+                shape.setY(e.getY());
             }
         });
 

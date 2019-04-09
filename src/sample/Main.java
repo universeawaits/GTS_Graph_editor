@@ -3,6 +3,7 @@ package sample;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import layout.form.AppForm;
 import layout.form.GraphGroup;
 import model.Graph;
 
@@ -13,11 +14,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Graph graph = new Graph();
-
-
         primaryStage.setTitle("Graph Editor");
-        primaryStage.setScene(new Scene(new GraphGroup(graph).getGroup()));
+        primaryStage.setScene(new Scene(new AppForm(new GraphController(new Graph())).getVBox()));
         primaryStage.setResizable(false);
         primaryStage.show();
     }
