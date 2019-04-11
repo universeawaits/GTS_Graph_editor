@@ -1,20 +1,20 @@
 package layout.form;
 
 import javafx.scene.layout.VBox;
-import sample.GraphController;
+import controller.GraphController;
 
 public class AppForm {
+    private GraphPane graphPane;
     private AppMenu appMenu;
-    private GraphGroup graphGroup;
-    private GraphToolBar graphToolBar;
+    private GraphStatusBar graphStatusBar;
 
     private VBox vBox;
 
 
     public AppForm(GraphController graphController) {
-        appMenu = new AppMenu();
-        graphGroup = new GraphGroup(graphController);
-        graphToolBar = new GraphToolBar();
+        graphPane = new GraphPane(graphController);
+        appMenu = new AppMenu(graphPane);
+        graphStatusBar = new GraphStatusBar(graphController);
 
         vBox = new VBox();
         configureVBox();
@@ -26,6 +26,6 @@ public class AppForm {
 
     // Configs
     private void configureVBox() {
-        vBox.getChildren().addAll(appMenu.getMenuBar(), graphGroup.getGroup(), graphToolBar.getToolBar());
+        vBox.getChildren().addAll(appMenu.getMenuBar(), graphPane.getPane(), graphStatusBar.getStatusBar());
     }
 }

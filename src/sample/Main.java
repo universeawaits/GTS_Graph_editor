@@ -1,15 +1,15 @@
 package sample;
 
+import controller.GraphController;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import layout.form.AppForm;
-import layout.form.GraphGroup;
 import model.Graph;
 
 public class Main extends Application {
     public static final double MAIN_FORM_HEIGHT = 900;
-    public static final double MAIN_FORM_WIDTH = 1500;
+    public static final double MAIN_FORM_WIDTH = 1600;
 
 
     @Override

@@ -9,21 +9,18 @@ import model.Node;
 
 import java.util.Random;
 
+
 public class DrawableNode {
     public static final int SHAPE_SIZE = 20;
 
 
     private Node sourceNode;
+
+    private boolean isFocused;
+
     private Rectangle shape;
     private Color color;
 
-
-    public DrawableNode(Color color) {
-        this.color = color;
-        shape = new Rectangle(SHAPE_SIZE, SHAPE_SIZE, color);
-
-        configureShape();
-    }
 
     public DrawableNode(Node sourceNode) {
         this.sourceNode = sourceNode;
@@ -41,6 +38,14 @@ public class DrawableNode {
         configureShape();
     }
 
+    public Node getSourceNode() {
+        return sourceNode;
+    }
+
+    public boolean isFocused() {
+        return isFocused;
+    }
+
     public Shape getShape() {
         return shape;
     }
@@ -53,27 +58,33 @@ public class DrawableNode {
         shape.setFill(color);
     }
 
+    /*
+        Configs
+     */
 
-    // Configs
+    // Shape configs: events handling, coloring
     private void configureShape() {
         shape.setFill(color);
+        shape.setFocusTraversable(true);
 
         // Node moving
         shape.setOnMouseDragged(e -> {
             if (e.getButton().equals(MouseButton.PRIMARY)) {
-                shape.setX(e.getX());
-                shape.setY(e.getY());
+                shape.setX(e.getX() - SHAPE_SIZE / 2);
+                shape.setY(e.getY() - SHAPE_SIZE / 2);
             }
         });
 
         // Node lightning when mouse entered
         shape.setOnMouseEntered(e -> {
             shape.setEffect(new Bloom());
+            isFocused = true;
         });
 
         // Remove lightning when mouse exited
         shape.setOnMouseExited(e -> {
             shape.setEffect(null);
+            isFocused = false;
         });
     }
 }
