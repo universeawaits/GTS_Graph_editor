@@ -1,6 +1,8 @@
 package model;
 
 
+import java.util.Objects;
+
 public class Arc {
     private Node begin;
     private Node end;
@@ -25,5 +27,21 @@ public class Arc {
 
     public Node getEnd() {
         return end;
+    }
+
+    @Override
+    public String toString() {
+        return isDirected ?
+                begin.getName() + " -> " + end.getName() :
+                begin.getName() + " - " + end.getName();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Arc arc = (Arc) o;
+        return  Objects.equals(begin, arc.begin) &&
+                Objects.equals(end, arc.end);
     }
 }

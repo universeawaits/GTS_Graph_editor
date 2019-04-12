@@ -43,4 +43,21 @@ public class GraphController {
     public void removeArc(Arc arc) {
         graph.getArcs().remove(arc);
     }
+
+    /*
+        Properties
+     */
+
+    // Calcs the degree of a node focused
+    public int degreeOf(Node node) {
+        int result = 0;
+
+        for (Arc arc : graph.getArcs()) {
+            if (arc.getBegin().equals(node) || arc.getEnd().equals(node)) {
+                result++;
+            }
+        }
+
+        return result;
+    }
 }

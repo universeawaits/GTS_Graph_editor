@@ -16,7 +16,7 @@ public class AppForm {
         appMenu = new AppMenu(graphController);
         graphPane = new GraphPane(graphController);
         graphToolBar = new GraphToolBar(graphPane);
-        graphStatusBar = new GraphStatusBar(graphController);
+        graphStatusBar = new GraphStatusBar(graphPane);
 
         vBox = new VBox();
         configureVBox();

@@ -94,9 +94,6 @@ public class DrawableNode {
         name.setFont(Font.font(3 * SHAPE_SIZE / 2));
         name.setText(sourceNode.getName());
 
-        name.setX(shape.getCenterX() + 2 * SHAPE_SIZE);
-        name.setY(shape.getCenterY() - 2 * SHAPE_SIZE);
-
         name.xProperty().bind(shape.centerXProperty()); // set to right upper........how???
         name.yProperty().bind(shape.centerYProperty());
     }

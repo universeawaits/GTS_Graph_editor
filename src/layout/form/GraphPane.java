@@ -71,6 +71,14 @@ public class GraphPane {
         this.actionType = actionType;
     }
 
+    public ObservableList<DrawableNode> getDrawableNodes() {
+        return drawableNodes;
+    }
+
+    public ObservableList<DrawableArc> getDrawableArcs() {
+        return drawableArcs;
+    }
+
     /*
         Configs
      */
@@ -121,6 +129,59 @@ public class GraphPane {
         }
     };
 
+    // Adding arc between selected nodes to graph & pane
+    private EventHandler<MouseEvent> arcAddingEventHandler = e -> {
+        if (e.getButton().equals(MouseButton.PRIMARY)
+                && (actionType == ActionType.ADD_ARC)) {
+
+            for (DrawableNode drawableNode : drawableNodes) {
+                if (drawableNode.isFocused()) {
+                    if (!isNodesForArcSelected) {
+                        beginForArc = drawableNode;
+                        isNodesForArcSelected = true;
+
+                        return;
+                    } else {
+                        endForArc = drawableNode;
+                        isNodesForArcSelected = false;
+
+                        break;
+                    }
+                }
+            }
+
+            if ((beginForArc == null)
+                    || (endForArc == null)) {
+
+                isNodesForArcSelected = false;
+                actionType = ActionType.POINTER;
+            }
+
+            if ((beginForArc != null)
+                    && (endForArc != null)) {
+
+                Arc arc = new Arc(beginForArc.getSourceNode(), endForArc.getSourceNode());
+                Arc inverseArc = new Arc(endForArc.getSourceNode(), beginForArc.getSourceNode());
+
+                if ((graphController.getArcs().contains(arc))
+                        || (graphController.getArcs().contains(inverseArc))) {
+                    isNodesForArcSelected = false;
+                    return;
+                }
+
+                graphController.addArc(arc);
+
+                DrawableArc arcShape = new DrawableArc(arc, beginForArc, endForArc);
+
+                drawableArcs.add(arcShape);
+                pane.getChildren().add(arcShape.getShape());
+
+                beginForArc = null;
+                endForArc = null;
+            }
+        }
+    };
+
     // Removing the selected node with/or incident arcs from pane & graph with DELETE key pressed and node hover
     private EventHandler<KeyEvent> nodeOrArcRemovingEventHandler = e -> {
         if (e.getCode().equals(KeyCode.DELETE) && (actionType == ActionType.POINTER)) {
@@ -157,56 +218,6 @@ public class GraphPane {
                     pane.getChildren().remove(drawableArc.getShape());
                     break;
                 }
-            }
-        }
-    };
-
-    // Adding arc between selected nodes to graph & pane
-    private EventHandler<MouseEvent> arcAddingEventHandler = e -> {
-        if (e.getButton().equals(MouseButton.PRIMARY)
-                && (actionType == ActionType.ADD_ARC)) {
-
-            for (DrawableNode drawableNode : drawableNodes) {
-                if (drawableNode.isFocused()) {
-                    if (!isNodesForArcSelected) {
-                        beginForArc = drawableNode;
-                        isNodesForArcSelected = true;
-
-                        return;
-                    } else {
-                        endForArc = drawableNode;
-                        isNodesForArcSelected = false;
-
-                        break;
-                    }
-                }
-            }
-
-            if ((beginForArc == null)
-                    || (endForArc == null)) {
-
-                isNodesForArcSelected = false;
-                actionType = ActionType.POINTER;
-            }
-
-            if ((beginForArc != null)
-                    && (endForArc != null)) {
-
-                Arc arc = new Arc(beginForArc.getSourceNode(), endForArc.getSourceNode());
-
-                if (graphController.getArcs().contains(arc)) {
-                    return;
-                }
-
-                graphController.addArc(arc);
-
-                DrawableArc arcShape = new DrawableArc(arc, beginForArc, endForArc);
-
-                drawableArcs.add(arcShape);
-                pane.getChildren().add(arcShape.getShape());
-
-                beginForArc = null;
-                endForArc = null;
             }
         }
     };
