@@ -21,11 +21,11 @@ public class GraphController {
         graph.getNodes().add(node);
     }
 
-    public void removeNode(Node node) { graph.getNodes().remove(node); }
+    public void removeNode(Node node) {
+        graph.getNodes().remove(node);
+    }
 
     public void addArc(Arc arc) {
         graph.getArcs().add(arc);
     }
-
-
 }

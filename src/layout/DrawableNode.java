@@ -1,5 +1,6 @@
 package layout;
 
+import javafx.geometry.Point2D;
 import javafx.scene.effect.Bloom;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
@@ -56,6 +57,13 @@ public class DrawableNode {
 
     public void setColor(Color color) {
         shape.setFill(color);
+    }
+
+    public Point2D getCenter() {
+        return new Point2D(
+                shape.getX() + SHAPE_SIZE / 2,
+                shape.getY() + SHAPE_SIZE / 2
+        );
     }
 
     /*
