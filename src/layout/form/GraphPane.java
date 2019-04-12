@@ -8,7 +8,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import layout.DrawableArc;
 import layout.DrawableNode;
+import model.Arc;
 import model.Node;
 import controller.GraphController;
 
@@ -22,9 +24,13 @@ public class GraphPane {
 
     private GraphController graphController;
     private ActionType actionType;
-    private int countOfSelectedNodes;
+
+    private boolean isNodesForArcSelected;
+    private DrawableNode beginForArc;
+    private DrawableNode endForArc;
 
     private ObservableList<DrawableNode> drawableNodes;
+    private ObservableList<DrawableArc> drawableArcs;
 
     private Pane pane;
 
@@ -32,9 +38,13 @@ public class GraphPane {
     public GraphPane(GraphController graphController) {
         this.graphController = graphController;
         actionType = ActionType.POINTER;
-        countOfSelectedNodes = 0;
+
+        isNodesForArcSelected = false;
+        beginForArc = null;
+        endForArc = null;
 
         drawableNodes = FXCollections.observableArrayList();
+        drawableArcs = FXCollections.observableArrayList();
 
         pane = new Pane();
         configurePane();
@@ -65,8 +75,9 @@ public class GraphPane {
         pane.setPrefSize(MAIN_FORM_WIDTH, 4 * MAIN_FORM_HEIGHT / 5);
         pane.setFocusTraversable(true);
 
-        pane.setOnMouseClicked(nodeAddingEventHandler);
-        pane.setOnKeyPressed(nodeRemovingEventHandler);
+        pane.addEventHandler(MouseEvent.MOUSE_CLICKED, nodeAddingEventHandler);
+        pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeRemovingEventHandler);
+        pane.addEventHandler(MouseEvent.MOUSE_CLICKED, arcAddingEventHandler);
     }
 
     /*
@@ -82,8 +93,8 @@ public class GraphPane {
             graphController.addNode(node);
 
             DrawableNode nodeShape = new DrawableNode(node);
-            nodeShape.getShape().setTranslateX(e.getSceneX() - DrawableNode.SHAPE_SIZE / 2);
-            nodeShape.getShape().setTranslateY(e.getSceneY() - 2 * DrawableNode.SHAPE_SIZE);
+            nodeShape.getShape().setCenterX(e.getSceneX());
+            nodeShape.getShape().setCenterY(e.getSceneY() - 2 * DrawableNode.SHAPE_SIZE);
 
             drawableNodes.add(nodeShape);
             pane.getChildren().add(nodeShape.getShape());
@@ -106,6 +117,49 @@ public class GraphPane {
 
     // Adding arc between selected nodes to graph & pane
     private EventHandler<MouseEvent> arcAddingEventHandler = e -> {
+        if (e.getButton().equals(MouseButton.PRIMARY)
+                && (actionType == ActionType.ADD_ARC)) {
 
+            for (DrawableNode drawableNode : drawableNodes) {
+                if (drawableNode.isFocused()) {
+                    if (!isNodesForArcSelected) {
+                        beginForArc = drawableNode;
+                        isNodesForArcSelected = true;
+
+                        return;
+                    } else {
+                        endForArc = drawableNode;
+                        isNodesForArcSelected = false;
+
+                        break;
+                    }
+                }
+            }
+
+            if ((beginForArc == null)
+                    || (endForArc == null)) {
+
+                isNodesForArcSelected = false;
+                actionType = ActionType.POINTER;
+            }
+
+            if ((beginForArc != null)
+                    && (endForArc != null)
+                    && !drawableArcs.contains(new DrawableArc(beginForArc, endForArc))) {
+
+                Arc arc = new Arc(beginForArc.getSourceNode(), endForArc.getSourceNode());
+                graphController.addArc(arc);
+
+                DrawableArc arcShape = new DrawableArc(beginForArc, endForArc);
+
+                drawableArcs.add(arcShape);
+                pane.getChildren().add(arcShape.getShape());
+
+                beginForArc = null;
+                endForArc = null;
+
+                actionType = ActionType.POINTER;
+            }
+        }
     };
 }

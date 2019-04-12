@@ -1,25 +1,25 @@
 package layout;
 
-import javafx.geometry.Point2D;
 import javafx.scene.effect.Bloom;
+import javafx.scene.effect.Effect;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.Circle;
 import model.Node;
 
 import java.util.Random;
 
 
 public class DrawableNode {
-    public static final int SHAPE_SIZE = 20;
-
+    public static final int SHAPE_SIZE = 11;
 
     private Node sourceNode;
 
     private boolean isFocused;
 
-    private Rectangle shape;
+    private Circle shape;
     private Color color;
 
 
@@ -34,7 +34,7 @@ public class DrawableNode {
                 randomColorComponent.nextDouble()
         );
 
-        shape = new Rectangle(SHAPE_SIZE, SHAPE_SIZE, color);
+        shape = new Circle(SHAPE_SIZE, color);
 
         configureShape();
     }
@@ -47,7 +47,7 @@ public class DrawableNode {
         return isFocused;
     }
 
-    public Shape getShape() {
+    public Circle getShape() {
         return shape;
     }
 
@@ -57,13 +57,6 @@ public class DrawableNode {
 
     public void setColor(Color color) {
         shape.setFill(color);
-    }
-
-    public Point2D getCenter() {
-        return new Point2D(
-                shape.getX() + SHAPE_SIZE / 2,
-                shape.getY() + SHAPE_SIZE / 2
-        );
     }
 
     /*
@@ -78,20 +71,22 @@ public class DrawableNode {
         // Node moving
         shape.setOnMouseDragged(e -> {
             if (e.getButton().equals(MouseButton.PRIMARY)) {
-                shape.setX(e.getX() - SHAPE_SIZE / 2);
-                shape.setY(e.getY() - SHAPE_SIZE / 2);
+                shape.setCenterX(e.getX() - SHAPE_SIZE / 2);
+                shape.setCenterY(e.getY() - SHAPE_SIZE / 2);
             }
         });
 
-        // Node lightning when mouse entered
+        // Node inner dark lightning when mouse entered
         shape.setOnMouseEntered(e -> {
-            shape.setEffect(new Bloom());
+            shape.setEffect(new Lighting(new Light.Distant()));
+            shape.toFront();
             isFocused = true;
         });
 
         // Remove lightning when mouse exited
         shape.setOnMouseExited(e -> {
             shape.setEffect(null);
+            shape.toFront();
             isFocused = false;
         });
     }
