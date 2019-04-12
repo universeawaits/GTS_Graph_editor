@@ -1,7 +1,6 @@
 package layout.form;
 
 import controller.GraphController;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
