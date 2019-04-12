@@ -53,6 +53,12 @@ public class GraphStatusBar {
         Label focusedNodeDegree = new Label(NODE_DEGREE + '-');
 
         ComboBox<String> nodesDegrees = new ComboBox<>();
+        graphController.getArcs().addListener((ListChangeListener) e -> {
+            nodesDegrees.getItems().clear();
+            for (Node node : graphController.getNodes()) {
+                nodesDegrees.getItems().add(node.getName() + ": " + graphController.degreeOf(node));
+            }
+        });
         graphController.getNodes().addListener((ListChangeListener) e -> {
             nodesDegrees.getItems().clear();
             for (Node node : graphController.getNodes()) {

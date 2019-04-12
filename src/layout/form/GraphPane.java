@@ -23,8 +23,9 @@ import static sample.Main.MAIN_FORM_WIDTH;
 
 
 public class GraphPane {
-    private static final ColorPicker colorPicker = new ColorPicker();
     public enum ActionType { POINTER, ADD_ARC }
+
+    private static final ColorPicker colorPicker = new ColorPicker();
     private static final int DOUBLE_MOUSE_CLICK_COUNT = 2;
 
     private GraphController graphController;
