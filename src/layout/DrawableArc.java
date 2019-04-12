@@ -3,6 +3,7 @@ package layout;
 import javafx.scene.effect.Bloom;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import model.Arc;
 
 import java.util.Objects;
@@ -18,6 +19,7 @@ public class DrawableArc {
 
     private boolean isFocused;
 
+    private Polygon arrow;
     private Line shape;
     private Color color;
 
@@ -44,7 +46,7 @@ public class DrawableArc {
         configureShape();
     }
 
-    public Line getShape() {
+    public Line getUndirectedShape() {
         return shape;
     }
 

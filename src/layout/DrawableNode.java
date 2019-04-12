@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import javafx.scene.text.Text;
 import model.Node;
 
@@ -13,6 +14,7 @@ import java.util.Random;
 
 
 public class DrawableNode {
+    private static final String FONT_FAMILY = "Segoe UI";
     public static final int SHAPE_SIZE = 10;
 
     private Node sourceNode;
@@ -94,11 +96,10 @@ public class DrawableNode {
     }
 
     private void configureName() {
-        name.setFont(Font.font(3 * SHAPE_SIZE / 2));
+        name.setFont(Font.font(FONT_FAMILY, FontPosture.ITALIC, 4 * SHAPE_SIZE / 3));
         name.setText(sourceNode.getName());
 
-        // TODO: move right upper a little for correct represent
-        name.xProperty().bind(shape.centerXProperty());
-        name.yProperty().bind(shape.centerYProperty());
+        name.xProperty().bind(shape.centerXProperty().add(3 * SHAPE_SIZE / 2));
+        name.yProperty().bind(shape.centerYProperty().add(-SHAPE_SIZE));
     }
 }

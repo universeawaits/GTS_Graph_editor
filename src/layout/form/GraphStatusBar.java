@@ -53,31 +53,12 @@ public class GraphStatusBar {
             arcsCount.setText(ARCS_COUNT + String.valueOf(graphController.getArcs().size()));
         });
 
-        ComboBox<String> nodesDegrees = new ComboBox<>();
-        nodesDegrees.setVisibleRowCount(NODES_DEGREES_COMBOBOX_VISIBLE_COUNT);
-        nodesDegrees.setPromptText("Nodes degrees");
-        graphController.getArcs().addListener((ListChangeListener) change -> {
-            nodesDegrees.getItems().clear();
-            for (Node node : graphController.getNodes()) {
-                nodesDegrees.getItems().add(node.getName() + ": " + graphController.degreeOf(node));
-            }
-        });
-        // TODO: when node name changes, change it also in nodes degrees' combobox
-        graphController.getNodes().addListener((ListChangeListener) change -> {
-            nodesDegrees.getItems().clear();
-            for (Node node : graphController.getNodes()) {
-                nodesDegrees.getItems().add(node.getName() + ": " + graphController.degreeOf(node));
-            }
-        });
-
 
 
         statusBar.getItems().addAll(
                 nodesCount,
                 new Separator(),
-                arcsCount,
-                new Separator(),
-                nodesDegrees
+                arcsCount
         );
     }
 }

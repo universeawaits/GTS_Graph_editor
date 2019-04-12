@@ -4,13 +4,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import layout.DrawableArc;
 import layout.DrawableNode;
 import model.Arc;
@@ -186,7 +190,7 @@ public class GraphPane {
                 DrawableArc arcShape = new DrawableArc(arc, beginForArc, endForArc);
 
                 drawableArcs.add(arcShape);
-                pane.getChildren().add(arcShape.getShape());
+                pane.getChildren().add(arcShape.getUndirectedShape());
 
                 beginForArc = null;
                 endForArc = null;
@@ -217,7 +221,7 @@ public class GraphPane {
                     drawableArcs.removeAll(arcsToRemove);
 
                     for (DrawableArc drawableArc : arcsToRemove) {
-                        pane.getChildren().remove(drawableArc.getShape());
+                        pane.getChildren().remove(drawableArc.getUndirectedShape());
                     }
                     break;
                 }
@@ -227,7 +231,7 @@ public class GraphPane {
                 if (drawableArc.isFocused()) {
                     graphController.removeArc(drawableArc.getSourceArc());
                     drawableNodes.remove(drawableArc);
-                    pane.getChildren().remove(drawableArc.getShape());
+                    pane.getChildren().remove(drawableArc.getUndirectedShape());
                     break;
                 }
             }
@@ -253,7 +257,7 @@ public class GraphPane {
             for (DrawableArc drawableArc : drawableArcs) {
                 if (drawableArc.isFocused()) {
                     colorPicker.setOnAction(actionEvent -> {
-                        drawableArc.getShape().setStroke(colorPicker.getValue());
+                        drawableArc.getUndirectedShape().setStroke(colorPicker.getValue());
                     });
 
                     Alert colorChoose = createEmptyDialog(colorPicker, "Color choosing");
@@ -294,17 +298,41 @@ public class GraphPane {
         }
     };
 
-    // Taking a node degree with D key pressed
+    // Taking focused or all node/'s degree/'s with D key pressed
     private EventHandler<KeyEvent> getNodeDegreeEventHandler = e -> {
         if (e.getCode().equals(KeyCode.D) && (actionType == ActionType.POINTER)) {
-            Label nodeDegree = new Label("Node degree: "
-                    + graphController.degreeOf(getFocusedNode().getSourceNode()));
+            Alert nodeDegreeDialog;
 
-            Alert nodeDegreeDialog = createEmptyDialog(nodeDegree, "Node degree");
+            if (getFocusedNode() == null) {
+                if (drawableNodes.size() == 0) {
+                    return;
+                }
 
-            nodeDegreeDialog.getButtonTypes().add(ButtonType.OK);
+                ScrollPane scrollPane = new ScrollPane();
+                scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-            nodeDegreeDialog.show();
+                ObservableList<String> nodesDegrees = FXCollections.observableArrayList();
+
+                for (Node node : graphController.getNodes()) {
+                    nodesDegrees.add(node.getName() + ": " + graphController.degreeOf(node));
+                }
+
+                ListView<String> listView = new ListView<>();
+                listView.getItems().addAll(nodesDegrees);
+                listView.setPrefSize(MAIN_FORM_WIDTH / 8,MAIN_FORM_HEIGHT / 7);
+                listView.setEditable(false);
+
+                nodeDegreeDialog = createEmptyDialog(listView, "Nodes' degrees");
+                nodeDegreeDialog.getButtonTypes().add(ButtonType.OK);
+                nodeDegreeDialog.show();
+            } else {
+                Label nodeDegree = new Label("Node degree: "
+                        + graphController.degreeOf(getFocusedNode().getSourceNode()));
+
+                nodeDegreeDialog = createEmptyDialog(nodeDegree, "Node degree");
+                nodeDegreeDialog.getButtonTypes().add(ButtonType.OK);
+                nodeDegreeDialog.show();
+            }
         }
     };
 }
