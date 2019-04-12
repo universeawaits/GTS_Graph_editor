@@ -10,7 +10,7 @@ import java.util.Random;
 
 
 public class DrawableArc {
-    private static final int SHAPE_WIDTH = 3;
+    private static final int SHAPE_WIDTH = 2;
 
     private Arc sourceArc;
     private DrawableNode begin;

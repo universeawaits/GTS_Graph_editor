@@ -1,26 +1,25 @@
 package layout;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.effect.Bloom;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import model.Node;
 
 import java.util.Random;
 
 
 public class DrawableNode {
-    public static final int SHAPE_SIZE = 11;
+    public static final int SHAPE_SIZE = 10;
 
     private Node sourceNode;
 
     private boolean isFocused;
 
     private Circle shape;
-    private Color color;
+    private Text name;
 
 
     public DrawableNode(Node sourceNode) {
@@ -28,15 +27,16 @@ public class DrawableNode {
 
         Random randomColorComponent = new Random(System.currentTimeMillis());
 
-        color = Color.color(
+        shape = new Circle(
+                SHAPE_SIZE, Color.color(
                 randomColorComponent.nextDouble(),
                 randomColorComponent.nextDouble(),
                 randomColorComponent.nextDouble()
-        );
-
-        shape = new Circle(SHAPE_SIZE, color);
-
+        ));
         configureShape();
+
+        name = new Text();
+        configureName();
     }
 
     public Node getSourceNode() {
@@ -51,12 +51,12 @@ public class DrawableNode {
         return shape;
     }
 
-    public Color getColor() {
-        return color;
+    public Text getName() {
+        return name;
     }
 
-    public void setColor(Color color) {
-        shape.setFill(color);
+    public void setName(String name) {
+        this.name.setText(name);
     }
 
     /*
@@ -65,7 +65,6 @@ public class DrawableNode {
 
     // Shape configs: events handling, coloring
     private void configureShape() {
-        shape.setFill(color);
         shape.setFocusTraversable(true);
 
         // Node moving
@@ -89,5 +88,16 @@ public class DrawableNode {
             shape.toFront();
             isFocused = false;
         });
+    }
+
+    private void configureName() {
+        name.setFont(Font.font(3 * SHAPE_SIZE / 2));
+        name.setText(sourceNode.getName());
+
+        name.setX(shape.getCenterX() + 2 * SHAPE_SIZE);
+        name.setY(shape.getCenterY() - 2 * SHAPE_SIZE);
+
+        name.xProperty().bind(shape.centerXProperty()); // set to right upper........how???
+        name.yProperty().bind(shape.centerYProperty());
     }
 }
