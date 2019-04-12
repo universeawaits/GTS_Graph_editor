@@ -13,6 +13,7 @@ public class GraphStatusBar {
     private static final String NODES_COUNT = "Nodes count: ";
     private static final String ARCS_COUNT = "Arcs count: ";
     private static final String NODE_DEGREE = "Node degree: ";
+    private static final int NODES_DEGREES_COMBOBOX_VISIBLE_COUNT = 5;
 
     private GraphController graphController;
     private GraphPane graphPane;
@@ -32,6 +33,10 @@ public class GraphStatusBar {
         return statusBar;
     }
 
+    public GraphController getGraphController() {
+        return graphController;
+    }
+
     /*
         Configs
      */
@@ -44,21 +49,21 @@ public class GraphStatusBar {
         });
 
         Label arcsCount = new Label(ARCS_COUNT + String.valueOf(graphController.getArcs().size()));
-        graphController.getArcs().addListener((ListChangeListener) e -> {
+        graphController.getArcs().addListener((ListChangeListener) change -> {
             arcsCount.setText(ARCS_COUNT + String.valueOf(graphController.getArcs().size()));
         });
 
-        // TODO: how to bind this with focus event?
-        Label focusedNodeDegree = new Label(NODE_DEGREE + '-');
-
         ComboBox<String> nodesDegrees = new ComboBox<>();
-        graphController.getArcs().addListener((ListChangeListener) e -> {
+        nodesDegrees.setVisibleRowCount(NODES_DEGREES_COMBOBOX_VISIBLE_COUNT);
+        nodesDegrees.setPromptText("Nodes degrees");
+        graphController.getArcs().addListener((ListChangeListener) change -> {
             nodesDegrees.getItems().clear();
             for (Node node : graphController.getNodes()) {
                 nodesDegrees.getItems().add(node.getName() + ": " + graphController.degreeOf(node));
             }
         });
-        graphController.getNodes().addListener((ListChangeListener) e -> {
+        // TODO: when node name changes, change it also in nodes degrees' combobox
+        graphController.getNodes().addListener((ListChangeListener) change -> {
             nodesDegrees.getItems().clear();
             for (Node node : graphController.getNodes()) {
                 nodesDegrees.getItems().add(node.getName() + ": " + graphController.degreeOf(node));
@@ -71,8 +76,6 @@ public class GraphStatusBar {
                 nodesCount,
                 new Separator(),
                 arcsCount,
-                new Separator(),
-                focusedNodeDegree,
                 new Separator(),
                 nodesDegrees
         );

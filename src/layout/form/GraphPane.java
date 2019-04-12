@@ -94,6 +94,7 @@ public class GraphPane {
         pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeOrArcRemovingEventHandler);
         pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeOrArcColoringEventHandler);
         pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeRenamingEventHandler);
+        pane.addEventHandler(KeyEvent.KEY_PRESSED, getNodeDegreeEventHandler);
     }
 
     /*
@@ -107,6 +108,16 @@ public class GraphPane {
         alert.getDialogPane().setContent(content);
 
         return alert;
+    }
+
+    public DrawableNode getFocusedNode() {
+        for (DrawableNode drawableNode : drawableNodes) {
+            if (drawableNode.isFocused()) {
+                return drawableNode;
+            }
+        }
+
+        return null;
     }
 
     /*
@@ -280,6 +291,20 @@ public class GraphPane {
                     break;
                 }
             }
+        }
+    };
+
+    // Taking a node degree with D key pressed
+    private EventHandler<KeyEvent> getNodeDegreeEventHandler = e -> {
+        if (e.getCode().equals(KeyCode.D) && (actionType == ActionType.POINTER)) {
+            Label nodeDegree = new Label("Node degree: "
+                    + graphController.degreeOf(getFocusedNode().getSourceNode()));
+
+            Alert nodeDegreeDialog = createEmptyDialog(nodeDegree, "Node degree");
+
+            nodeDegreeDialog.getButtonTypes().add(ButtonType.OK);
+
+            nodeDegreeDialog.show();
         }
     };
 }
