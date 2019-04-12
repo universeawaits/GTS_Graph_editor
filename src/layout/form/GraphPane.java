@@ -3,6 +3,9 @@ package layout.form;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -19,6 +22,7 @@ import static sample.Main.MAIN_FORM_WIDTH;
 
 
 public class GraphPane {
+    private static final ColorPicker colorPicker = new ColorPicker();
     public enum ActionType { POINTER, ADD_ARC }
     private static final int DOUBLE_MOUSE_CLICK_COUNT = 2;
 
@@ -76,8 +80,24 @@ public class GraphPane {
         pane.setFocusTraversable(true);
 
         pane.addEventHandler(MouseEvent.MOUSE_CLICKED, nodeAddingEventHandler);
-        pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeOrArcRemovingEventHandler);
         pane.addEventHandler(MouseEvent.MOUSE_CLICKED, arcAddingEventHandler);
+        pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeOrArcRemovingEventHandler);
+        pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeOrArcColoringEventHandler);
+    }
+
+    /*
+        Others
+     */
+
+    private Alert createColorPickerDialog() {
+        Alert colorChoose = new Alert(Alert.AlertType.NONE);
+
+        ButtonType APPLY = new ButtonType("Apply");
+        colorChoose.getButtonTypes().add(APPLY);
+
+        colorChoose.getDialogPane().setContent(colorPicker);
+
+        return colorChoose;
     }
 
     /*
@@ -101,7 +121,7 @@ public class GraphPane {
         }
     };
 
-    // Removing the selected node with incident arcs from pane & graph with R key pressed and node hover
+    // Removing the selected node with/or incident arcs from pane & graph with R key pressed and node hover
     private EventHandler<KeyEvent> nodeOrArcRemovingEventHandler = e -> {
         if (e.getCode().equals(KeyCode.R) && (actionType == ActionType.POINTER)) {
             for (DrawableNode drawableNode : drawableNodes) {
@@ -187,6 +207,31 @@ public class GraphPane {
 
                 beginForArc = null;
                 endForArc = null;
+            }
+        }
+    };
+
+    // Coloring of a node or an arc in focus with C key pressed
+    private EventHandler<KeyEvent> nodeOrArcColoringEventHandler = e -> {
+        if (e.getCode().equals(KeyCode.C) && (actionType == ActionType.POINTER)) {
+            for (DrawableNode drawableNode : drawableNodes) {
+                if (drawableNode.isFocused()) {
+                    colorPicker.setOnAction(actionEvent -> {
+                        drawableNode.getShape().setFill(colorPicker.getValue());
+                    });
+                    createColorPickerDialog().show();
+                    break;
+                }
+            }
+
+            for (DrawableArc drawableArc : drawableArcs) {
+                if (drawableArc.isFocused()) {
+                    colorPicker.setOnAction(actionEvent -> {
+                        drawableArc.getShape().setStroke(colorPicker.getValue());
+                    });
+                    createColorPickerDialog().show();
+                    break;
+                }
             }
         }
     };
