@@ -3,6 +3,7 @@ package layout;
 import javafx.scene.effect.Bloom;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import model.Arc;
 
 import java.util.Objects;
 import java.util.Random;
@@ -11,16 +12,22 @@ import java.util.Random;
 public class DrawableArc {
     private static final int SHAPE_WIDTH = 2;
 
+    private Arc sourceArc;
     private DrawableNode begin;
     private DrawableNode end;
+
+    private boolean isFocused;
 
     private Line shape;
     private Color color;
 
 
-    public DrawableArc(DrawableNode begin, DrawableNode end) {
+    public DrawableArc(Arc sourceArc, DrawableNode begin, DrawableNode end) {
+        this.sourceArc = sourceArc;
         this.begin = begin;
         this.end = end;
+
+        isFocused = false;
 
         Random randomColorComponent = new Random(System.currentTimeMillis());
 
@@ -41,6 +48,14 @@ public class DrawableArc {
         return shape;
     }
 
+    public Arc getSourceArc() {
+        return sourceArc;
+    }
+
+    public boolean isFocused() {
+        return isFocused;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -56,8 +71,8 @@ public class DrawableArc {
 
     // Shape configs: events handling, coloring
     private void configureShape() {
-        shape.setFill(color);
         shape.setStrokeWidth(SHAPE_WIDTH);
+        shape.setStroke(color);
 
         shape.startXProperty().bind(begin.getShape().centerXProperty());
         shape.startYProperty().bind(begin.getShape().centerYProperty());
@@ -67,11 +82,13 @@ public class DrawableArc {
         // Node lightning when mouse entered
         shape.setOnMouseEntered(e -> {
             shape.setEffect(new Bloom());
+            isFocused = true;
         });
 
         // Remove lightning when mouse exited
         shape.setOnMouseExited(e -> {
             shape.setEffect(null);
+            isFocused = false;
         });
     }
 }

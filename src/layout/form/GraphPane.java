@@ -76,7 +76,7 @@ public class GraphPane {
         pane.setFocusTraversable(true);
 
         pane.addEventHandler(MouseEvent.MOUSE_CLICKED, nodeAddingEventHandler);
-        pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeRemovingEventHandler);
+        pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeOrArcRemovingEventHandler);
         pane.addEventHandler(MouseEvent.MOUSE_CLICKED, arcAddingEventHandler);
     }
 
@@ -101,14 +101,40 @@ public class GraphPane {
         }
     };
 
-    // Removing the selected node from pane & graph with R key pressed and node hover
-    private EventHandler<KeyEvent> nodeRemovingEventHandler = e -> {
+    // Removing the selected node with incident arcs from pane & graph with R key pressed and node hover
+    private EventHandler<KeyEvent> nodeOrArcRemovingEventHandler = e -> {
         if (e.getCode().equals(KeyCode.R) && (actionType == ActionType.POINTER)) {
             for (DrawableNode drawableNode : drawableNodes) {
                 if (drawableNode.isFocused()) {
                     graphController.removeNode(drawableNode.getSourceNode());
                     drawableNodes.remove(drawableNode);
                     pane.getChildren().remove(drawableNode.getShape());
+
+
+                    ObservableList<DrawableArc> arcsToRemove = FXCollections.observableArrayList();
+
+                    for (DrawableArc drawableArc : drawableArcs) {
+                        if (drawableArc.getSourceArc().getBegin().equals(drawableNode.getSourceNode())
+                                || drawableArc.getSourceArc().getEnd().equals(drawableNode.getSourceNode())) {
+
+                            arcsToRemove.add(drawableArc);
+                        }
+                    }
+
+                    drawableArcs.removeAll(arcsToRemove);
+
+                    for (DrawableArc drawableArc : arcsToRemove) {
+                        pane.getChildren().remove(drawableArc.getShape());
+                    }
+                    break;
+                }
+            }
+
+            for (DrawableArc drawableArc : drawableArcs) {
+                if (drawableArc.isFocused()) {
+                    graphController.removeArc(drawableArc.getSourceArc());
+                    drawableNodes.remove(drawableArc);
+                    pane.getChildren().remove(drawableArc.getShape());
                     break;
                 }
             }
@@ -144,21 +170,23 @@ public class GraphPane {
             }
 
             if ((beginForArc != null)
-                    && (endForArc != null)
-                    && !drawableArcs.contains(new DrawableArc(beginForArc, endForArc))) {
+                    && (endForArc != null)) {
 
                 Arc arc = new Arc(beginForArc.getSourceNode(), endForArc.getSourceNode());
+
+                if (graphController.getArcs().contains(arc)) {
+                    return;
+                }
+
                 graphController.addArc(arc);
 
-                DrawableArc arcShape = new DrawableArc(beginForArc, endForArc);
+                DrawableArc arcShape = new DrawableArc(arc, beginForArc, endForArc);
 
                 drawableArcs.add(arcShape);
                 pane.getChildren().add(arcShape.getShape());
 
                 beginForArc = null;
                 endForArc = null;
-
-                actionType = ActionType.POINTER;
             }
         }
     };

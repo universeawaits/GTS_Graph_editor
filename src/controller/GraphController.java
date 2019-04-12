@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.Arc;
 import model.Graph;
@@ -23,9 +24,23 @@ public class GraphController {
 
     public void removeNode(Node node) {
         graph.getNodes().remove(node);
+
+        ObservableList<Arc> arcsToRemove = FXCollections.observableArrayList();
+
+        for (Arc arc : graph.getArcs()) {
+            if (arc.getBegin().equals(node) || arc.getEnd().equals(node)) {
+                arcsToRemove.add(arc);
+            }
+        }
+
+        graph.getArcs().removeAll(arcsToRemove);
     }
 
     public void addArc(Arc arc) {
         graph.getArcs().add(arc);
+    }
+
+    public void removeArc(Arc arc) {
+        graph.getArcs().remove(arc);
     }
 }

@@ -78,7 +78,7 @@ public class DrawableNode {
 
         // Node inner dark lightning when mouse entered
         shape.setOnMouseEntered(e -> {
-            shape.setEffect(new Lighting(new Light.Distant()));
+            shape.setEffect(new Bloom());
             shape.toFront();
             isFocused = true;
         });
