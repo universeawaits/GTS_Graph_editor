@@ -29,6 +29,10 @@ public class Arc {
         return end;
     }
 
+    public boolean isDirected() {
+        return isDirected;
+    }
+
     @Override
     public String toString() {
         return isDirected ?

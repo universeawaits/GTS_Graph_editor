@@ -53,8 +53,6 @@ public class GraphStatusBar {
             arcsCount.setText(ARCS_COUNT + String.valueOf(graphController.getArcs().size()));
         });
 
-
-
         statusBar.getItems().addAll(
                 nodesCount,
                 new Separator(),

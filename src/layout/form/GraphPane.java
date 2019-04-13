@@ -4,24 +4,20 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import layout.DrawableArc;
 import layout.DrawableNode;
 import model.Arc;
 import model.Node;
 import controller.GraphController;
 
-import static layout.DrawableNode.SHAPE_SIZE;
+import static layout.DrawableNode.CIRCLE_RADIUS;
 import static sample.Main.MAIN_FORM_HEIGHT;
 import static sample.Main.MAIN_FORM_WIDTH;
 
@@ -138,7 +134,7 @@ public class GraphPane {
 
             DrawableNode nodeShape = new DrawableNode(node);
             nodeShape.getShape().setCenterX(e.getSceneX());
-            nodeShape.getShape().setCenterY(e.getSceneY() - 2 * SHAPE_SIZE);
+            nodeShape.getShape().setCenterY(e.getSceneY() - 2 * CIRCLE_RADIUS);
 
             drawableNodes.add(nodeShape);
             pane.getChildren().addAll(nodeShape.getShape(), nodeShape.getName());
@@ -190,7 +186,7 @@ public class GraphPane {
                 DrawableArc arcShape = new DrawableArc(arc, beginForArc, endForArc);
 
                 drawableArcs.add(arcShape);
-                pane.getChildren().add(arcShape.getUndirectedShape());
+                pane.getChildren().addAll(arcShape.getLine(), arcShape.getArrow());
 
                 beginForArc = null;
                 endForArc = null;
@@ -221,7 +217,7 @@ public class GraphPane {
                     drawableArcs.removeAll(arcsToRemove);
 
                     for (DrawableArc drawableArc : arcsToRemove) {
-                        pane.getChildren().remove(drawableArc.getUndirectedShape());
+                        pane.getChildren().removeAll(drawableArc.getLine(), drawableArc.getArrow());
                     }
                     break;
                 }
@@ -230,8 +226,8 @@ public class GraphPane {
             for (DrawableArc drawableArc : drawableArcs) {
                 if (drawableArc.isFocused()) {
                     graphController.removeArc(drawableArc.getSourceArc());
-                    drawableNodes.remove(drawableArc);
-                    pane.getChildren().remove(drawableArc.getUndirectedShape());
+                    drawableArcs.remove(drawableArc);
+                    pane.getChildren().removeAll(drawableArc.getLine(), drawableArc.getArrow());
                     break;
                 }
             }
@@ -257,7 +253,9 @@ public class GraphPane {
             for (DrawableArc drawableArc : drawableArcs) {
                 if (drawableArc.isFocused()) {
                     colorPicker.setOnAction(actionEvent -> {
-                        drawableArc.getUndirectedShape().setStroke(colorPicker.getValue());
+                        drawableArc.getLine().setStroke(colorPicker.getValue());
+                        drawableArc.getArrow().setStroke(colorPicker.getValue());
+                        drawableArc.getArrow().setFill(colorPicker.getValue());
                     });
 
                     Alert colorChoose = createEmptyDialog(colorPicker, "Color choosing");
@@ -279,7 +277,7 @@ public class GraphPane {
                     GridPane gridPane = new GridPane();
                     gridPane.add(new Label("New name"), 0, 0);
                     gridPane.add(newName, 1, 0);
-                    GridPane.setMargin(newName, new Insets(SHAPE_SIZE));
+                    GridPane.setMargin(newName, new Insets(CIRCLE_RADIUS));
 
                     Alert renameDialog = createEmptyDialog(gridPane, "Node renaming");
 

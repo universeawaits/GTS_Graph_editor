@@ -15,7 +15,7 @@ import java.util.Random;
 
 public class DrawableNode {
     private static final String FONT_FAMILY = "Segoe UI";
-    public static final int SHAPE_SIZE = 10;
+    public static final int CIRCLE_RADIUS = 10;
 
     private Node sourceNode;
 
@@ -31,7 +31,7 @@ public class DrawableNode {
         Random randomColorComponent = new Random(System.currentTimeMillis());
 
         shape = new Circle(
-                SHAPE_SIZE, Color.color(
+                CIRCLE_RADIUS, Color.color(
                 randomColorComponent.nextDouble(),
                 randomColorComponent.nextDouble(),
                 randomColorComponent.nextDouble()
@@ -69,7 +69,7 @@ public class DrawableNode {
     // Shape configs: events handling
     private void configureShape() {
         shape.setStrokeType(StrokeType.OUTSIDE);
-        shape.setStrokeWidth(SHAPE_SIZE);
+        shape.setStrokeWidth(CIRCLE_RADIUS / 2);
         shape.setStroke(Color.TRANSPARENT);
 
         // Node moving
@@ -96,10 +96,10 @@ public class DrawableNode {
     }
 
     private void configureName() {
-        name.setFont(Font.font(FONT_FAMILY, FontPosture.ITALIC, 4 * SHAPE_SIZE / 3));
+        name.setFont(Font.font(FONT_FAMILY, FontPosture.ITALIC, 4 * CIRCLE_RADIUS / 3));
         name.setText(sourceNode.getName());
 
-        name.xProperty().bind(shape.centerXProperty().add(3 * SHAPE_SIZE / 2));
-        name.yProperty().bind(shape.centerYProperty().add(-SHAPE_SIZE));
+        name.xProperty().bind(shape.centerXProperty().add(3 * CIRCLE_RADIUS / 2));
+        name.yProperty().bind(shape.centerYProperty().add(-CIRCLE_RADIUS));
     }
 }
