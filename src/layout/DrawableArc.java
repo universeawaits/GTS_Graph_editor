@@ -1,7 +1,5 @@
 package layout;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.effect.Bloom;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -28,6 +26,24 @@ public class DrawableArc {
     private Polygon arrow;
     private Line line;
     private Color color;
+
+    // Properties for arrow correct rotating and locating
+    double headX;
+    double headY;
+    double leftX;
+    double leftY;
+    double rightX;
+    double rightY;
+
+    double headXMod;
+    double headYMod;
+    double leftXMod;
+    double leftYMod;
+    double rightXMod;
+    double rightYMod;
+
+    double cos;
+    double sin;
 
 
     public DrawableArc(Arc sourceArc, DrawableNode begin, DrawableNode end) {
@@ -119,107 +135,7 @@ public class DrawableArc {
         arrow.setFill(color);
         arrow.setStroke(color);
 
-        final DoubleProperty headXProperty = new SimpleDoubleProperty(0);
-        DoubleProperty headYProperty = new SimpleDoubleProperty(0);
-        DoubleProperty leftXProperty = new SimpleDoubleProperty(0);
-        DoubleProperty leftYProperty = new SimpleDoubleProperty(0);
-        DoubleProperty rightXProperty = new SimpleDoubleProperty(0);
-        DoubleProperty rightYProperty = new SimpleDoubleProperty(0);
 
-        DoubleProperty headXMod = new SimpleDoubleProperty(0);
-        DoubleProperty headYMod = new SimpleDoubleProperty(0);
-        DoubleProperty leftXMod = new SimpleDoubleProperty(0);
-        DoubleProperty leftYMod = new SimpleDoubleProperty(0);
-        DoubleProperty rightXMod = new SimpleDoubleProperty(0);
-        DoubleProperty rightYMod = new SimpleDoubleProperty(0);
-
-        DoubleProperty cos = new SimpleDoubleProperty(0);
-        DoubleProperty sin = new SimpleDoubleProperty(0);
-
-        DoubleProperty one = new SimpleDoubleProperty(1);
-
-        // cos = |endX - startX| / sqrt((endX - startX)^2 + (endY - startY)^2)
-        cos.bind(one.multiply(Math.abs(end.getShape()
-                .centerXProperty().add(begin.getShape().centerXProperty().multiply(-1)).doubleValue()))
-                .divide(Math.sqrt(
-                        Math.pow(end.getShape()
-                                .centerXProperty().add(begin.getShape()
-                                .centerXProperty().multiply(-1)).doubleValue(), 2)
-                        + Math.pow(end.getShape()
-                                .centerYProperty().add(begin.getShape()
-                                .centerYProperty().multiply(-1)).doubleValue(), 2)
-                ))
-        );
-        // sin = sqrt(1 - cos^2)
-        sin.bind(one.multiply(
-                Math.sqrt(cos.multiply(cos).multiply(-1).add(1).doubleValue()))
-        );
-
-        headXMod.bind(cos.multiply(CIRCLE_RADIUS));
-        headYMod.bind(sin.multiply(CIRCLE_RADIUS));
-
-        headXProperty.bind(end.getShape().centerXProperty().add(headXMod.multiply(-1)));
-        headYProperty.bind(end.getShape().centerYProperty().add(headYMod.multiply(-1)));
-
-        // sin (90 - a - y) = cos a / 2 - sin a / 2 &&& cos (90 - a - y) = sin a / 2 + cos a / 2 =>>>
-        rightXMod.bind(cos.divide(2).subtract(sin.divide(2)).multiply(ARROW_SIDE));
-        rightYMod.bind(cos.divide(2).add(sin.divide(2)).multiply(ARROW_SIDE));
-
-        rightXProperty.bind(headXProperty.subtract(rightXMod));
-        rightYProperty.bind(headYProperty.subtract(rightYMod));
-
-        //  cos (a - y) = cos a / 2 + sin a / 2 &&& sin (a - y) = sin a / 2 - cos a / 2
-        leftXMod.bind(cos.divide(2).add(sin.divide(2)).multiply(ARROW_SIDE));
-        leftYMod.bind(sin.divide(2).subtract(cos.divide(2)).multiply(ARROW_SIDE));
-
-        leftXProperty.bind(headXProperty.subtract(leftXMod));
-        leftYProperty.bind(headYProperty.subtract(leftYMod));
-
-
-
-        begin.getShape().centerXProperty().addListener(change -> {
-            arrow.getPoints().clear();
-            arrow.getPoints().addAll(
-                    headXProperty.get(), headYProperty.get(), // head
-                    leftXProperty.get(), leftYProperty.get(), // left
-                    rightXProperty.get(), rightYProperty.get(), // right
-                    headXProperty.get(), headYProperty.get() // head
-            );
-        });
-        begin.getShape().centerYProperty().addListener(change -> {
-            arrow.getPoints().clear();
-            arrow.getPoints().addAll(
-                    headXProperty.get(), headYProperty.get(), // head
-                    leftXProperty.get(), leftYProperty.get(), // left
-                    rightXProperty.get(), rightYProperty.get(), // right
-                    headXProperty.get(), headYProperty.get() // head
-            );
-        });
-        end.getShape().centerXProperty().addListener(change -> {
-            arrow.getPoints().clear();
-            arrow.getPoints().addAll(
-                    headXProperty.get(), headYProperty.get(), // head
-                    leftXProperty.get(), leftYProperty.get(), // left
-                    rightXProperty.get(), rightYProperty.get(), // right
-                    headXProperty.get(), headYProperty.get() // head
-            );
-        });
-        end.getShape().centerYProperty().addListener(change -> {
-            arrow.getPoints().clear();
-            arrow.getPoints().addAll(
-                    headXProperty.get(), headYProperty.get(), // head
-                    leftXProperty.get(), leftYProperty.get(), // left
-                    rightXProperty.get(), rightYProperty.get(), // right
-                    headXProperty.get(), headYProperty.get() // head
-            );
-        });
-
-        arrow.getPoints().addAll(
-                headXProperty.get(), headYProperty.get(), // head
-                leftXProperty.get(), leftYProperty.get(), // left
-                rightXProperty.get(), rightYProperty.get(), // right
-                headXProperty.get(), headYProperty.get() // head
-        );
 
         // Arrow lightning when mouse entered
         arrow.setOnMouseEntered(e -> {
@@ -234,5 +150,107 @@ public class DrawableArc {
             line.setEffect(null);
             isFocused = false;
         });
+
+        begin.getShape().centerXProperty().addListener(change -> {
+            updateArrowTransform();
+
+            arrow.getPoints().clear();
+            arrow.getPoints().addAll(
+                    headX, headY, // head
+                    leftX, leftY, // left
+                    rightX, rightY, // right
+                    headX, headY // head
+            );
+        });
+        begin.getShape().centerYProperty().addListener(change -> {
+            updateArrowTransform();
+
+            arrow.getPoints().clear();
+            arrow.getPoints().addAll(
+                    headX, headY, // head
+                    leftX, leftY, // left
+                    rightX, rightY, // right
+                    headX, headY // head
+            );
+        });
+        end.getShape().centerXProperty().addListener(change -> {
+            updateArrowTransform();
+
+            arrow.getPoints().clear();
+            arrow.getPoints().addAll(
+                    headX, headY, // head
+                    leftX, leftY, // left
+                    rightX, rightY, // right
+                    headX, headY // head
+            );
+        });
+        end.getShape().centerYProperty().addListener(change -> {
+            updateArrowTransform();
+
+            arrow.getPoints().clear();
+            arrow.getPoints().addAll(
+                    headX, headY, // head
+                    leftX, leftY, // left
+                    rightX, rightY, // right
+                    headX, headY // head
+            );
+        });
+
+        arrow.getPoints().addAll(
+                headX, headY, // head
+                leftX, leftY, // left
+                rightX, rightY, // right
+                headX, headY // head
+        );
+    }
+
+    private void updateArrowTransform() {
+        // cos = |endX - startX| / sqrt((endX - startX)^2 + (endY - startY)^2)
+        cos = Math.abs(end.getShape().getCenterX() - begin.getShape().getCenterX())
+                / Math.sqrt(Math.pow(end.getShape().getCenterX() - begin.getShape().getCenterX(), 2)
+                    + Math.pow(end.getShape().getCenterY() - begin.getShape().getCenterY(), 2));
+
+        // sin = sqrt(1 - cos^2)
+        sin = Math.sqrt(1 - Math.pow(cos, 2));
+
+
+        headXMod = CIRCLE_RADIUS * cos;
+        headYMod = CIRCLE_RADIUS * sin;
+
+        //headX = end.getShape().getCenterX() - headXMod;
+        //headY = end.getShape().getCenterY() - headYMod;
+
+        headX = end.getShape().getCenterX() > begin.getShape().getCenterX() ?
+                end.getShape().getCenterX() - headXMod
+                : end.getShape().getCenterX() + headXMod;
+
+        headY = end.getShape().getCenterY() > begin.getShape().getCenterY() ?
+                end.getShape().getCenterY() - headYMod
+                : end.getShape().getCenterY() + headYMod;
+
+        // sin (90 - a - y) = cos a / 2 - sin a / 2 &&& cos (90 - a - y) = sin a / 2 + cos a / 2 =>>>
+        rightXMod = ARROW_SIDE * (cos / 2 - sin / 2);
+        rightYMod = ARROW_SIDE * (cos / 2 + sin / 2);
+
+        rightX = end.getShape().getCenterX() > begin.getShape().getCenterX() ?
+                headX - rightXMod
+                : headX + rightXMod;
+        rightY = end.getShape().getCenterY() > begin.getShape().getCenterY() ?
+                headY - rightYMod
+                : headY + rightYMod;
+
+        //  cos (a - y) = cos a / 2 + sin a / 2 &&& sin (a - y) = sin a / 2 - cos a / 2
+        leftXMod = ARROW_SIDE * (cos / 2 + sin / 2);
+        leftYMod = ARROW_SIDE * (sin / 2 - cos / 2);
+
+        //leftX = headX - leftXMod;
+        //leftY = headY - leftYMod;
+
+        leftX = end.getShape().getCenterX() > begin.getShape().getCenterX() ?
+                headX - leftXMod
+                : headX + leftXMod;
+        leftY = end.getShape().getCenterY() > begin.getShape().getCenterY() ?
+                headY - leftYMod
+                : headY + leftYMod;
     }
 }

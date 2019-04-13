@@ -2,16 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/model/GraphDistanceMatrix.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/GTS_Graph_editor/layout/DrawableArc.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/GTS_Graph_editor/layout/DrawableArc.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/GTS_Graph_editor/layout/form/GraphStatusBar.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/GTS_Graph_editor/layout/form/GraphStatusBar.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/GTS_Graph_editor/model/Arc.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/GTS_Graph_editor/model/Arc.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/layout/DrawableArc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/layout/DrawableArc.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/layout/DrawableNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/layout/DrawableNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/layout/form/GraphPane.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/layout/form/GraphPane.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/layout/form/GraphStatusBar.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/layout/form/GraphStatusBar.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/Arc.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Arc.java" afterDir="false" />
     </list>
     <ignored path="JavaFxApplication.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -69,25 +60,14 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="GraphController.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/controller/GraphController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="748">
-              <caret line="56" column="25" selection-start-line="56" selection-start-column="25" selection-end-line="56" selection-end-column="25" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="DrawableArc.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/layout/DrawableArc.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="443">
-              <caret line="156" lean-forward="true" selection-start-line="156" selection-end-line="156" />
+            <state relative-caret-position="349">
+              <caret line="243" column="32" lean-forward="true" selection-start-line="243" selection-start-column="32" selection-end-line="243" selection-end-column="32" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="method#DrawableArc#0;class#DrawableArc#0" />
                 <element signature="e#1687#1688#0" expanded="true" />
                 <element signature="e#1715#1716#0" expanded="true" />
                 <element signature="method#equals#0;class#DrawableArc#0" />
@@ -213,6 +193,7 @@
     <findStrings>
       <find>degree</find>
       <find>&quot;\t&quot;</find>
+      <find>= new SimpleDoubleProperty(0);</find>
     </findStrings>
   </component>
   <component name="FindManager">
@@ -470,12 +451,12 @@
       <workItem from="1555057043260" duration="81000" />
       <workItem from="1555057630547" duration="5419000" />
       <workItem from="1555094347730" duration="25767000" />
-      <workItem from="1555174326087" duration="10942000" />
+      <workItem from="1555174326087" duration="15434000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="122870000" />
+    <option name="totallyTimeSpent" value="127362000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -537,7 +518,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/layout/TriangleNodeImage.java" />
     <entry file="file://$PROJECT_DIR$/src/layout/NodeShape.java" />
     <entry file="file://$PROJECT_DIR$/src/model/Node.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -844,12 +824,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_191/javafx-src.zip!/javafx/beans/property/DoubleProperty.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="413">
+          <caret line="77" column="16" lean-forward="true" selection-start-line="77" selection-start-column="16" selection-end-line="77" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/layout/DrawableArc.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="443">
-          <caret line="156" lean-forward="true" selection-start-line="156" selection-end-line="156" />
+        <state relative-caret-position="349">
+          <caret line="243" column="32" lean-forward="true" selection-start-line="243" selection-start-column="32" selection-end-line="243" selection-end-column="32" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#DrawableArc#0;class#DrawableArc#0" />
             <element signature="e#1687#1688#0" expanded="true" />
             <element signature="e#1715#1716#0" expanded="true" />
             <element signature="method#equals#0;class#DrawableArc#0" />
