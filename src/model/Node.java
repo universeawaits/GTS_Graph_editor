@@ -1,7 +1,5 @@
 package model;
 
-import java.util.Objects;
-
 public class Node {
     private String name;
 

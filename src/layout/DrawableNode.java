@@ -14,6 +14,7 @@ import java.util.Random;
 
 
 public class DrawableNode {
+    private static final Bloom BLOOM = new Bloom();
     private static final String FONT_FAMILY = "Segoe UI";
     public static final int CIRCLE_RADIUS = 10;
 
@@ -80,9 +81,9 @@ public class DrawableNode {
             }
         });
 
-        // Node inner dark lightning when mouse entered
+        // Node lightning when mouse entered
         shape.setOnMouseEntered(e -> {
-            shape.setEffect(new Bloom());
+            shape.setEffect(BLOOM);
             shape.toFront();
             isFocused = true;
         });
@@ -96,7 +97,7 @@ public class DrawableNode {
     }
 
     private void configureName() {
-        name.setFont(Font.font(FONT_FAMILY, FontPosture.ITALIC, 4 * CIRCLE_RADIUS / 3));
+        name.setFont(Font.font(FONT_FAMILY, FontPosture.ITALIC, 3 * CIRCLE_RADIUS / 2));
         name.setText(sourceNode.getName());
 
         name.xProperty().bind(shape.centerXProperty().add(3 * CIRCLE_RADIUS / 2));

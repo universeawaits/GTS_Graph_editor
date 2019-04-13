@@ -187,6 +187,8 @@ public class GraphPane {
 
                 drawableArcs.add(arcShape);
                 pane.getChildren().addAll(arcShape.getLine(), arcShape.getArrow());
+                beginForArc.getShape().toFront();
+                endForArc.getShape().toFront();
 
                 beginForArc = null;
                 endForArc = null;

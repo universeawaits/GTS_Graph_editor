@@ -13,9 +13,10 @@ import static layout.DrawableNode.CIRCLE_RADIUS;
 
 
 public class DrawableArc {
-    private static final Bloom bloom = new Bloom();
+    private static final Bloom BLOOM = new Bloom();
     private static final int LINE_WIDTH = 3;
     private static final int ARROW_SIDE = 2 * CIRCLE_RADIUS;
+    private static final double SIN_Y = 0.3;
 
     private Arc sourceArc;
     private DrawableNode begin;
@@ -116,8 +117,8 @@ public class DrawableArc {
 
         // Line lightning when mouse entered
         line.setOnMouseEntered(e -> {
-            line.setEffect(bloom);
-            arrow.setEffect(bloom);
+            line.setEffect(BLOOM);
+            arrow.setEffect(BLOOM);
             isFocused = true;
         });
 
@@ -135,12 +136,25 @@ public class DrawableArc {
         arrow.setFill(color);
         arrow.setStroke(color);
 
+        updateArrowShape();
 
+        begin.getShape().centerXProperty().addListener(change -> {
+            updateArrowShape();
+        });
+        begin.getShape().centerYProperty().addListener(change -> {
+            updateArrowShape();
+        });
+        end.getShape().centerXProperty().addListener(change -> {
+            updateArrowShape();
+        });
+        end.getShape().centerYProperty().addListener(change -> {
+            updateArrowShape();
+        });
 
         // Arrow lightning when mouse entered
         arrow.setOnMouseEntered(e -> {
-            arrow.setEffect(bloom);
-            line.setEffect(bloom);
+            arrow.setEffect(BLOOM);
+            line.setEffect(BLOOM);
             isFocused = true;
         });
 
@@ -150,60 +164,9 @@ public class DrawableArc {
             line.setEffect(null);
             isFocused = false;
         });
-
-        begin.getShape().centerXProperty().addListener(change -> {
-            updateArrowTransform();
-
-            arrow.getPoints().clear();
-            arrow.getPoints().addAll(
-                    headX, headY, // head
-                    leftX, leftY, // left
-                    rightX, rightY, // right
-                    headX, headY // head
-            );
-        });
-        begin.getShape().centerYProperty().addListener(change -> {
-            updateArrowTransform();
-
-            arrow.getPoints().clear();
-            arrow.getPoints().addAll(
-                    headX, headY, // head
-                    leftX, leftY, // left
-                    rightX, rightY, // right
-                    headX, headY // head
-            );
-        });
-        end.getShape().centerXProperty().addListener(change -> {
-            updateArrowTransform();
-
-            arrow.getPoints().clear();
-            arrow.getPoints().addAll(
-                    headX, headY, // head
-                    leftX, leftY, // left
-                    rightX, rightY, // right
-                    headX, headY // head
-            );
-        });
-        end.getShape().centerYProperty().addListener(change -> {
-            updateArrowTransform();
-
-            arrow.getPoints().clear();
-            arrow.getPoints().addAll(
-                    headX, headY, // head
-                    leftX, leftY, // left
-                    rightX, rightY, // right
-                    headX, headY // head
-            );
-        });
-
-        arrow.getPoints().addAll(
-                headX, headY, // head
-                leftX, leftY, // left
-                rightX, rightY, // right
-                headX, headY // head
-        );
     }
 
+    // Updates arrow coordinates if incident node was moved
     private void updateArrowTransform() {
         // cos = |endX - startX| / sqrt((endX - startX)^2 + (endY - startY)^2)
         cos = Math.abs(end.getShape().getCenterX() - begin.getShape().getCenterX())
@@ -217,9 +180,6 @@ public class DrawableArc {
         headXMod = CIRCLE_RADIUS * cos;
         headYMod = CIRCLE_RADIUS * sin;
 
-        //headX = end.getShape().getCenterX() - headXMod;
-        //headY = end.getShape().getCenterY() - headYMod;
-
         headX = end.getShape().getCenterX() > begin.getShape().getCenterX() ?
                 end.getShape().getCenterX() - headXMod
                 : end.getShape().getCenterX() + headXMod;
@@ -229,8 +189,8 @@ public class DrawableArc {
                 : end.getShape().getCenterY() + headYMod;
 
         // sin (90 - a - y) = cos a / 2 - sin a / 2 &&& cos (90 - a - y) = sin a / 2 + cos a / 2 =>>>
-        rightXMod = ARROW_SIDE * (cos / 2 - sin / 2);
-        rightYMod = ARROW_SIDE * (cos / 2 + sin / 2);
+        rightXMod = ARROW_SIDE * (cos * SIN_Y - sin * SIN_Y);
+        rightYMod = ARROW_SIDE * (cos * SIN_Y + sin * SIN_Y);
 
         rightX = end.getShape().getCenterX() > begin.getShape().getCenterX() ?
                 headX - rightXMod
@@ -240,11 +200,8 @@ public class DrawableArc {
                 : headY + rightYMod;
 
         //  cos (a - y) = cos a / 2 + sin a / 2 &&& sin (a - y) = sin a / 2 - cos a / 2
-        leftXMod = ARROW_SIDE * (cos / 2 + sin / 2);
-        leftYMod = ARROW_SIDE * (sin / 2 - cos / 2);
-
-        //leftX = headX - leftXMod;
-        //leftY = headY - leftYMod;
+        leftXMod = ARROW_SIDE * (cos * SIN_Y + sin * SIN_Y);
+        leftYMod = ARROW_SIDE * (sin * SIN_Y - cos * SIN_Y);
 
         leftX = end.getShape().getCenterX() > begin.getShape().getCenterX() ?
                 headX - leftXMod
@@ -252,5 +209,18 @@ public class DrawableArc {
         leftY = end.getShape().getCenterY() > begin.getShape().getCenterY() ?
                 headY - leftYMod
                 : headY + leftYMod;
+    }
+
+    // Redraws arrow polygon
+    private void updateArrowShape() {
+        updateArrowTransform();
+
+        arrow.getPoints().clear();
+        arrow.getPoints().addAll(
+                headX, headY,
+                leftX, leftY,
+                rightX, rightY,
+                headX, headY
+        );
     }
 }
