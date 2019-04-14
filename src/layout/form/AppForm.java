@@ -26,7 +26,10 @@ public class AppForm {
         return vBox;
     }
 
-    // Configs
+    /*
+        Configs
+     */
+
     private void configureVBox() {
         vBox.getChildren().addAll(
                 appMenu.getMenuBar(),

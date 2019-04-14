@@ -11,6 +11,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
 import layout.DrawableArc;
 import layout.DrawableNode;
 import model.Arc;
@@ -88,6 +89,14 @@ public class GraphPane {
     private void configurePane() {
         pane.setPrefSize(MAIN_FORM_WIDTH, 4 * MAIN_FORM_HEIGHT / 5);
         pane.setFocusTraversable(true);
+        Rectangle clip = new Rectangle(pane.getWidth(), pane.getHeight());
+
+        pane.layoutBoundsProperty().addListener((ov, oldValue, newValue) -> {
+            clip.setWidth(newValue.getWidth());
+            clip.setHeight(newValue.getHeight());
+        });
+
+        pane.setClip(clip);
 
         pane.addEventHandler(MouseEvent.MOUSE_CLICKED, nodeAddingEventHandler);
         pane.addEventHandler(MouseEvent.MOUSE_CLICKED, arcAddingEventHandler);
@@ -95,6 +104,7 @@ public class GraphPane {
         pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeOrArcColoringEventHandler);
         pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeRenamingEventHandler);
         pane.addEventHandler(KeyEvent.KEY_PRESSED, getNodeDegreeEventHandler);
+        pane.addEventHandler(KeyEvent.KEY_PRESSED, arcDirectionSwapEventHandler);
     }
 
     /*
@@ -332,6 +342,23 @@ public class GraphPane {
                 nodeDegreeDialog = createEmptyDialog(nodeDegree, "Node degree");
                 nodeDegreeDialog.getButtonTypes().add(ButtonType.OK);
                 nodeDegreeDialog.show();
+            }
+        }
+    };
+
+    // Making arc (un)directed with T key pressed
+    private EventHandler<KeyEvent> arcDirectionSwapEventHandler = e -> {
+        if (e.getCode().equals(KeyCode.T) && (actionType == ActionType.POINTER)) {
+            for (DrawableArc drawableArc : drawableArcs) {
+                if (drawableArc.isFocused()) {
+                    if (drawableArc.getSourceArc().isDirected()) {
+                        pane.getChildren().remove(drawableArc.getArrow());
+                        drawableArc.getSourceArc().setDirected(false);
+                    } else {
+                        pane.getChildren().add(drawableArc.getArrow());
+                        drawableArc.getSourceArc().setDirected(true);
+                    }
+                }
             }
         }
     };
