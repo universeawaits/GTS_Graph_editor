@@ -147,7 +147,7 @@ public class GraphPane {
             nodeShape.getShape().setCenterY(e.getSceneY() - 2 * CIRCLE_RADIUS);
 
             drawableNodes.add(nodeShape);
-            pane.getChildren().addAll(nodeShape.getShape(), nodeShape.getName());
+            pane.getChildren().addAll(nodeShape.getShape(), nodeShape.getName(), nodeShape.getIdentifier());
         }
     };
 
@@ -213,7 +213,11 @@ public class GraphPane {
                 if (drawableNode.isFocused()) {
                     graphController.removeNode(drawableNode.getSourceNode());
                     drawableNodes.remove(drawableNode);
-                    pane.getChildren().removeAll(drawableNode.getShape(), drawableNode.getName());
+                    pane.getChildren().removeAll(
+                            drawableNode.getShape(),
+                            drawableNode.getName(),
+                            drawableNode.getIdentifier()
+                    );
 
 
                     ObservableList<DrawableArc> arcsToRemove = FXCollections.observableArrayList();
@@ -308,38 +312,14 @@ public class GraphPane {
         }
     };
 
-    // Taking focused or all node/'s degree/'s with D key pressed
+    // Taking focused node's degree with D key pressed
     private EventHandler<KeyEvent> getNodeDegreeEventHandler = e -> {
         if (e.getCode().equals(KeyCode.D) && (actionType == ActionType.POINTER)) {
-            Alert nodeDegreeDialog;
-
-            if (getFocusedNode() == null) {
-                if (drawableNodes.size() == 0) {
-                    return;
-                }
-
-                ScrollPane scrollPane = new ScrollPane();
-                scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-
-                ObservableList<String> nodesDegrees = FXCollections.observableArrayList();
-
-                for (Node node : graphController.getNodes()) {
-                    nodesDegrees.add(node.getName() + ": " + graphController.degreeOf(node));
-                }
-
-                ListView<String> listView = new ListView<>();
-                listView.getItems().addAll(nodesDegrees);
-                listView.setPrefSize(MAIN_FORM_WIDTH / 8,MAIN_FORM_HEIGHT / 7);
-                listView.setEditable(false);
-
-                nodeDegreeDialog = createEmptyDialog(listView, "Nodes' degrees");
-                nodeDegreeDialog.getButtonTypes().add(ButtonType.OK);
-                nodeDegreeDialog.show();
-            } else {
+            if (getFocusedNode() != null) {
                 Label nodeDegree = new Label("Node degree: "
                         + graphController.degreeOf(getFocusedNode().getSourceNode()));
 
-                nodeDegreeDialog = createEmptyDialog(nodeDegree, "Node degree");
+                Alert nodeDegreeDialog = createEmptyDialog(nodeDegree, "Node degree");
                 nodeDegreeDialog.getButtonTypes().add(ButtonType.OK);
                 nodeDegreeDialog.show();
             }

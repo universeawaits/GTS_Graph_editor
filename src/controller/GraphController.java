@@ -8,6 +8,9 @@ import model.GraphDistanceMatrix;
 import model.Node;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static model.GraphDistanceMatrix.INFINITY;
 
 
@@ -59,7 +62,7 @@ public class GraphController {
         Metrics
      */
 
-    // Calcs degree of a node
+    // Calculation of a node degree
     public int degreeOf(Node node) {
         int degree = 0;
 
@@ -72,11 +75,32 @@ public class GraphController {
         return degree;
     }
 
-    // Calcs graph diameter
+    // Calculation of the nodes' eccentricities
+    private Map<Node, Integer> eccentricities() {
+        Map<Node, Integer> eccentricities = new HashMap<>();
+
+        int eccentricity;
+
+        for (Node node : graphDistanceMatrix.getDistancesMap().keySet()) {
+            eccentricity = 0;
+
+            for (Integer distance : graphDistanceMatrix.getDistancesMap().get(node).values()) {
+                if ((distance > eccentricity) && (distance != INFINITY)) {
+                    eccentricity = distance;
+                }
+            }
+
+            eccentricities.put(node, eccentricity);
+        }
+
+        return eccentricities;
+    }
+
+    // Calculation of a graph diameter
     public int diameter() {
         int diameter = 0;
 
-        for (Integer eccentricity : graphDistanceMatrix.eccentricities()) {
+        for (Integer eccentricity : eccentricities().values()) {
             if ((eccentricity > diameter) && (eccentricity != INFINITY)) {
                 diameter = eccentricity;
             }
@@ -85,16 +109,30 @@ public class GraphController {
         return diameter;
     }
 
-    // Calcs graph radius
+    // Calculation of a graph radius
     public int radius() {
         int radius = INFINITY;
 
-        for (Integer eccentricity : graphDistanceMatrix.eccentricities()) {
+        for (Integer eccentricity : eccentricities().values()) {
             if ((eccentricity < radius) && (eccentricity != 0)) {
                 radius = eccentricity;
             }
         }
 
         return radius == INFINITY ? 0 : radius;
+    }
+
+    // Taking of graph centers
+    public ObservableList<Node> centers() {
+        ObservableList<Node> centres = FXCollections.observableArrayList();
+        int radius = radius();
+
+        for (Node node : eccentricities().keySet()) {
+            if (eccentricities().get(node) == radius) {
+                centres.add(node);
+            }
+        }
+
+        return centres;
     }
 }

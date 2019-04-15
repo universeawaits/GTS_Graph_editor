@@ -1,8 +1,6 @@
 package model;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,52 +9,39 @@ public class GraphDistanceMatrix {
     public static final int INFINITY = 1000000;
 
     private Graph graph;
-    ObservableList<ObservableList<Integer>> distancesMatrix;
+    Map<Node, Map<Node, Integer>> distancesMap;
 
 
     public GraphDistanceMatrix(Graph graph) {
         this.graph = graph;
 
-        distancesMatrix = FXCollections.observableArrayList();
+        distancesMap = new HashMap<>();
         configureDistancesMatrix();
     }
 
-    public ObservableList<ObservableList<Integer>> getDistancesMatrix() {
-        return distancesMatrix;
+    public Map<Node, Map<Node, Integer>> getDistancesMap() {
+        return distancesMap;
     }
+
+    /*
+        Configs
+     */
 
     private void configureDistancesMatrix() {
         graph.getArcs().addListener((ListChangeListener) changeList -> {
-            distancesMatrix.clear();
+            distancesMap.clear();
             for (Node node : graph.getNodes()) {
-                distancesMatrix.add(allDistancesFrom(node));
+                distancesMap.put(node, allDistancesFrom(node));
             }
         });
     }
 
+    /*
+        Calculations
+     */
 
-    public ObservableList<Integer> eccentricities() {
-        ObservableList<Integer> eccentricities = FXCollections.observableArrayList();
-
-        int eccentricity;
-
-        for (ObservableList<Integer> distancesFromNode : distancesMatrix) {
-            eccentricity = 0;
-
-            for (Integer distance : distancesFromNode) {
-                if ((distance > eccentricity) && (distance != INFINITY)) {
-                    eccentricity = distance;
-                }
-            }
-
-            eccentricities.add(eccentricity);
-        }
-
-        return eccentricities;
-    }
-
-    // Calcs distances between the node given and all other nodes in the graph with Bellman–Ford algorithm
-    private ObservableList<Integer> allDistancesFrom(Node begin) {
+    // Calculation of distances between the node given and all other nodes in the graph with Bellman–Ford algorithm
+    private Map<Node, Integer> allDistancesFrom(Node begin) {
         Map<Node, Integer> distanceTo = new HashMap<>();
 
         for (Node node : graph.getNodes()) {
@@ -81,6 +66,6 @@ public class GraphDistanceMatrix {
             }
         }
 
-        return FXCollections.observableArrayList(distanceTo.values());
+        return distanceTo;
     }
 }

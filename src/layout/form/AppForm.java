@@ -3,6 +3,7 @@ package layout.form;
 import javafx.scene.layout.VBox;
 import controller.GraphController;
 
+
 public class AppForm {
     private AppMenu appMenu;
     private GraphPane graphPane;
@@ -16,7 +17,7 @@ public class AppForm {
         appMenu = new AppMenu(graphController);
         graphPane = new GraphPane(graphController);
         graphToolBar = new GraphToolBar(graphPane);
-        graphStatusBar = new GraphStatusBar(graphPane);
+        graphStatusBar = new GraphStatusBar(graphController);
 
         vBox = new VBox();
         configureVBox();

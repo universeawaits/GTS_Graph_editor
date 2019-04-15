@@ -1,6 +1,9 @@
 package model;
 
 public class Node {
+    private static long nodeCounter;
+    private final long IDENTIFIER = nodeCounter++;
+
     private String name;
 
 
@@ -10,6 +13,10 @@ public class Node {
 
     public Node(String name) {
         this.name = name;
+    }
+
+    public long getIdentifier() {
+        return IDENTIFIER;
     }
 
     public String getName() {

@@ -14,14 +14,12 @@ public class GraphStatusBar {
     private static final String RADIUS = "Radius: ";
 
     private GraphController graphController;
-    private GraphPane graphPane;
 
     private ToolBar statusBar;
 
 
-    public GraphStatusBar(GraphPane graphPane) {
-        this.graphPane = graphPane;
-        graphController = graphPane.getGraphController();
+    public GraphStatusBar(GraphController graphController) {
+        this.graphController = graphController;
 
         statusBar = new ToolBar();
         configureStatusBar();
