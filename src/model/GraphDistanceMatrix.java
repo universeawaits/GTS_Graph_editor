@@ -35,14 +35,24 @@ public class GraphDistanceMatrix {
     }
 
 
-    public ObservableList<Integer> toList() {
-        ObservableList<Integer> allDistances = FXCollections.observableArrayList();
+    public ObservableList<Integer> eccentricities() {
+        ObservableList<Integer> eccentricities = FXCollections.observableArrayList();
+
+        int eccentricity;
 
         for (ObservableList<Integer> distancesFromNode : distancesMatrix) {
-            allDistances.addAll(distancesFromNode);
+            eccentricity = 0;
+
+            for (Integer distance : distancesFromNode) {
+                if ((distance > eccentricity) && (distance != INFINITY)) {
+                    eccentricity = distance;
+                }
+            }
+
+            eccentricities.add(eccentricity);
         }
 
-        return allDistances;
+        return eccentricities;
     }
 
     // Calcs distances between the node given and all other nodes in the graph with Bellman–Ford algorithm

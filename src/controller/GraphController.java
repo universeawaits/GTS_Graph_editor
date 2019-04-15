@@ -76,9 +76,9 @@ public class GraphController {
     public int diameter() {
         int diameter = 0;
 
-        for (Integer distance : graphDistanceMatrix.toList()) {
-            if ((distance > diameter) && (distance != INFINITY)) {
-                diameter = distance;
+        for (Integer eccentricity : graphDistanceMatrix.eccentricities()) {
+            if ((eccentricity > diameter) && (eccentricity != INFINITY)) {
+                diameter = eccentricity;
             }
         }
 
@@ -89,12 +89,12 @@ public class GraphController {
     public int radius() {
         int radius = INFINITY;
 
-        for (Integer distance : graphDistanceMatrix.toList()) {
-            if ((distance < radius) && (distance != 0)) {
-                radius = distance;
+        for (Integer eccentricity : graphDistanceMatrix.eccentricities()) {
+            if ((eccentricity < radius) && (eccentricity != 0)) {
+                radius = eccentricity;
             }
         }
 
-        return radius;
+        return radius == INFINITY ? 0 : radius;
     }
 }
