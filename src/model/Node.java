@@ -29,6 +29,6 @@ public class Node {
 
     @Override
     public String toString() {
-        return "Node " + name;
+        return name.equals("") ? ("[" + IDENTIFIER + "]") : name;
     }
 }

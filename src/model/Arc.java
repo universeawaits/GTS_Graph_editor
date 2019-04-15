@@ -36,8 +36,8 @@ public class Arc {
     @Override
     public String toString() {
         return isDirected ?
-                begin.getName() + " -> " + end.getName() :
-                begin.getName() + " - " + end.getName();
+                begin + " -> " + end :
+                begin + " - " + end;
     }
 
     @Override

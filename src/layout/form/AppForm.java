@@ -14,8 +14,8 @@ public class AppForm {
 
 
     public AppForm(GraphController graphController) {
-        appMenu = new AppMenu(graphController);
         graphPane = new GraphPane(graphController);
+        appMenu = new AppMenu(graphPane);
         graphToolBar = new GraphToolBar(graphPane);
         graphStatusBar = new GraphStatusBar(graphController);
 

@@ -59,10 +59,10 @@ public class GraphStatusBar {
             radius.setText(RADIUS + String.valueOf(graphController.radius()));
         });
 
-        Label center = new Label(DIAMETER + String.valueOf(graphController.diameter()));
-        graphController.getArcs().addListener((ListChangeListener) change -> {
-
-        });
+        /*Label isPlanar = new Label("Graph isn't planar");
+        graphController.getArcs().addListener((ListChangeListener) changeList -> {
+            isPlanar.setText("Graph is" + (graphController.isPlanar() ? "" : "n't") + " planar");
+        });*/
 
         statusBar.getItems().addAll(
                 nodesCount,
@@ -71,7 +71,9 @@ public class GraphStatusBar {
                 new Separator(),
                 diameter,
                 new Separator(),
-                radius
+                radius,
+                new Separator()/*,
+                isPlanar*/
         );
     }
 }

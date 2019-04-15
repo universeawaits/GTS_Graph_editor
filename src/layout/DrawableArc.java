@@ -79,6 +79,14 @@ public class DrawableArc {
         }
     }
 
+    public DrawableNode getBegin() {
+        return begin;
+    }
+
+    public DrawableNode getEnd() {
+        return end;
+    }
+
     public Polygon getArrow() {
         return arrow;
     }

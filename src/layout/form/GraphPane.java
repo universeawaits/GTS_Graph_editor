@@ -333,9 +333,11 @@ public class GraphPane {
                 if (drawableArc.isFocused()) {
                     if (drawableArc.getSourceArc().isDirected()) {
                         pane.getChildren().remove(drawableArc.getArrow());
+                        graphController.addArc(new Arc(drawableArc.getSourceArc().getEnd(), drawableArc.getSourceArc().getBegin()));
                         drawableArc.getSourceArc().setDirected(false);
                     } else {
                         pane.getChildren().add(drawableArc.getArrow());
+                        graphController.removeArc(new Arc(drawableArc.getSourceArc().getEnd(), drawableArc.getSourceArc().getBegin()));
                         drawableArc.getSourceArc().setDirected(true);
                     }
                 }

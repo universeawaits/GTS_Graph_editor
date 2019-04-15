@@ -7,9 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+import model.Arc;
 import model.Node;
 
 import static sample.Main.MAIN_FORM_HEIGHT;
@@ -18,17 +16,21 @@ import static sample.Main.MAIN_FORM_WIDTH;
 
 public class AppMenu {
     private GraphController graphController;
+    private GraphPane graphPane;
 
     private MenuBar menuBar;
 
 
-    public AppMenu(GraphController graphController) {
-        this.graphController = graphController;
+    public AppMenu(GraphPane graphPane) {
+        this.graphPane = graphPane;
+        this.graphController = graphPane.getGraphController();
 
         menuBar = new MenuBar();
         menuBar.getMenus().addAll(
                 createFileMenu(),
-                createStatisticsMenu()
+                createEditMenu(),
+                createStatisticsMenu(),
+                createAlgorithmMenu()
         );
     }
 
@@ -41,7 +43,7 @@ public class AppMenu {
         Menus creating
      */
 
-    // Creating of a file menu
+    // Creating of the file menu
     private Menu createFileMenu() {
         Menu file = new Menu("File");
         MenuItem newFile = new MenuItem("New");
@@ -54,7 +56,19 @@ public class AppMenu {
         return file;
     }
 
-    // Creating of a statistics menu
+    // Creating of the edit menu
+    private Menu createEditMenu() {
+        Menu edit = new Menu("Edit");
+        MenuItem clearPane = new MenuItem("Clear pane");
+
+        clearPane.setOnAction(graphClearingEventHandler);
+
+        edit.getItems().addAll(clearPane);
+
+        return edit;
+    }
+
+    // Creating of the statistics menu
     private Menu createStatisticsMenu() {
         Menu statistics = new Menu("Statistics");
         MenuItem nodesDegrees = new MenuItem("Node degrees");
@@ -66,6 +80,17 @@ public class AppMenu {
         statistics.getItems().addAll(nodesDegrees, centers);
 
         return statistics;
+    }
+
+    private Menu createAlgorithmMenu() {
+        Menu algorithm = new Menu("Algorithm");
+        MenuItem hamiltonianCycles = new MenuItem("Hamiltonian cycles");
+
+        hamiltonianCycles.setOnAction(findHamiltonianCyclesEventHandler);
+
+        algorithm.getItems().addAll(hamiltonianCycles);
+
+        return algorithm;
     }
 
     /*
@@ -90,7 +115,7 @@ public class AppMenu {
            ObservableList<String> nodesDegrees = FXCollections.observableArrayList();
 
             for (Node node : graphController.getNodes()) {
-                nodesDegrees.add("[" + node.getIdentifier() + "] " + node.getName() + ": " + graphController.degreeOf(node));
+                nodesDegrees.add(node + ": " + graphController.degreeOf(node));
             }
 
             ListView<String> listView = new ListView<>();
@@ -103,12 +128,12 @@ public class AppMenu {
             nodeDegreeDialog.show();
     };
 
-    // Taking all graph nodes degrees
+    // Taking all graph centers
     private EventHandler<ActionEvent> getCentersEventHandler = e -> {
         ObservableList<String> graphCenters = FXCollections.observableArrayList();
 
         for (Node node : graphController.centers()) {
-            graphCenters.add("[" + node.getIdentifier() + "] " + node.getName());
+            graphCenters.add(node.toString());
         }
 
         ListView<String> listView = new ListView<>();
@@ -117,6 +142,39 @@ public class AppMenu {
         listView.setEditable(false);
 
         Alert centersDialog = createEmptyDialog(listView, "Centers");
+        centersDialog.getButtonTypes().add(ButtonType.OK);
+        centersDialog.show();
+    };
+
+    // Clearing the graph pane with the source graph
+    private EventHandler<ActionEvent> graphClearingEventHandler = e -> {
+        graphPane.getPane().getChildren().clear();
+        graphPane.getDrawableArcs().clear();
+        graphPane.getDrawableNodes().clear();
+        graphController.getArcs().clear();
+        graphController.getNodes().clear();
+    };
+
+    // Finding of hamiltonian cycles
+    private EventHandler<ActionEvent> findHamiltonianCyclesEventHandler = e -> {
+        ObservableList<String> cycles = FXCollections.observableArrayList();
+
+        for (ObservableList<Arc> cycle : graphController.hamiltonianCycles()) {
+            String thatCycle = "";
+
+            for (Arc arc : cycle) {
+                thatCycle = thatCycle.concat(arc.toString() + "  ");
+            }
+
+            cycles.add(thatCycle);
+        }
+
+        ListView<String> listView = new ListView<>();
+        listView.getItems().addAll(cycles);
+        listView.setPrefSize(MAIN_FORM_WIDTH / 5,MAIN_FORM_HEIGHT / 8);
+        listView.setEditable(false);
+
+        Alert centersDialog = createEmptyDialog(listView, "Hamiltonian cycles");
         centersDialog.getButtonTypes().add(ButtonType.OK);
         centersDialog.show();
     };

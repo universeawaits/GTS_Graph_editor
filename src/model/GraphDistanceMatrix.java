@@ -40,7 +40,8 @@ public class GraphDistanceMatrix {
         Calculations
      */
 
-    // Calculation of distances between the node given and all other nodes in the graph with Bellman–Ford algorithm
+    // Calculation of distances between the node given and all other nodes in the graph
+    // with modified Bellman–Ford algorithm ///fordirect
     private Map<Node, Integer> allDistancesFrom(Node begin) {
         Map<Node, Integer> distanceTo = new HashMap<>();
 
@@ -49,11 +50,11 @@ public class GraphDistanceMatrix {
         }
         distanceTo.replace(begin, 0);
 
-        for (;;) {
+        while (true) {
             boolean any = false;
 
             for (Arc arc : graph.getArcs()) {
-                if (distanceTo.get(arc.getBegin()) < INFINITY) {
+                if ((distanceTo.get(arc.getBegin()) < INFINITY)) {
                     if ((distanceTo.get(arc.getEnd()) > distanceTo.get(arc.getBegin()) + Arc.WEIGHT)) {
                         distanceTo.replace(arc.getEnd(), distanceTo.get(arc.getBegin()) + Arc.WEIGHT);
                         any = true;

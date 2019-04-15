@@ -135,4 +135,75 @@ public class GraphController {
 
         return centres;
     }
+
+    // Finding all of hamiltonian cycles in the graph
+    public ObservableList<ObservableList<Arc>> hamiltonianCycles() {
+        ObservableList<ObservableList<Arc>> hamiltonianCycles = FXCollections.observableArrayList();
+
+        for (Node begin : graph.getNodes()) {
+            ObservableList<Arc> cycle = findHamiltonianCycleFrom(begin);
+            if (!cycle.isEmpty()) {
+                hamiltonianCycles.add(cycle);
+            }
+        }
+
+        return hamiltonianCycles;
+    }
+
+    private ObservableList<Arc> findHamiltonianCycleFrom(Node begin) {
+        Map<Node, Boolean> wasVisited = new HashMap<>();
+        ObservableList<Arc> cycle = FXCollections.observableArrayList();
+
+        for (Node node : graph.getNodes()) {
+            wasVisited.put(node, false);
+        }
+
+        deepFirstSearch(begin, wasVisited, cycle);
+
+        if (cycle.isEmpty()) {
+            return cycle;
+        }
+
+        if (getIncidentArc(cycle.get(cycle.size() - 1).getEnd(), begin) == null) {
+            cycle.clear();
+            return cycle;
+        } else {
+            for (Node node : wasVisited.keySet()) {
+                if (!wasVisited.get(node)) {
+                    cycle.clear();
+                    return cycle;
+                }
+            }
+        }
+
+        cycle.add(getIncidentArc(cycle.get(cycle.size() - 1).getEnd(), begin));
+
+        System.out.println("VISITED FROM " + begin);
+        System.out.println(wasVisited);
+
+        return cycle;
+    }
+
+    private void deepFirstSearch(Node begin, Map<Node, Boolean> wasVisited, ObservableList<Arc> cycle) {
+        wasVisited.replace(begin, true);
+
+        for (Node node : graph.getNodes()) {
+            Arc incidentArc = getIncidentArc(begin, node);
+
+            if ((incidentArc != null) && !wasVisited.get(incidentArc.getEnd())) {
+                cycle.add(incidentArc);
+                deepFirstSearch(incidentArc.getEnd(), wasVisited, cycle);
+            }
+        }
+    }
+
+    private Arc getIncidentArc(Node begin, Node end) {
+        for (Arc arc : graph.getArcs()) {
+            if (arc.getBegin().equals(begin) && arc.getEnd().equals(end)) {
+                return arc;
+            }
+        }
+
+        return null;
+    }
 }
