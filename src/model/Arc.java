@@ -1,9 +1,11 @@
 package model;
 
-
 import java.util.Objects;
 
+
 public class Arc {
+    public static final int WEIGHT = 1;
+
     private Node begin;
     private Node end;
     private boolean isDirected;

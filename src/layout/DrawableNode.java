@@ -14,7 +14,7 @@ import java.util.Random;
 
 
 public class DrawableNode {
-    private static final Bloom BLOOM = new Bloom();
+    private static final Bloom BLOOM = new Bloom(0);
     private static final String FONT_FAMILY = "Segoe UI";
     public static final int CIRCLE_RADIUS = 10;
 

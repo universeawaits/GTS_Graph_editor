@@ -13,10 +13,13 @@ import static layout.DrawableNode.CIRCLE_RADIUS;
 
 
 public class DrawableArc {
-    private static final Bloom BLOOM = new Bloom();
+    private static final Bloom BLOOM = new Bloom(0);
+
     private static final int LINE_WIDTH = 3;
-    private static final int ARROW_SIDE = 2 * CIRCLE_RADIUS;
-    private static final double SIN_Y = 0.3;
+    private static final int ARROW_SIDE = CIRCLE_RADIUS;
+    private static final int ARROW_SIDE_TO_HEIGHT_ANGLE = 20;
+    private static final double SIN_Y = Math.sin(Math.toRadians(ARROW_SIDE_TO_HEIGHT_ANGLE));
+    private static final double COS_Y = Math.cos(Math.toRadians(ARROW_SIDE_TO_HEIGHT_ANGLE));
 
     private Arc sourceArc;
     private DrawableNode begin;
@@ -188,9 +191,9 @@ public class DrawableArc {
                 end.getShape().getCenterY() - headYMod
                 : end.getShape().getCenterY() + headYMod;
 
-        // sin (90 - a - y) = cos a / 2 - sin a / 2 &&& cos (90 - a - y) = sin a / 2 + cos a / 2 =>>>
-        rightXMod = ARROW_SIDE * (cos * SIN_Y - sin * SIN_Y);
-        rightYMod = ARROW_SIDE * (cos * SIN_Y + sin * SIN_Y);
+        // sin (90 - a - y) = cos a * COS_Y - sin a * SIN_Y &&& cos (90 - a - y) = sin a * COS_Y + cos a * SIN_Y =>>>
+        rightXMod = ARROW_SIDE * (cos * COS_Y - sin * SIN_Y);
+        rightYMod = ARROW_SIDE * (sin * COS_Y + cos * SIN_Y);
 
         rightX = end.getShape().getCenterX() > begin.getShape().getCenterX() ?
                 headX - rightXMod
@@ -199,9 +202,9 @@ public class DrawableArc {
                 headY - rightYMod
                 : headY + rightYMod;
 
-        //  cos (a - y) = cos a / 2 + sin a / 2 &&& sin (a - y) = sin a / 2 - cos a / 2
-        leftXMod = ARROW_SIDE * (cos * SIN_Y + sin * SIN_Y);
-        leftYMod = ARROW_SIDE * (sin * SIN_Y - cos * SIN_Y);
+        //  cos (a - y) = cos a * COS_Y + sin a * SIN_Y &&& sin (a - y) = sin a * COS_Y - cos a * SIN_Y
+        leftXMod = ARROW_SIDE * (cos * COS_Y + sin * SIN_Y);
+        leftYMod = ARROW_SIDE * (sin * COS_Y - cos * SIN_Y);
 
         leftX = end.getShape().getCenterX() > begin.getShape().getCenterX() ?
                 headX - leftXMod

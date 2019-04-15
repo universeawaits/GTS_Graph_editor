@@ -10,6 +10,8 @@ import javafx.scene.control.ToolBar;
 public class GraphStatusBar {
     private static final String NODES_COUNT = "Nodes count: ";
     private static final String ARCS_COUNT = "Arcs count: ";
+    private static final String DIAMETER = "Diameter: ";
+    private static final String RADIUS = "Radius: ";
 
     private GraphController graphController;
     private GraphPane graphPane;
@@ -49,10 +51,29 @@ public class GraphStatusBar {
             arcsCount.setText(ARCS_COUNT + String.valueOf(graphController.getArcs().size()));
         });
 
+        Label diameter = new Label(DIAMETER + String.valueOf(graphController.diameter()));
+        graphController.getArcs().addListener((ListChangeListener) change -> {
+            diameter.setText(DIAMETER + String.valueOf(graphController.diameter()));
+        });
+
+        Label radius = new Label(RADIUS + 0);
+        graphController.getArcs().addListener((ListChangeListener) change -> {
+            radius.setText(RADIUS + String.valueOf(graphController.radius()));
+        });
+
+        Label center = new Label(DIAMETER + String.valueOf(graphController.diameter()));
+        graphController.getArcs().addListener((ListChangeListener) change -> {
+
+        });
+
         statusBar.getItems().addAll(
                 nodesCount,
                 new Separator(),
-                arcsCount
+                arcsCount,
+                new Separator(),
+                diameter,
+                new Separator(),
+                radius
         );
     }
 }

@@ -4,14 +4,25 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.Arc;
 import model.Graph;
+import model.GraphDistanceMatrix;
 import model.Node;
+
+
+import static model.GraphDistanceMatrix.INFINITY;
+
 
 public class GraphController {
     private Graph graph;
+    private GraphDistanceMatrix graphDistanceMatrix;
 
 
     public GraphController(Graph graph) {
         this.graph = graph;
+        graphDistanceMatrix = new GraphDistanceMatrix(graph);
+    }
+
+    public Graph getGraph() {
+        return graph;
     }
 
     public ObservableList<Node> getNodes() { return graph.getNodes(); }
@@ -45,19 +56,45 @@ public class GraphController {
     }
 
     /*
-        Properties
+        Metrics
      */
 
-    // Calcs the degree of a node focused
+    // Calcs degree of a node
     public int degreeOf(Node node) {
-        int result = 0;
+        int degree = 0;
 
         for (Arc arc : graph.getArcs()) {
             if (arc.getBegin().equals(node) || arc.getEnd().equals(node)) {
-                result++;
+                degree++;
             }
         }
 
-        return result;
+        return degree;
+    }
+
+    // Calcs graph diameter
+    public int diameter() {
+        int diameter = 0;
+
+        for (Integer distance : graphDistanceMatrix.toList()) {
+            if ((distance > diameter) && (distance != INFINITY)) {
+                diameter = distance;
+            }
+        }
+
+        return diameter;
+    }
+
+    // Calcs graph radius
+    public int radius() {
+        int radius = INFINITY;
+
+        for (Integer distance : graphDistanceMatrix.toList()) {
+            if ((distance < radius) && (distance != 0)) {
+                radius = distance;
+            }
+        }
+
+        return radius;
     }
 }
