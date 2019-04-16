@@ -164,7 +164,9 @@ public class GraphController {
 
         deepFirstSearch(begin, nodeVisited, arcVisited, cycle);
 
-        System.out.println(cycle);
+        System.out.println(" ");
+
+        //System.out.println(cycle);
 
         if (cycle.isEmpty()) {
             return cycle;
@@ -189,15 +191,18 @@ public class GraphController {
 
     private void deepFirstSearch(Node begin, Map<Node, Boolean> nodeVisited, Map<Arc, Boolean> arcVisited, ObservableList<Arc> cycle) {
         nodeVisited.replace(begin, true);
+        Arc incidentArc = null;
 
         for (Node node : graph.getNodes()) {
-            Arc incidentArc = getIncidentArc(begin, node);
+            incidentArc = getIncidentArc(begin, node);
 
             if ((incidentArc != null) && arcVisited.get(incidentArc)) {
+                incidentArc = null;
                 continue;
             }
 
             if ((incidentArc != null) && nodeVisited.get(incidentArc.getEnd()) && !arcVisited.get(incidentArc)){
+                incidentArc = null;
                 continue;
             }
 
@@ -205,6 +210,15 @@ public class GraphController {
                 cycle.add(incidentArc);
                 arcVisited.replace(incidentArc, true);
                 deepFirstSearch(incidentArc.getEnd(), nodeVisited, arcVisited, cycle);
+            }
+        }
+
+        if ((incidentArc == null)) {
+            for (Node node : nodeVisited.keySet()) {
+                if (!nodeVisited.get(node)){
+                    nodeVisited.replace(begin, false);
+                    return;
+                }
             }
         }
     }
