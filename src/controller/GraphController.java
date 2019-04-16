@@ -7,7 +7,6 @@ import model.Graph;
 import model.GraphDistanceMatrix;
 import model.Node;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -150,15 +149,22 @@ public class GraphController {
         return hamiltonianCycles;
     }
 
+    // Finds one of all possible cycles begins with the node given
     private ObservableList<Arc> findHamiltonianCycleFrom(Node begin) {
-        Map<Node, Boolean> wasVisited = new HashMap<>();
+        Map<Node, Boolean> nodeVisited = new HashMap<>();
+        Map<Arc, Boolean> arcVisited = new HashMap<>();
         ObservableList<Arc> cycle = FXCollections.observableArrayList();
 
         for (Node node : graph.getNodes()) {
-            wasVisited.put(node, false);
+            nodeVisited.put(node, false);
+        }
+        for (Arc arc : graph.getArcs()) {
+            arcVisited.put(arc, false);
         }
 
-        deepFirstSearch(begin, wasVisited, cycle);
+        deepFirstSearch(begin, nodeVisited, arcVisited, cycle);
+
+        System.out.println(cycle);
 
         if (cycle.isEmpty()) {
             return cycle;
@@ -168,8 +174,8 @@ public class GraphController {
             cycle.clear();
             return cycle;
         } else {
-            for (Node node : wasVisited.keySet()) {
-                if (!wasVisited.get(node)) {
+            for (Node node : nodeVisited.keySet()) {
+                if (!nodeVisited.get(node)) {
                     cycle.clear();
                     return cycle;
                 }
@@ -178,21 +184,27 @@ public class GraphController {
 
         cycle.add(getIncidentArc(cycle.get(cycle.size() - 1).getEnd(), begin));
 
-        System.out.println("VISITED FROM " + begin);
-        System.out.println(wasVisited);
-
         return cycle;
     }
 
-    private void deepFirstSearch(Node begin, Map<Node, Boolean> wasVisited, ObservableList<Arc> cycle) {
-        wasVisited.replace(begin, true);
+    private void deepFirstSearch(Node begin, Map<Node, Boolean> nodeVisited, Map<Arc, Boolean> arcVisited, ObservableList<Arc> cycle) {
+        nodeVisited.replace(begin, true);
 
         for (Node node : graph.getNodes()) {
             Arc incidentArc = getIncidentArc(begin, node);
 
-            if ((incidentArc != null) && !wasVisited.get(incidentArc.getEnd())) {
+            if ((incidentArc != null) && arcVisited.get(incidentArc)) {
+                continue;
+            }
+
+            if ((incidentArc != null) && nodeVisited.get(incidentArc.getEnd()) && !arcVisited.get(incidentArc)){
+                continue;
+            }
+
+            if ((incidentArc != null) && !nodeVisited.get(incidentArc.getEnd())) {
                 cycle.add(incidentArc);
-                deepFirstSearch(incidentArc.getEnd(), wasVisited, cycle);
+                arcVisited.replace(incidentArc, true);
+                deepFirstSearch(incidentArc.getEnd(), nodeVisited, arcVisited, cycle);
             }
         }
     }
