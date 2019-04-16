@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
+import model.Arc;
 import model.Node;
 
 import static sample.Main.MAIN_FORM_HEIGHT;
@@ -161,7 +162,7 @@ public class AppMenu {
     private EventHandler<ActionEvent> findHamiltonianCyclesEventHandler = e -> {
         ObservableList<String> cycles = FXCollections.observableArrayList();
 
-        /*for (ObservableList<Arc> cycle : graphController.hamiltonianCycles()) {
+        for (ObservableList<Arc> cycle : graphController.hamiltonianCycles()) {
             String thatCycle = "";
 
             for (Arc arc : cycle) {
@@ -169,7 +170,7 @@ public class AppMenu {
             }
 
             cycles.add(thatCycle);
-        }*/
+        }
 
         ListView<String> listView = new ListView<>();
         listView.getItems().addAll(cycles);
@@ -178,7 +179,7 @@ public class AppMenu {
 
         Alert centersDialog = createEmptyDialog(listView, "Hamiltonian cycles");
         centersDialog.getButtonTypes().add(ButtonType.OK);
-        //centersDialog.show();
+        centersDialog.show();
     };
 
     // Taking graph's adjacency matrix

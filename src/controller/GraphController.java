@@ -26,6 +26,11 @@ public class GraphController {
         return graph;
     }
 
+    public AdjacencyMatrix adjacencyMatrix() {
+        return adjacencyMatrix;
+    }
+
+
     public ObservableList<Node> getNodes() { return graph.getNodes(); }
 
     public ObservableList<Arc> getArcs() { return graph.getArcs(); }
@@ -134,11 +139,8 @@ public class GraphController {
         return centres;
     }
 
-    public AdjacencyMatrix adjacencyMatrix() {
-        return adjacencyMatrix;
-    }
-
-    /*// Finding all of hamiltonian cycles in the graph
+    // Finding all of hamiltonian cycles in the graph
+    // TODO: enhance algorithm?? not all cycles found
     public ObservableList<ObservableList<Arc>> hamiltonianCycles() {
         ObservableList<ObservableList<Arc>> hamiltonianCycles = FXCollections.observableArrayList();
 
@@ -234,5 +236,5 @@ public class GraphController {
         }
 
         return null;
-    }*/
+    }
 }
