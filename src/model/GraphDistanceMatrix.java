@@ -9,7 +9,7 @@ public class GraphDistanceMatrix {
     public static final int INFINITY = 1000000;
 
     private Graph graph;
-    Map<Node, Map<Node, Integer>> distancesMap;
+    private Map<Node, Map<Node, Integer>> distancesMap;
 
 
     public GraphDistanceMatrix(Graph graph) {

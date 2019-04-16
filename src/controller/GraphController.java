@@ -2,10 +2,7 @@ package controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import model.Arc;
-import model.Graph;
-import model.GraphDistanceMatrix;
-import model.Node;
+import model.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,11 +13,13 @@ import static model.GraphDistanceMatrix.INFINITY;
 public class GraphController {
     private Graph graph;
     private GraphDistanceMatrix graphDistanceMatrix;
+    private AdjacencyMatrix adjacencyMatrix;
 
 
     public GraphController(Graph graph) {
         this.graph = graph;
         graphDistanceMatrix = new GraphDistanceMatrix(graph);
+        adjacencyMatrix = new AdjacencyMatrix(graph);
     }
 
     public Graph getGraph() {
@@ -135,7 +134,11 @@ public class GraphController {
         return centres;
     }
 
-    // Finding all of hamiltonian cycles in the graph
+    public AdjacencyMatrix adjacencyMatrix() {
+        return adjacencyMatrix;
+    }
+
+    /*// Finding all of hamiltonian cycles in the graph
     public ObservableList<ObservableList<Arc>> hamiltonianCycles() {
         ObservableList<ObservableList<Arc>> hamiltonianCycles = FXCollections.observableArrayList();
 
@@ -231,5 +234,5 @@ public class GraphController {
         }
 
         return null;
-    }
+    }*/
 }

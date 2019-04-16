@@ -7,7 +7,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
-import model.Arc;
 import model.Node;
 
 import static sample.Main.MAIN_FORM_HEIGHT;
@@ -73,15 +72,18 @@ public class AppMenu {
         Menu statistics = new Menu("Statistics");
         MenuItem nodesDegrees = new MenuItem("Node degrees");
         MenuItem centers = new MenuItem("Centers");
+        MenuItem adjacencyMatrix = new MenuItem("Adjacency matrix");
 
         nodesDegrees.setOnAction(getNodeDegreeEventHandler);
         centers.setOnAction(getCentersEventHandler);
+        adjacencyMatrix.setOnAction(getAdjacencyMatrixEventHandler);
 
-        statistics.getItems().addAll(nodesDegrees, centers);
+        statistics.getItems().addAll(nodesDegrees, centers, adjacencyMatrix);
 
         return statistics;
     }
 
+    // Creating of an algorithms menu
     private Menu createAlgorithmMenu() {
         Menu algorithm = new Menu("Algorithm");
         MenuItem hamiltonianCycles = new MenuItem("Hamiltonian cycles");
@@ -159,7 +161,7 @@ public class AppMenu {
     private EventHandler<ActionEvent> findHamiltonianCyclesEventHandler = e -> {
         ObservableList<String> cycles = FXCollections.observableArrayList();
 
-        for (ObservableList<Arc> cycle : graphController.hamiltonianCycles()) {
+        /*for (ObservableList<Arc> cycle : graphController.hamiltonianCycles()) {
             String thatCycle = "";
 
             for (Arc arc : cycle) {
@@ -167,7 +169,7 @@ public class AppMenu {
             }
 
             cycles.add(thatCycle);
-        }
+        }*/
 
         ListView<String> listView = new ListView<>();
         listView.getItems().addAll(cycles);
@@ -176,6 +178,19 @@ public class AppMenu {
 
         Alert centersDialog = createEmptyDialog(listView, "Hamiltonian cycles");
         centersDialog.getButtonTypes().add(ButtonType.OK);
-        centersDialog.show();
+        //centersDialog.show();
+    };
+
+    // Taking graph's adjacency matrix
+    private EventHandler<ActionEvent> getAdjacencyMatrixEventHandler = e -> {
+        Label matrix = new Label(graphController.adjacencyMatrix().toString());
+
+        if (matrix.getText().equals("")) {
+            matrix.setText("The graph is empty");
+        }
+
+        Alert matrixDialog = createEmptyDialog(matrix, "Adjacency matrix");
+        matrixDialog.getButtonTypes().add(ButtonType.CLOSE);
+        matrixDialog.show();
     };
 }
