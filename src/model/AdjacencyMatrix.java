@@ -1,6 +1,8 @@
 package model;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,14 +41,14 @@ public class AdjacencyMatrix {
         graph.getArcs().addListener((ListChangeListener) changeList -> {
             adjacencyMatrix.clear();
             for (Node node : graph.getNodes()) {
-                adjacencyMatrix.put(node, allAdjacentNodesOf(node));
+                adjacencyMatrix.put(node, setAdjacentNodesFor(node));
             }
         });
 
         graph.getNodes().addListener((ListChangeListener) changeList -> {
             adjacencyMatrix.clear();
             for (Node node : graph.getNodes()) {
-                adjacencyMatrix.put(node, allAdjacentNodesOf(node));
+                adjacencyMatrix.put(node, setAdjacentNodesFor(node));
             }
         });
     }
@@ -55,7 +57,7 @@ public class AdjacencyMatrix {
         Utility
      */
 
-    private Map<Node, Boolean> allAdjacentNodesOf(Node node) {
+    private Map<Node, Boolean> setAdjacentNodesFor(Node node) {
         Map<Node, Boolean> adjacentNodes = new HashMap<>();
 
         for (Node graphNode : graph.getNodes()) {
@@ -77,5 +79,17 @@ public class AdjacencyMatrix {
         }
 
         return false;
+    }
+
+    public ObservableList<Node> adjacentNodesOf(Node node) {
+        ObservableList<Node> adjacents = FXCollections.observableArrayList();
+
+        for (Node foundNode : adjacencyMatrix.get(node).keySet()) {
+            if (adjacencyMatrix.get(node).get(foundNode)) {
+                adjacents.add(foundNode);
+            }
+        }
+
+        return adjacents;
     }
 }

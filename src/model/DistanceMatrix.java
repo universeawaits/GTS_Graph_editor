@@ -5,14 +5,14 @@ import javafx.collections.ListChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GraphDistanceMatrix {
+public class DistanceMatrix {
     public static final int INFINITY = 1000000;
 
     private Graph graph;
     private Map<Node, Map<Node, Integer>> distancesMap;
 
 
-    public GraphDistanceMatrix(Graph graph) {
+    public DistanceMatrix(Graph graph) {
         this.graph = graph;
 
         distancesMap = new HashMap<>();

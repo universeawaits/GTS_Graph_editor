@@ -9,6 +9,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import model.Arc;
 import model.Node;
+import model.Path;
 
 import static sample.Main.MAIN_FORM_HEIGHT;
 import static sample.Main.MAIN_FORM_WIDTH;
@@ -162,19 +163,13 @@ public class AppMenu {
     private EventHandler<ActionEvent> findHamiltonianCyclesEventHandler = e -> {
         ObservableList<String> cycles = FXCollections.observableArrayList();
 
-        for (ObservableList<Arc> cycle : graphController.hamiltonianCycles()) {
-            String thatCycle = "";
-
-            for (Arc arc : cycle) {
-                thatCycle = thatCycle.concat(arc.toString() + "  ");
-            }
-
-            cycles.add(thatCycle);
+        for (Path cycle : graphController.hamiltonianCycles()) {
+            cycles.add(cycle.toString());
         }
 
         ListView<String> listView = new ListView<>();
         listView.getItems().addAll(cycles);
-        listView.setPrefSize(MAIN_FORM_WIDTH / 5,MAIN_FORM_HEIGHT / 8);
+        listView.setPrefSize(MAIN_FORM_WIDTH / 5,MAIN_FORM_HEIGHT / 6);
         listView.setEditable(false);
 
         Alert centersDialog = createEmptyDialog(listView, "Hamiltonian cycles");

@@ -7,18 +7,18 @@ import model.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static model.GraphDistanceMatrix.INFINITY;
+import static model.DistanceMatrix.INFINITY;
 
 
 public class GraphController {
     private Graph graph;
-    private GraphDistanceMatrix graphDistanceMatrix;
+    private DistanceMatrix distanceMatrix;
     private AdjacencyMatrix adjacencyMatrix;
 
 
     public GraphController(Graph graph) {
         this.graph = graph;
-        graphDistanceMatrix = new GraphDistanceMatrix(graph);
+        distanceMatrix = new DistanceMatrix(graph);
         adjacencyMatrix = new AdjacencyMatrix(graph);
     }
 
@@ -84,10 +84,10 @@ public class GraphController {
 
         int eccentricity;
 
-        for (Node node : graphDistanceMatrix.getDistancesMap().keySet()) {
+        for (Node node : distanceMatrix.getDistancesMap().keySet()) {
             eccentricity = 0;
 
-            for (Integer distance : graphDistanceMatrix.getDistancesMap().get(node).values()) {
+            for (Integer distance : distanceMatrix.getDistancesMap().get(node).values()) {
                 if ((distance > eccentricity) && (distance != INFINITY)) {
                     eccentricity = distance;
                 }
@@ -141,89 +141,77 @@ public class GraphController {
 
     // Finding all of hamiltonian cycles in the graph
     // TODO: enhance algorithm?? not all cycles found
-    public ObservableList<ObservableList<Arc>> hamiltonianCycles() {
-        ObservableList<ObservableList<Arc>> hamiltonianCycles = FXCollections.observableArrayList();
+    public ObservableList<Path> hamiltonianCycles() {
+        ObservableList<Path> hamiltonianCycles = FXCollections.observableArrayList();
 
         for (Node begin : graph.getNodes()) {
-            ObservableList<Arc> cycle = findHamiltonianCycleFrom(begin);
-            if (!cycle.isEmpty()) {
-                hamiltonianCycles.add(cycle);
+            ObservableList<Path> cycles = findAllHamiltonianCyclesFrom(begin);
+            for (Path cycleFromThisNode : cycles) {
+                if (!hamiltonianCycles.contains(cycleFromThisNode)) {
+                    hamiltonianCycles.add(cycleFromThisNode);
+                }
             }
         }
 
         return hamiltonianCycles;
     }
 
-    // Finds one of all possible cycles begins with the node given
-    private ObservableList<Arc> findHamiltonianCycleFrom(Node begin) {
-        Map<Node, Boolean> nodeVisited = new HashMap<>();
-        Map<Arc, Boolean> arcVisited = new HashMap<>();
-        ObservableList<Arc> cycle = FXCollections.observableArrayList();
+    // Finds all possible Hamiltonian cycles begins with the node given
+    private ObservableList<Path> findAllHamiltonianCyclesFrom(Node begin) {
+        Map<Node, Boolean> visitedNodes = new HashMap<>();
+        ObservableList<Path> hamiltonianCyclesBeginsWithThisNode = FXCollections.observableArrayList();
+        Path trackingCycle = new Path();
 
         for (Node node : graph.getNodes()) {
-            nodeVisited.put(node, false);
-        }
-        for (Arc arc : graph.getArcs()) {
-            arcVisited.put(arc, false);
+            visitedNodes.put(node, false);
         }
 
-        deepFirstSearch(begin, nodeVisited, arcVisited, cycle);
+        deepFirstSearch(begin, trackingCycle, visitedNodes, hamiltonianCyclesBeginsWithThisNode);
 
-        System.out.println(" ");
-
-        //System.out.println(cycle);
-
-        if (cycle.isEmpty()) {
-            return cycle;
-        }
-
-        if (getIncidentArc(cycle.get(cycle.size() - 1).getEnd(), begin) == null) {
-            cycle.clear();
-            return cycle;
-        } else {
-            for (Node node : nodeVisited.keySet()) {
-                if (!nodeVisited.get(node)) {
-                    cycle.clear();
-                    return cycle;
-                }
-            }
-        }
-
-        cycle.add(getIncidentArc(cycle.get(cycle.size() - 1).getEnd(), begin));
-
-        return cycle;
+        return hamiltonianCyclesBeginsWithThisNode;
     }
 
-    private void deepFirstSearch(Node begin, Map<Node, Boolean> nodeVisited, Map<Arc, Boolean> arcVisited, ObservableList<Arc> cycle) {
-        nodeVisited.replace(begin, true);
-        Arc incidentArc = null;
+    private void deepFirstSearch(Node begin, Path trackingCycle,
+                                 Map<Node, Boolean> visitedNodes,
+                                 ObservableList<Path> hamiltonianCyclesBeginsWithThisNode) {
 
-        for (Node node : graph.getNodes()) {
-            incidentArc = getIncidentArc(begin, node);
+        if (trackingCycle.getPath().size() == graph.getNodes().size())
+        {
+            if (getIncidentArc(trackingCycle.getPath().get(trackingCycle.getPath().size() - 1),
+                    trackingCycle.getPath().get(0)) != null) {
+                Path hamiltonianCycle = new Path(trackingCycle);
+                hamiltonianCycle.getPath().add(trackingCycle.getPath().get(0));
 
-            if ((incidentArc != null) && arcVisited.get(incidentArc)) {
-                incidentArc = null;
-                continue;
+                for (Path cycle : hamiltonianCyclesBeginsWithThisNode) {
+                    if (hamiltonianCycle.getPath().contains(cycle.getPath())) {
+                        return;
+                    }
+                }
+
+                hamiltonianCyclesBeginsWithThisNode.add(hamiltonianCycle);
+
+                return;
             }
-
-            if ((incidentArc != null) && nodeVisited.get(incidentArc.getEnd()) && !arcVisited.get(incidentArc)){
-                incidentArc = null;
-                continue;
-            }
-
-            if ((incidentArc != null) && !nodeVisited.get(incidentArc.getEnd())) {
-                cycle.add(incidentArc);
-                arcVisited.replace(incidentArc, true);
-                deepFirstSearch(incidentArc.getEnd(), nodeVisited, arcVisited, cycle);
-            }
+            // нужно ли перенести в верхюю if cond?
         }
 
-        if ((incidentArc == null)) {
-            for (Node node : nodeVisited.keySet()) {
-                if (!nodeVisited.get(node)){
-                    nodeVisited.replace(begin, false);
-                    return;
-                }
+        // Check if every edge starting from vertex v leads
+        // to a solution or not
+        for (Node adjacentNode : adjacencyMatrix.adjacentNodesOf(begin)) {
+            // process only unvisited vertices as Hamiltonian
+            // path visits each vertex exactly once
+            if (!visitedNodes.get(adjacentNode))
+            {
+                visitedNodes.replace(adjacentNode, true);
+                trackingCycle.getPath().add(adjacentNode);
+
+                // check if adding vertex w to the path leads
+                // to solution or not
+                deepFirstSearch(adjacentNode, trackingCycle, visitedNodes, hamiltonianCyclesBeginsWithThisNode);
+
+                // Backtrack
+                visitedNodes.replace(adjacentNode, false);
+                trackingCycle.getPath().remove(trackingCycle.getPath().size() - 1); // or path.remove(adjacentNode) ??
             }
         }
     }
