@@ -333,7 +333,9 @@ public class GraphPane {
                 if (drawableArc.isFocused()) {
                     if (drawableArc.getSourceArc().isDirected()) {
                         pane.getChildren().remove(drawableArc.getArrow());
-                        graphController.addArc(new Arc(drawableArc.getSourceArc().getEnd(), drawableArc.getSourceArc().getBegin()));
+                        Arc reversedArc = new Arc(drawableArc.getSourceArc().getEnd(), drawableArc.getSourceArc().getBegin());
+                        reversedArc.setDirected(false);
+                        graphController.addArc(reversedArc);
                         drawableArc.getSourceArc().setDirected(false);
                     } else {
                         pane.getChildren().add(drawableArc.getArrow());

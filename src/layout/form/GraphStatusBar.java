@@ -1,6 +1,7 @@
 package layout.form;
 
 import controller.GraphController;
+import controller.PlanarityVerifier;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -59,10 +60,10 @@ public class GraphStatusBar {
             radius.setText(RADIUS + String.valueOf(graphController.radius()));
         });
 
-        /*Label isPlanar = new Label("Graph isn't planar");
+        Label isPlanar = new Label("Graph isn't planar");
         graphController.getArcs().addListener((ListChangeListener) changeList -> {
             isPlanar.setText("Graph is" + (graphController.isPlanar() ? "" : "n't") + " planar");
-        });*/
+        });
 
         statusBar.getItems().addAll(
                 nodesCount,
@@ -72,8 +73,8 @@ public class GraphStatusBar {
                 diameter,
                 new Separator(),
                 radius,
-                new Separator()/*,
-                isPlanar*/
+                new Separator(),
+                isPlanar
         );
     }
 }

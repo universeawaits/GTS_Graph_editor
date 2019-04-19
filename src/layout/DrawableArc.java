@@ -32,22 +32,22 @@ public class DrawableArc {
     private Color color;
 
     // Properties for arrow correct rotating and locating
-    double headX;
-    double headY;
-    double leftX;
-    double leftY;
-    double rightX;
-    double rightY;
+    private double headX;
+    private double headY;
+    private double leftX;
+    private double leftY;
+    private double rightX;
+    private double rightY;
 
-    double headXMod;
-    double headYMod;
-    double leftXMod;
-    double leftYMod;
-    double rightXMod;
-    double rightYMod;
+    private double headXMod;
+    private double headYMod;
+    private double leftXMod;
+    private double leftYMod;
+    private double rightXMod;
+    private double rightYMod;
 
-    double cos;
-    double sin;
+    private double cos;
+    private double sin;
 
 
     public DrawableArc(Arc sourceArc, DrawableNode begin, DrawableNode end) {

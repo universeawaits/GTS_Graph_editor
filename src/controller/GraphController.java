@@ -1,6 +1,7 @@
 package controller;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import model.*;
 
@@ -29,7 +30,6 @@ public class GraphController {
     public AdjacencyMatrix adjacencyMatrix() {
         return adjacencyMatrix;
     }
-
 
     public ObservableList<Node> getNodes() { return graph.getNodes(); }
 
@@ -140,7 +140,6 @@ public class GraphController {
     }
 
     // Finding all of hamiltonian cycles in the graph
-    // TODO: enhance algorithm?? not all cycles found
     public ObservableList<Path> hamiltonianCycles() {
         ObservableList<Path> hamiltonianCycles = FXCollections.observableArrayList();
 
@@ -156,6 +155,15 @@ public class GraphController {
         return hamiltonianCycles;
     }
 
+    // Check for graph planarity
+    public boolean isPlanar() {
+        return new PlanarityVerifier(graph, adjacencyMatrix).getPlanarLaying() != null;
+    }
+
+    /*
+        Utility
+     */
+
     // Finds all possible Hamiltonian cycles begins with the node given
     private ObservableList<Path> findAllHamiltonianCyclesFrom(Node begin) {
         Map<Node, Boolean> visitedNodes = new HashMap<>();
@@ -166,19 +174,19 @@ public class GraphController {
             visitedNodes.put(node, false);
         }
 
-        deepFirstSearch(begin, trackingCycle, visitedNodes, hamiltonianCyclesBeginsWithThisNode);
+        dfsHamiltonianCycle(begin, trackingCycle, visitedNodes, hamiltonianCyclesBeginsWithThisNode);
 
         return hamiltonianCyclesBeginsWithThisNode;
     }
 
-    private void deepFirstSearch(Node begin, Path trackingCycle,
-                                 Map<Node, Boolean> visitedNodes,
-                                 ObservableList<Path> hamiltonianCyclesBeginsWithThisNode) {
+    private void dfsHamiltonianCycle(Node begin, Path trackingCycle,
+                                     Map<Node, Boolean> visitedNodes,
+                                     ObservableList<Path> hamiltonianCyclesBeginsWithThisNode) {
 
         if (trackingCycle.getPath().size() == graph.getNodes().size())
         {
-            if (getIncidentArc(trackingCycle.getPath().get(trackingCycle.getPath().size() - 1),
-                    trackingCycle.getPath().get(0)) != null) {
+            if (graph.getArcs().contains(new Arc(trackingCycle.getPath().get(trackingCycle.getPath().size() - 1),
+                    trackingCycle.getPath().get(0)))) {
                 Path hamiltonianCycle = new Path(trackingCycle);
                 hamiltonianCycle.getPath().add(trackingCycle.getPath().get(0));
 
@@ -192,7 +200,6 @@ public class GraphController {
 
                 return;
             }
-            // нужно ли перенести в верхюю if cond?
         }
 
         // Check if every edge starting from vertex v leads
@@ -207,22 +214,12 @@ public class GraphController {
 
                 // check if adding vertex w to the path leads
                 // to solution or not
-                deepFirstSearch(adjacentNode, trackingCycle, visitedNodes, hamiltonianCyclesBeginsWithThisNode);
+                dfsHamiltonianCycle(adjacentNode, trackingCycle, visitedNodes, hamiltonianCyclesBeginsWithThisNode);
 
                 // Backtrack
                 visitedNodes.replace(adjacentNode, false);
-                trackingCycle.getPath().remove(trackingCycle.getPath().size() - 1); // or path.remove(adjacentNode) ??
+                trackingCycle.getPath().remove(trackingCycle.getPath().size() - 1);
             }
         }
-    }
-
-    private Arc getIncidentArc(Node begin, Node end) {
-        for (Arc arc : graph.getArcs()) {
-            if (arc.getBegin().equals(begin) && arc.getEnd().equals(end)) {
-                return arc;
-            }
-        }
-
-        return null;
     }
 }

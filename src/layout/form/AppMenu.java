@@ -7,9 +7,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
-import model.Arc;
 import model.Node;
 import model.Path;
+
+import java.util.concurrent.ExecutorService;
 
 import static sample.Main.MAIN_FORM_HEIGHT;
 import static sample.Main.MAIN_FORM_WIDTH;
@@ -169,12 +170,12 @@ public class AppMenu {
 
         ListView<String> listView = new ListView<>();
         listView.getItems().addAll(cycles);
-        listView.setPrefSize(MAIN_FORM_WIDTH / 5,MAIN_FORM_HEIGHT / 6);
+        listView.setPrefSize(MAIN_FORM_WIDTH / 3,MAIN_FORM_HEIGHT / 5);
         listView.setEditable(false);
 
-        Alert centersDialog = createEmptyDialog(listView, "Hamiltonian cycles");
-        centersDialog.getButtonTypes().add(ButtonType.OK);
-        centersDialog.show();
+        Alert hamiltonianCyclesDialog = createEmptyDialog(listView, "Hamiltonian cycles");
+        hamiltonianCyclesDialog.getButtonTypes().add(ButtonType.OK);
+        hamiltonianCyclesDialog.show();
     };
 
     // Taking graph's adjacency matrix

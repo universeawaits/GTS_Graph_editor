@@ -1,16 +1,20 @@
 package model;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class AdjacencyMatrix {
     private Graph graph;
     private Map<Node, Map<Node, Boolean>> adjacencyMatrix;
 
+
+    public AdjacencyMatrix() {
+        graph = new Graph();
+
+        adjacencyMatrix = new HashMap<>();
+        configureAdjacentNodesMatrix();
+    }
 
     public AdjacencyMatrix(Graph graph) {
         this.graph = graph;
@@ -31,6 +35,10 @@ public class AdjacencyMatrix {
         }
 
         return toString;
+    }
+
+    public Graph getGraph() {
+        return graph;
     }
 
     /*
@@ -65,26 +73,24 @@ public class AdjacencyMatrix {
         }
 
         for (Node anotherGraphNode : graph.getNodes()) {
-            adjacentNodes.replace(anotherGraphNode, isArcExist(node, anotherGraphNode));
+            adjacentNodes.replace(anotherGraphNode, graph.getArcs().contains(new Arc(node, anotherGraphNode)));
         }
 
         return adjacentNodes;
     }
 
-    private boolean isArcExist(Node begin, Node end) {
-        for (Arc arc : graph.getArcs()) {
-            if (arc.getBegin().equals(begin) && arc.getEnd().equals(end)) {
-                return true;
-            }
-        }
+    /*
+        Others
+     */
 
-        return false;
-    }
+    public List<Node> adjacentNodesOf(Node node) {
+        List<Node> adjacents = new ArrayList<>();
 
-    public ObservableList<Node> adjacentNodesOf(Node node) {
-        ObservableList<Node> adjacents = FXCollections.observableArrayList();
+        Map<Node, Boolean> nodesMap = adjacencyMatrix.get(node);
+        Set<Node> nodes = nodesMap.keySet();
 
-        for (Node foundNode : adjacencyMatrix.get(node).keySet()) {
+
+        for (Node foundNode : nodes) {
             if (adjacencyMatrix.get(node).get(foundNode)) {
                 adjacents.add(foundNode);
             }

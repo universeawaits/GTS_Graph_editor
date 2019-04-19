@@ -1,17 +1,16 @@
 package model;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Path {
-    private ObservableList<Node> path;
+    private List<Node> path;
 
 
     public Path() {
-        path = FXCollections.observableArrayList();
+        path = new ArrayList<>();
     }
 
     public Path(Path path) {
@@ -19,12 +18,8 @@ public class Path {
         this.path.addAll(path.path);
     }
 
-    public ObservableList<Node> getPath() {
+    public List<Node> getPath() {
         return path;
-    }
-
-    public void setPath(ObservableList<Node> path) {
-        this.path = path;
     }
 
     @Override
