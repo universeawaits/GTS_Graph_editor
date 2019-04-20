@@ -46,6 +46,10 @@ public class AdjacencyMatrix {
      */
 
     private void configureAdjacentNodesMatrix() {
+        for (Node node : graph.getNodes()) {
+            adjacencyMatrix.put(node, setAdjacentNodesFor(node));
+        }
+
         graph.getArcs().addListener((ListChangeListener) changeList -> {
             adjacencyMatrix.clear();
             for (Node node : graph.getNodes()) {

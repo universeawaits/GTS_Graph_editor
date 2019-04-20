@@ -157,7 +157,7 @@ public class GraphController {
 
     // Check for graph planarity
     public boolean isPlanar() {
-        return new PlanarityVerifier(graph, adjacencyMatrix).getPlanarLaying() != null;
+        return new PlanarityVerifier(graph).isPlanar();
     }
 
     /*

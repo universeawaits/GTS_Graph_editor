@@ -60,7 +60,7 @@ public class GraphStatusBar {
             radius.setText(RADIUS + String.valueOf(graphController.radius()));
         });
 
-        Label isPlanar = new Label("Graph isn't planar");
+        Label isPlanar = new Label("Graph is planar");
         graphController.getArcs().addListener((ListChangeListener) changeList -> {
             isPlanar.setText("Graph is" + (graphController.isPlanar() ? "" : "n't") + " planar");
         });

@@ -13,6 +13,11 @@ public class Path {
         path = new ArrayList<>();
     }
 
+    public Path(List<Node> path) {
+        this();
+        this.path.addAll(path);
+    }
+
     public Path(Path path) {
         this();
         this.path.addAll(path.path);
@@ -40,7 +45,7 @@ public class Path {
         if (o == null || getClass() != o.getClass()) return false;
         Path pathToCheck = (Path) o;
 
-        for (int nodeIter = 0; nodeIter < this.path.size(); nodeIter++) {
+        for (int nodeIter = 0; nodeIter < this.path.size() && nodeIter < pathToCheck.getPath().size(); nodeIter++) {
             if (!pathToCheck.getPath().get(nodeIter).equals(this.path.get(nodeIter))) {
                 return false;
             }

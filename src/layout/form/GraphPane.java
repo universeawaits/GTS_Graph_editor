@@ -235,16 +235,21 @@ public class GraphPane {
                     for (DrawableArc drawableArc : arcsToRemove) {
                         pane.getChildren().removeAll(drawableArc.getLine(), drawableArc.getArrow());
                     }
-                    break;
+                    return;
                 }
             }
 
             for (DrawableArc drawableArc : drawableArcs) {
                 if (drawableArc.isFocused()) {
+                    if (!drawableArc.getSourceArc().isDirected()){
+                        graphController.removeArc(new Arc(drawableArc.getSourceArc().getEnd(),
+                                drawableArc.getSourceArc().getBegin()));
+                    }
+
                     graphController.removeArc(drawableArc.getSourceArc());
                     drawableArcs.remove(drawableArc);
                     pane.getChildren().removeAll(drawableArc.getLine(), drawableArc.getArrow());
-                    break;
+                    return;
                 }
             }
         }
