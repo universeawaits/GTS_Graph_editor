@@ -11,7 +11,8 @@ public class PlanarityVerifier {
 
 
     public PlanarityVerifier(Graph graph) {
-        this.graph = makeGraphUndirected(graph);
+        this.graph = undirectedEquivalentOf(graph);
+        shrinkage(this.graph);
         this.adjacencyMatrix = new AdjacencyMatrix(this.graph);
     }
 
@@ -29,7 +30,8 @@ public class PlanarityVerifier {
             Path cycle = new Path();
             List<Path> cyclesFromThisNode = new ArrayList<>();
 
-            dfsKSubgraph(begin, begin, graph.getArcs(), nodeColors, new Arc(new Node(), new Node()), cycle, cyclesFromThisNode);
+            dfsKSubgraph(begin, begin, graph.getArcs(), nodeColors,
+                    new Arc(new Node(), new Node()), cycle, cyclesFromThisNode);
 
             if (!cyclesFromThisNode.isEmpty()) {
                 return false;
@@ -43,7 +45,7 @@ public class PlanarityVerifier {
         Utility
      */
 
-    private Graph makeGraphUndirected(Graph graph) {
+    private Graph undirectedEquivalentOf(Graph graph) {
         Graph undirectedGraph = new Graph();
 
         undirectedGraph.getNodes().addAll(graph.getNodes());
@@ -59,6 +61,82 @@ public class PlanarityVerifier {
         return undirectedGraph;
     }
 
+    private void shrinkage(Graph graphToShrinkage) {
+        List<Node> fourDegreeNodes = new ArrayList<>();
+        List<Arc> arcsToRemove = new ArrayList<>();
+        List<Arc> arcsToRestore = new ArrayList<>();
+
+        while (true) {
+            fourDegreeNodes.clear();
+            arcsToRemove.clear();
+            arcsToRestore.clear();
+
+            for (Node node : graphToShrinkage.getNodes()) {
+                int nodeDegree = 0;
+
+                for (Arc arc : graphToShrinkage.getArcs()) {
+                    if (arc.getBegin().equals(node)) {
+                        nodeDegree++;
+                    }
+
+                    if (arc.getEnd().equals(node)) {
+                        nodeDegree++;
+                    }
+                }
+
+                if (nodeDegree == 4) {
+                    fourDegreeNodes.add(node);
+                }
+            }
+
+            if (!fourDegreeNodes.isEmpty()) {
+                for (Node node : fourDegreeNodes) {
+                    for (Arc arc : graphToShrinkage.getArcs()) {
+                        if (arc.getBegin().equals(node)) {
+                            arcsToRemove.add(arc);
+                            Node beginForArcToRestore = null;
+
+                            for (Arc arcToCheck : graphToShrinkage.getArcs()) {
+                                if (arcToCheck.getEnd().equals(node) && !arcToCheck.getBegin().equals(arc.getEnd())) {
+                                    beginForArcToRestore = arcToCheck.getBegin();
+                                }
+                            }
+
+                            if (beginForArcToRestore == null) {
+                                continue;
+                            }
+
+                            arcsToRestore.add(new Arc(beginForArcToRestore, arc.getEnd()));
+                        }
+
+                        if (arc.getEnd().equals(node)) {
+                            arcsToRemove.add(arc);
+                            Node endForArcToRestore = null;
+
+                            for (Arc arcToCheck : graphToShrinkage.getArcs()) {
+                                if (arcToCheck.getBegin().equals(node) && !arcToCheck.getEnd().equals(arc.getBegin())) {
+                                    endForArcToRestore = arcToCheck.getEnd();
+                                }
+                            }
+
+                            if (endForArcToRestore == null) {
+                                continue;
+                            }
+
+                            arcsToRestore.add(new Arc(arc.getBegin(), endForArcToRestore));
+                        }
+                    }
+                }
+
+                graphToShrinkage.getArcs().removeAll(arcsToRemove);
+                graphToShrinkage.getNodes().removeAll(fourDegreeNodes);
+                graphToShrinkage.getArcs().addAll(arcsToRestore);
+            } else {
+                break;
+            }
+        }
+    }
+
     private boolean isK5(Path subgraph) {
         boolean isK5 = true;
 
@@ -72,7 +150,7 @@ public class PlanarityVerifier {
         return isK5;
     }
 
-    private boolean isK33(Path subgraph) {
+    private boolean isK33(Path subgraph) { // ???????
         boolean isK33 = true;
 
         for (int i = 0; i < subgraph.getPath().size() - 1; i++) {

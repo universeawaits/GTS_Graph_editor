@@ -44,8 +44,8 @@ public class Arc {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Arc arc = (Arc) o;
-        return  Objects.equals(begin, arc.begin) &&
-                Objects.equals(end, arc.end);
+        Arc arcToCheck = (Arc) o;
+        return  Objects.equals(begin, arcToCheck.begin) &&
+                Objects.equals(end, arcToCheck.end);
     }
 }

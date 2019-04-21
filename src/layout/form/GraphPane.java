@@ -180,7 +180,7 @@ public class GraphPane {
             }
 
             if ((beginForArc != null)
-                    && (endForArc != null)) {
+                    && (endForArc != null) && (!beginForArc.equals(endForArc))) {
 
                 Arc arc = new Arc(beginForArc.getSourceNode(), endForArc.getSourceNode());
                 Arc inverseArc = new Arc(endForArc.getSourceNode(), beginForArc.getSourceNode());
