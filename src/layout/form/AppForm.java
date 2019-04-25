@@ -6,18 +6,18 @@ import controller.GraphController;
 
 public class AppForm {
     private AppMenu appMenu;
-    private GraphPane graphPane;
+    private GraphTabPane graphTabPane;
     private GraphToolBar graphToolBar;
     private GraphStatusBar graphStatusBar;
 
     private VBox vBox;
 
 
-    public AppForm(GraphController graphController) {
-        graphPane = new GraphPane(graphController);
-        appMenu = new AppMenu(graphPane);
-        graphToolBar = new GraphToolBar(graphPane);
-        graphStatusBar = new GraphStatusBar(graphController);
+    public AppForm() {
+        graphToolBar = new GraphToolBar();
+        graphStatusBar = new GraphStatusBar();
+        graphTabPane = new GraphTabPane(graphToolBar, graphStatusBar);
+        appMenu = new AppMenu(graphTabPane);
 
         vBox = new VBox();
         configureVBox();
@@ -34,7 +34,7 @@ public class AppForm {
     private void configureVBox() {
         vBox.getChildren().addAll(
                 appMenu.getMenuBar(),
-                graphPane.getPane(),
+                graphTabPane.getTabPane(),
                 graphToolBar.getToolBar(),
                 graphStatusBar.getStatusBar()
         );

@@ -1,31 +1,28 @@
 package layout.form;
 
-import controller.GraphController;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import model.Node;
 import model.Path;
 
-import java.util.concurrent.ExecutorService;
-
+import static layout.DrawableNode.CIRCLE_RADIUS;
 import static sample.Main.MAIN_FORM_HEIGHT;
 import static sample.Main.MAIN_FORM_WIDTH;
 
 
 public class AppMenu {
-    private GraphController graphController;
-    private GraphPane graphPane;
+    private GraphTabPane graphTabPane;
 
     private MenuBar menuBar;
 
 
-    public AppMenu(GraphPane graphPane) {
-        this.graphPane = graphPane;
-        this.graphController = graphPane.getGraphController();
+    public AppMenu(GraphTabPane graphTabPane) {
+        this.graphTabPane = graphTabPane;
 
         menuBar = new MenuBar();
         menuBar.getMenus().addAll(
@@ -52,6 +49,8 @@ public class AppMenu {
         MenuItem openFile = new MenuItem("Open");
         MenuItem saveFile = new MenuItem("Save");
         MenuItem closeFile = new MenuItem("Close");
+
+        newFile.setOnAction(newGraphEventHandler);
 
         file.getItems().addAll(newFile, openFile, saveFile, closeFile);
 
@@ -115,30 +114,77 @@ public class AppMenu {
         Event handlers
      */
 
-    // Taking all graph nodes degrees
-    private EventHandler<ActionEvent> getNodeDegreeEventHandler = e -> {
-           ObservableList<String> nodesDegrees = FXCollections.observableArrayList();
+    // Creating of a new graph
+    private EventHandler<ActionEvent> newGraphEventHandler = e -> {
+        TextField name = new TextField();
 
-            for (Node node : graphController.getNodes()) {
-                nodesDegrees.add(node + ": " + graphController.degreeOf(node));
+        GridPane gridPane = new GridPane();
+        gridPane.add(new Label("Graph name"), 0, 0);
+        gridPane.add(name, 1, 0);
+        GridPane.setMargin(name, new Insets(CIRCLE_RADIUS));
+
+        Alert newGraphDialog = createEmptyDialog(gridPane, "New graph");
+
+        ButtonType CREATE = new ButtonType("Create");
+        newGraphDialog.getButtonTypes().add(CREATE);
+
+        ((Button) newGraphDialog.getDialogPane().lookupButton(CREATE)).setOnAction(actionEvent -> {
+            String graphName = name.getText();
+
+            for (Tab tab : graphTabPane.getManagingGraphs().keySet()) {
+                if (tab.getText().equals(graphName)) {
+                    Alert error = createEmptyDialog(new Label("Such graph is already exists"), "Error");
+
+                    ButtonType OK = new ButtonType("OK");
+                    error.getButtonTypes().add(OK);
+
+                    ((Button) error.getDialogPane().lookupButton(OK)).setOnAction(aaa -> {
+                        newGraphDialog.show();
+                    });
+
+                    error.show();
+                    return;
+                }
             }
 
-            ListView<String> listView = new ListView<>();
-            listView.getItems().addAll(nodesDegrees);
-            listView.setPrefSize(MAIN_FORM_WIDTH / 8,MAIN_FORM_HEIGHT / 7);
-            listView.setEditable(false);
+            graphTabPane.addTab(name.getText());
+        });
 
-            Alert nodeDegreeDialog = createEmptyDialog(listView, "Nodes' degrees");
-            nodeDegreeDialog.getButtonTypes().add(ButtonType.OK);
-            nodeDegreeDialog.show();
+        newGraphDialog.show();
     };
 
-    // Taking all graph centers
+    // Taking all graph nodes degrees
+    private EventHandler<ActionEvent> getNodeDegreeEventHandler = e -> {
+        ObservableList<String> nodesDegrees = FXCollections.observableArrayList();
+
+        try {
+            for (Node node : graphTabPane.currentGraphPane().getGraphController().getNodes()) {
+               nodesDegrees.add(node + ": " + graphTabPane.currentGraphPane().getGraphController().degreeOf(node));
+            }
+        } catch (NullPointerException ex) {
+            return;
+        }
+
+        ListView<String> listView = new ListView<>();
+        listView.getItems().addAll(nodesDegrees);
+        listView.setPrefSize(MAIN_FORM_WIDTH / 8,MAIN_FORM_HEIGHT / 7);
+        listView.setEditable(false);
+
+        Alert nodeDegreeDialog = createEmptyDialog(listView, "Nodes' degrees");
+        nodeDegreeDialog.getButtonTypes().add(ButtonType.OK);
+        nodeDegreeDialog.show();
+    };
+
+    // Taking all graph's centers
     private EventHandler<ActionEvent> getCentersEventHandler = e -> {
         ObservableList<String> graphCenters = FXCollections.observableArrayList();
 
-        for (Node node : graphController.centers()) {
-            graphCenters.add(node.toString());
+        try {
+            for (Node node : graphTabPane.currentGraphPane().getGraphController().centers()) {
+                graphCenters.add(node.toString());
+            }
+        } catch (NullPointerException ex) {
+            return;
         }
 
         ListView<String> listView = new ListView<>();
@@ -153,19 +199,27 @@ public class AppMenu {
 
     // Clearing the graph pane with the source graph
     private EventHandler<ActionEvent> graphClearingEventHandler = e -> {
-        graphPane.getPane().getChildren().clear();
-        graphPane.getDrawableArcs().clear();
-        graphPane.getDrawableNodes().clear();
-        graphController.getArcs().clear();
-        graphController.getNodes().clear();
+        try {
+            graphTabPane.currentGraphPane().getPane().getChildren().clear();
+            graphTabPane.currentGraphPane().getDrawableArcs().clear();
+            graphTabPane.currentGraphPane().getDrawableNodes().clear();
+            graphTabPane.currentGraphPane().getGraphController().getArcs().clear();
+            graphTabPane.currentGraphPane().getGraphController().getNodes().clear();
+        } finally {
+            return;
+        }
     };
 
     // Finding of hamiltonian cycles
     private EventHandler<ActionEvent> findHamiltonianCyclesEventHandler = e -> {
         ObservableList<String> cycles = FXCollections.observableArrayList();
 
-        for (Path cycle : graphController.hamiltonianCycles()) {
-            cycles.add(cycle.toString());
+        try {
+            for (Path cycle : graphTabPane.currentGraphPane().getGraphController().hamiltonianCycles()) {
+                cycles.add(cycle.toString());
+            }
+        } catch (NullPointerException ex){
+            return;
         }
 
         ListView<String> listView = new ListView<>();
@@ -180,7 +234,13 @@ public class AppMenu {
 
     // Taking graph's adjacency matrix
     private EventHandler<ActionEvent> getAdjacencyMatrixEventHandler = e -> {
-        Label matrix = new Label(graphController.adjacencyMatrix().toString());
+        Label matrix;
+
+        try {
+            matrix = new Label(graphTabPane.currentGraphPane().getGraphController().adjacencyMatrix().toString());
+        } catch (NullPointerException ex) {
+            return;
+        }
 
         if (matrix.getText().equals("")) {
             matrix.setText("The graph is empty");

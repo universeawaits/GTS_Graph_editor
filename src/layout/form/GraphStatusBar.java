@@ -1,7 +1,6 @@
 package layout.form;
 
 import controller.GraphController;
-import controller.PlanarityVerifier;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -17,10 +16,15 @@ public class GraphStatusBar {
     private GraphController graphController;
 
     private ToolBar statusBar;
+    private Label nodesCount;
+    private Label arcsCount;
+    private Label diameter;
+    private Label radius;
+    private Label isPlanar;
 
 
-    public GraphStatusBar(GraphController graphController) {
-        this.graphController = graphController;
+    public GraphStatusBar() {
+        this.graphController = null;
 
         statusBar = new ToolBar();
         configureStatusBar();
@@ -30,40 +34,23 @@ public class GraphStatusBar {
         return statusBar;
     }
 
-    public GraphController getGraphController() {
-        return graphController;
+    public void updateSource(GraphController graphController) {
+        removeListeners();
+        this.graphController = graphController;
+        updateLabels();
+        addListeners();
     }
 
     /*
         Configs
      */
 
-    // Configure status bar: binding source graph changes with view panels
     private void configureStatusBar() {
-        Label nodesCount = new Label(NODES_COUNT + String.valueOf(graphController.getNodes().size()));
-        graphController.getNodes().addListener((ListChangeListener) e -> {
-            nodesCount.setText(NODES_COUNT + String.valueOf(graphController.getNodes().size()));
-        });
-
-        Label arcsCount = new Label(ARCS_COUNT + String.valueOf(graphController.getArcs().size()));
-        graphController.getArcs().addListener((ListChangeListener) change -> {
-            arcsCount.setText(ARCS_COUNT + String.valueOf(graphController.getArcs().size()));
-        });
-
-        Label diameter = new Label(DIAMETER + String.valueOf(graphController.diameter()));
-        graphController.getArcs().addListener((ListChangeListener) change -> {
-            diameter.setText(DIAMETER + String.valueOf(graphController.diameter()));
-        });
-
-        Label radius = new Label(RADIUS + 0);
-        graphController.getArcs().addListener((ListChangeListener) change -> {
-            radius.setText(RADIUS + String.valueOf(graphController.radius()));
-        });
-
-        Label isPlanar = new Label("Graph is planar");
-        graphController.getArcs().addListener((ListChangeListener) changeList -> {
-            isPlanar.setText("Graph is" + (graphController.isPlanar() ? "" : "n't") + " planar");
-        });
+        nodesCount = new Label(NODES_COUNT + 0);
+        arcsCount = new Label(ARCS_COUNT + 0);
+        diameter = new Label(DIAMETER + 0);
+        radius = new Label(RADIUS + 0);
+        isPlanar = new Label("Graph is planar");
 
         statusBar.getItems().addAll(
                 nodesCount,
@@ -77,4 +64,56 @@ public class GraphStatusBar {
                 isPlanar
         );
     }
+
+    private void removeListeners() {
+        try {
+            graphController.getNodes().removeListener(nodesCountListener);
+            graphController.getArcs().removeListener(arcsCountListener);
+            graphController.getArcs().removeListener(diameterListener);
+            graphController.getArcs().removeListener(radiusListener);
+            graphController.getArcs().removeListener(isPlanarListener);
+        } finally {
+            return;
+        }
+    }
+
+    private void addListeners() {
+        graphController.getNodes().addListener(nodesCountListener);
+        graphController.getArcs().addListener(arcsCountListener);
+        graphController.getArcs().addListener(diameterListener);
+        graphController.getArcs().addListener(radiusListener);
+        graphController.getArcs().addListener(isPlanarListener);
+    }
+
+    private void updateLabels() {
+        nodesCount.setText(NODES_COUNT + String.valueOf(graphController.getNodes().size()));
+        arcsCount.setText(ARCS_COUNT + String.valueOf(graphController.getArcs().size()));
+        diameter.setText(DIAMETER + String.valueOf(graphController.diameter()));
+        radius.setText(RADIUS + String.valueOf(graphController.radius()));
+        isPlanar.setText("Graph is" + (graphController.isPlanar() ? " " : "n't ") + "planar");
+    }
+
+    /*
+     *      Event handlers
+     */
+
+    private ListChangeListener nodesCountListener = change -> {
+        nodesCount.setText(NODES_COUNT + String.valueOf(graphController.getNodes().size()));
+    };
+
+    private ListChangeListener arcsCountListener = change -> {
+        arcsCount.setText(ARCS_COUNT + String.valueOf(graphController.getArcs().size()));
+    };
+
+    private ListChangeListener diameterListener = change -> {
+        diameter.setText(DIAMETER + String.valueOf(graphController.diameter()));
+    };
+
+    private ListChangeListener radiusListener = change -> {
+        radius.setText(RADIUS + String.valueOf(graphController.radius()));
+    };
+
+    private ListChangeListener isPlanarListener = change -> {
+        isPlanar.setText("Graph is" + (graphController.isPlanar() ? " " : "n't ") + "planar");
+    };
 }

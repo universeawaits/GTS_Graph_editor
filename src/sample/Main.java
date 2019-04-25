@@ -15,7 +15,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Graph Editor");
-        primaryStage.setScene(new Scene(new AppForm(new GraphController(new Graph())).getVBox()));
+        primaryStage.setScene(new Scene(new AppForm().getVBox()));
         primaryStage.setResizable(false);
         primaryStage.show();
     }

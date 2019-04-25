@@ -175,6 +175,8 @@ public class GraphPane {
             if ((beginForArc == null)
                     || (endForArc == null)) {
 
+                beginForArc = null;
+                endForArc = null;
                 isNodesForArcSelected = false;
                 actionType = ActionType.POINTER;
             }
@@ -206,7 +208,7 @@ public class GraphPane {
         }
     };
 
-    // Removing the selected node with/or incident arcs from pane & graph with DELETE key pressed and node hover
+    // Removing the selected node with/or incident arcs from pane & graph with DELETE key pressed
     private EventHandler<KeyEvent> nodeOrArcRemovingEventHandler = e -> {
         if (e.getCode().equals(KeyCode.DELETE) && (actionType == ActionType.POINTER)) {
             for (DrawableNode drawableNode : drawableNodes) {
