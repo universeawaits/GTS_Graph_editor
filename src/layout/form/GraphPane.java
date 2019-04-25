@@ -2,6 +2,7 @@ package layout.form;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -111,6 +112,32 @@ public class GraphPane {
         Others
      */
 
+    public void perforrmKeyAction(KeyEvent event) {
+        switch (actionType) {
+            case POINTER: {
+                if (event.getCode().equals(KeyCode.DELETE)) {
+                    nodeOrArcRemovingEventHandler.handle(event);
+                }
+
+                if (event.getCode().equals(KeyCode.C)) {
+                    nodeOrArcColoringEventHandler.handle(event);
+                }
+
+                if (event.getCode().equals(KeyCode.R)) {
+                    nodeRenamingEventHandler.handle(event);
+                }
+
+                if (event.getCode().equals(KeyCode.D)) {
+                    getNodeDegreeEventHandler.handle(event);
+                }
+
+                if (event.getCode().equals(KeyCode.T)) {
+                    arcDirectionSwapEventHandler.handle(event);
+                }
+            }
+        }
+    }
+
     private Alert createEmptyDialog(javafx.scene.Node content, String title) {
         Alert alert = new Alert(Alert.AlertType.NONE);
         alert.setTitle(title);
@@ -210,145 +237,134 @@ public class GraphPane {
 
     // Removing the selected node with/or incident arcs from pane & graph with DELETE key pressed
     private EventHandler<KeyEvent> nodeOrArcRemovingEventHandler = e -> {
-        if (e.getCode().equals(KeyCode.DELETE) && (actionType == ActionType.POINTER)) {
-            for (DrawableNode drawableNode : drawableNodes) {
-                if (drawableNode.isFocused()) {
-                    graphController.removeNode(drawableNode.getSourceNode());
-                    drawableNodes.remove(drawableNode);
-                    pane.getChildren().removeAll(
-                            drawableNode.getShape(),
-                            drawableNode.getName(),
-                            drawableNode.getIdentifier()
-                    );
+        for (DrawableNode drawableNode : drawableNodes) {
+            if (drawableNode.isFocused()) {
+                graphController.removeNode(drawableNode.getSourceNode());
+                drawableNodes.remove(drawableNode);
+                pane.getChildren().removeAll(
+                        drawableNode.getShape(),
+                        drawableNode.getName(),
+                        drawableNode.getIdentifier()
+                );
 
+                ObservableList<DrawableArc> arcsToRemove = FXCollections.observableArrayList();
 
-                    ObservableList<DrawableArc> arcsToRemove = FXCollections.observableArrayList();
+                for (DrawableArc drawableArc : drawableArcs) {
+                    if (drawableArc.getSourceArc().getBegin().equals(drawableNode.getSourceNode())
+                            || drawableArc.getSourceArc().getEnd().equals(drawableNode.getSourceNode())) {
 
-                    for (DrawableArc drawableArc : drawableArcs) {
-                        if (drawableArc.getSourceArc().getBegin().equals(drawableNode.getSourceNode())
-                                || drawableArc.getSourceArc().getEnd().equals(drawableNode.getSourceNode())) {
-
-                            arcsToRemove.add(drawableArc);
-                        }
+                        arcsToRemove.add(drawableArc);
                     }
-
-                    drawableArcs.removeAll(arcsToRemove);
-
-                    for (DrawableArc drawableArc : arcsToRemove) {
-                        pane.getChildren().removeAll(drawableArc.getLine(), drawableArc.getArrow());
-                    }
-                    return;
                 }
-            }
 
-            for (DrawableArc drawableArc : drawableArcs) {
-                if (drawableArc.isFocused()) {
-                    if (!drawableArc.getSourceArc().isDirected()){
-                        graphController.removeArc(new Arc(drawableArc.getSourceArc().getEnd(),
-                                drawableArc.getSourceArc().getBegin()));
-                    }
+                drawableArcs.removeAll(arcsToRemove);
 
-                    graphController.removeArc(drawableArc.getSourceArc());
-                    drawableArcs.remove(drawableArc);
+                for (DrawableArc drawableArc : arcsToRemove) {
                     pane.getChildren().removeAll(drawableArc.getLine(), drawableArc.getArrow());
-                    return;
                 }
+                return;
+            }
+        }
+
+        for (DrawableArc drawableArc : drawableArcs) {
+            if (drawableArc.isFocused()) {
+                if (!drawableArc.getSourceArc().isDirected()){
+                    graphController.removeArc(new Arc(drawableArc.getSourceArc().getEnd(),
+                            drawableArc.getSourceArc().getBegin()));
+                }
+
+                graphController.removeArc(drawableArc.getSourceArc());
+                drawableArcs.remove(drawableArc);
+                pane.getChildren().removeAll(drawableArc.getLine(), drawableArc.getArrow());
+                return;
             }
         }
     };
 
     // Coloring of a node or an arc in focus with C key pressed
     private EventHandler<KeyEvent> nodeOrArcColoringEventHandler = e -> {
-        if (e.getCode().equals(KeyCode.C) && (actionType == ActionType.POINTER)) {
-            for (DrawableNode drawableNode : drawableNodes) {
-                if (drawableNode.isFocused()) {
-                    colorPicker.setOnAction(actionEvent -> {
-                        drawableNode.getShape().setFill(colorPicker.getValue());
-                    });
+        for (DrawableNode drawableNode : drawableNodes) {
+            if (drawableNode.isFocused()) {
+                colorPicker.setOnAction(actionEvent -> {
+                    drawableNode.getShape().setFill(colorPicker.getValue());
+                });
 
-                    Alert colorChooseDialog = createEmptyDialog(colorPicker, "Color choosing");
-                    colorChooseDialog.getButtonTypes().add(ButtonType.APPLY);
-                    colorChooseDialog.show();
-                    break;
-                }
+                Alert colorChooseDialog = createEmptyDialog(colorPicker, "Color choosing");
+                colorChooseDialog.getButtonTypes().add(ButtonType.APPLY);
+                colorChooseDialog.show();
+                break;
             }
+        }
 
-            for (DrawableArc drawableArc : drawableArcs) {
-                if (drawableArc.isFocused()) {
-                    colorPicker.setOnAction(actionEvent -> {
-                        drawableArc.getLine().setStroke(colorPicker.getValue());
-                        drawableArc.getArrow().setStroke(colorPicker.getValue());
-                        drawableArc.getArrow().setFill(colorPicker.getValue());
-                    });
+        for (DrawableArc drawableArc : drawableArcs) {
+            if (drawableArc.isFocused()) {
+                colorPicker.setOnAction(actionEvent -> {
+                    drawableArc.getLine().setStroke(colorPicker.getValue());
+                    drawableArc.getArrow().setStroke(colorPicker.getValue());
+                    drawableArc.getArrow().setFill(colorPicker.getValue());
+                });
 
-                    Alert colorChoose = createEmptyDialog(colorPicker, "Color choosing");
-                    colorChoose.getButtonTypes().add(ButtonType.APPLY);
-                    colorChoose.show();
-                    break;
-                }
+                Alert colorChoose = createEmptyDialog(colorPicker, "Color choosing");
+                colorChoose.getButtonTypes().add(ButtonType.APPLY);
+                colorChoose.show();
+                break;
             }
         }
     };
 
     // Renaming of a node in focus with R key pressed
     private EventHandler<KeyEvent> nodeRenamingEventHandler = e -> {
-        if (e.getCode().equals(KeyCode.R) && (actionType == ActionType.POINTER)) {
-            for (DrawableNode drawableNode : drawableNodes) {
-                if (drawableNode.isFocused()) {
-                    TextField newName = new TextField();
+        for (DrawableNode drawableNode : drawableNodes) {
+            if (drawableNode.isFocused()) {
+                TextField newName = new TextField();
 
-                    GridPane gridPane = new GridPane();
-                    gridPane.add(new Label("New name"), 0, 0);
-                    gridPane.add(newName, 1, 0);
-                    GridPane.setMargin(newName, new Insets(CIRCLE_RADIUS));
+                GridPane gridPane = new GridPane();
+                gridPane.add(new Label("New name"), 0, 0);
+                gridPane.add(newName, 1, 0);
+                GridPane.setMargin(newName, new Insets(CIRCLE_RADIUS));
 
-                    Alert renameDialog = createEmptyDialog(gridPane, "Node renaming");
+                Alert renameDialog = createEmptyDialog(gridPane, "Node renaming");
 
-                    ButtonType RENAME = new ButtonType("Rename");
-                    renameDialog.getButtonTypes().add(RENAME);
+                ButtonType RENAME = new ButtonType("Rename");
+                renameDialog.getButtonTypes().add(RENAME);
 
-                    ((Button) renameDialog.getDialogPane().lookupButton(RENAME)).setOnAction(actionEvent -> {
-                        drawableNode.getSourceNode().setName(newName.getText());
-                        drawableNode.setName(newName.getText());
-                    });
+                ((Button) renameDialog.getDialogPane().lookupButton(RENAME)).setOnAction(actionEvent -> {
+                    drawableNode.getSourceNode().setName(newName.getText());
+                    drawableNode.setName(newName.getText());
+                });
 
-                    renameDialog.show();
-                    break;
-                }
+                renameDialog.show();
+                break;
             }
         }
     };
 
     // Taking focused node's degree with D key pressed
     private EventHandler<KeyEvent> getNodeDegreeEventHandler = e -> {
-        if (e.getCode().equals(KeyCode.D) && (actionType == ActionType.POINTER)) {
-            if (getFocusedNode() != null) {
-                Label nodeDegree = new Label("Node degree: "
-                        + graphController.degreeOf(getFocusedNode().getSourceNode()));
+        if (getFocusedNode() != null) {
+            Label nodeDegree = new Label("Node degree: "
+                    + graphController.degreeOf(getFocusedNode().getSourceNode()));
 
-                Alert nodeDegreeDialog = createEmptyDialog(nodeDegree, "Node degree");
-                nodeDegreeDialog.getButtonTypes().add(ButtonType.OK);
-                nodeDegreeDialog.show();
-            }
+            Alert nodeDegreeDialog = createEmptyDialog(nodeDegree, "Node degree");
+            nodeDegreeDialog.getButtonTypes().add(ButtonType.OK);
+            nodeDegreeDialog.show();
         }
     };
 
     // Making arc (un)directed with T key pressed
     private EventHandler<KeyEvent> arcDirectionSwapEventHandler = e -> {
-        if (e.getCode().equals(KeyCode.T) && (actionType == ActionType.POINTER)) {
-            for (DrawableArc drawableArc : drawableArcs) {
-                if (drawableArc.isFocused()) {
-                    if (drawableArc.getSourceArc().isDirected()) {
-                        pane.getChildren().remove(drawableArc.getArrow());
-                        Arc reversedArc = new Arc(drawableArc.getSourceArc().getEnd(), drawableArc.getSourceArc().getBegin());
-                        reversedArc.setDirected(false);
-                        graphController.addArc(reversedArc);
-                        drawableArc.getSourceArc().setDirected(false);
-                    } else {
-                        pane.getChildren().add(drawableArc.getArrow());
-                        graphController.removeArc(new Arc(drawableArc.getSourceArc().getEnd(), drawableArc.getSourceArc().getBegin()));
-                        drawableArc.getSourceArc().setDirected(true);
-                    }
+        for (DrawableArc drawableArc : drawableArcs) {
+            if (drawableArc.isFocused()) {
+                if (drawableArc.getSourceArc().isDirected()) {
+                    pane.getChildren().remove(drawableArc.getArrow());
+                    Arc reversedArc = new Arc(drawableArc.getSourceArc().getEnd(), drawableArc.getSourceArc().getBegin());
+                    reversedArc.setDirected(false);
+                    graphController.addArc(reversedArc);
+                    drawableArc.getSourceArc().setDirected(false);
+                } else {
+                    pane.getChildren().add(drawableArc.getArrow());
+                    graphController.removeArc(new Arc(drawableArc.getSourceArc().getEnd(), drawableArc.getSourceArc().getBegin()));
+                    drawableArc.getSourceArc().setDirected(true);
                 }
             }
         }

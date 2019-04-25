@@ -1,10 +1,11 @@
 package layout.form;
 
 import controller.GraphController;
+import javafx.event.Event;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.KeyEvent;
 import model.Graph;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,6 +52,14 @@ public class GraphTabPane {
         tabPane.getSelectionModel().selectedItemProperty().addListener(e -> {
             graphToolBar.updateSource(currentGraphPane());
             graphStatusBar.updateSource(currentGraphPane().getGraphController());
+        });
+
+        tabPane.addEventHandler(KeyEvent.ANY, e -> {
+            try {
+                currentGraphPane().perforrmKeyAction(e);
+            } finally {
+                return;
+            }
         });
     }
 
