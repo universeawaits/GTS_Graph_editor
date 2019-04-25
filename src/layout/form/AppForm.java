@@ -2,6 +2,7 @@ package layout.form;
 
 import javafx.scene.layout.VBox;
 import controller.GraphController;
+import javafx.stage.Stage;
 
 
 public class AppForm {
@@ -13,11 +14,11 @@ public class AppForm {
     private VBox vBox;
 
 
-    public AppForm() {
+    public AppForm(Stage stage) {
         graphToolBar = new GraphToolBar();
         graphStatusBar = new GraphStatusBar();
         graphTabPane = new GraphTabPane(graphToolBar, graphStatusBar);
-        appMenu = new AppMenu(graphTabPane);
+        appMenu = new AppMenu(graphTabPane, stage);
 
         vBox = new VBox();
         configureVBox();

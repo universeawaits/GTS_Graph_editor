@@ -1,7 +1,6 @@
 package controller;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import model.*;
 
@@ -202,8 +201,6 @@ public class GraphController {
             }
         }
 
-        // Check if every edge starting from vertex v leads
-        // to a solution or not
         for (Node adjacentNode : adjacencyMatrix.adjacentNodesOf(begin)) {
             // process only unvisited vertices as Hamiltonian
             // path visits each vertex exactly once

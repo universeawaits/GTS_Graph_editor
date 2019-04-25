@@ -1,7 +1,6 @@
 package layout.form;
 
 import controller.GraphController;
-import javafx.event.Event;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyEvent;
@@ -50,8 +49,12 @@ public class GraphTabPane {
         tabPane.setTabMinWidth(TAB_TITLE_WIDTH);
 
         tabPane.getSelectionModel().selectedItemProperty().addListener(e -> {
-            graphToolBar.updateSource(currentGraphPane());
-            graphStatusBar.updateSource(currentGraphPane().getGraphController());
+            try {
+                graphToolBar.updateSource(currentGraphPane());
+                graphStatusBar.updateSource(currentGraphPane().getGraphController());
+            } finally {
+                return;
+            }
         });
 
         tabPane.addEventHandler(KeyEvent.ANY, e -> {
@@ -64,7 +67,7 @@ public class GraphTabPane {
     }
 
 
-    public void addTab(String name) {
+    public void newTab(String name) {
         Tab tab = new Tab(name);
 
         Graph graph = new Graph();

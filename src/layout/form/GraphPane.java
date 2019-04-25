@@ -171,7 +171,7 @@ public class GraphPane {
 
             DrawableNode nodeShape = new DrawableNode(node);
             nodeShape.getShape().setCenterX(e.getSceneX());
-            nodeShape.getShape().setCenterY(e.getSceneY() - 2 * CIRCLE_RADIUS);
+            nodeShape.getShape().setCenterY(e.getSceneY() - 5 * CIRCLE_RADIUS);
 
             drawableNodes.add(nodeShape);
             pane.getChildren().addAll(nodeShape.getShape(), nodeShape.getName(), nodeShape.getIdentifier());

@@ -1,5 +1,6 @@
 package layout.form;
 
+import controller.FileProcessor;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -7,8 +8,12 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import model.Node;
 import model.Path;
+
+import java.io.File;
 
 import static layout.DrawableNode.CIRCLE_RADIUS;
 import static sample.Main.MAIN_FORM_HEIGHT;
@@ -16,12 +21,15 @@ import static sample.Main.MAIN_FORM_WIDTH;
 
 
 public class AppMenu {
+    private static final String FILE_FORMAT = "*.graph";
+
     private GraphTabPane graphTabPane;
 
     private MenuBar menuBar;
+    private Stage ownerStage;
 
 
-    public AppMenu(GraphTabPane graphTabPane) {
+    public AppMenu(GraphTabPane graphTabPane, Stage stage) {
         this.graphTabPane = graphTabPane;
 
         menuBar = new MenuBar();
@@ -31,6 +39,8 @@ public class AppMenu {
                 createStatisticsMenu(),
                 createAlgorithmMenu()
         );
+
+        ownerStage = stage;
     }
 
     public MenuBar getMenuBar() {
@@ -51,6 +61,8 @@ public class AppMenu {
         MenuItem closeFile = new MenuItem("Close");
 
         newFile.setOnAction(newGraphEventHandler);
+
+        saveFile.setOnAction(saveGraphEventHandler);
 
         file.getItems().addAll(newFile, openFile, saveFile, closeFile);
 
@@ -110,6 +122,16 @@ public class AppMenu {
         return alert;
     }
 
+    private File createSaveFileDialog() {
+        FileChooser saveFileChooser = new FileChooser();
+        saveFileChooser.setTitle("Save graph");
+        saveFileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Graph file", FILE_FORMAT)
+        );
+
+        return saveFileChooser.showSaveDialog(ownerStage);
+    }
+
     /*
         Event handlers
      */
@@ -147,10 +169,19 @@ public class AppMenu {
                 }
             }
 
-            graphTabPane.addTab(name.getText());
+            graphTabPane.newTab(name.getText());
         });
 
         newGraphDialog.show();
+    };
+
+    // Saving of a graph
+    private EventHandler<ActionEvent> saveGraphEventHandler = e -> {
+        File selectedFile = createSaveFileDialog();
+
+        if (selectedFile != null) {
+            new FileProcessor(selectedFile.getAbsolutePath()).write(graphTabPane.currentGraphPane());
+        }
     };
 
     // Taking all graph nodes degrees
