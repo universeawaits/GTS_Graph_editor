@@ -14,6 +14,7 @@ import model.Node;
 import model.Path;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import static layout.DrawableNode.CIRCLE_RADIUS;
 import static sample.Main.MAIN_FORM_HEIGHT;
@@ -129,6 +130,14 @@ public class AppMenu {
                 new FileChooser.ExtensionFilter("Graph file", FILE_FORMAT)
         );
 
+        try {
+            saveFileChooser.setInitialFileName(
+                    graphTabPane.getTabPane().getSelectionModel().getSelectedItem().getText()
+            );
+        } catch (NullPointerException ex){
+            return null;
+        }
+
         return saveFileChooser.showSaveDialog(ownerStage);
     }
 
@@ -180,7 +189,10 @@ public class AppMenu {
         File selectedFile = createSaveFileDialog();
 
         if (selectedFile != null) {
-            new FileProcessor(selectedFile.getAbsolutePath()).write(graphTabPane.currentGraphPane());
+            new FileProcessor(selectedFile.getAbsolutePath()).write(
+                    graphTabPane.currentGraphPane(),
+                    graphTabPane.getTabPane().getSelectionModel().getSelectedItem().getText()
+            );
         }
     };
 

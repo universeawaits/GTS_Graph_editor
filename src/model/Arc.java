@@ -17,6 +17,12 @@ public class Arc {
         isDirected = true;
     }
 
+    public Arc(Node begin, Node end, boolean isDirected) {
+        this.begin = begin;
+        this.end = end;
+        this.isDirected = isDirected;
+    }
+
     public Node getBegin() {
         return begin;
     }

@@ -43,6 +43,21 @@ public class GraphPane {
     private Pane pane;
 
 
+    public GraphPane() {
+        this.graphController = null;
+        actionType = ActionType.POINTER;
+
+        isNodesForArcSelected = false;
+        beginForArc = null;
+        endForArc = null;
+
+        drawableNodes = FXCollections.observableArrayList();
+        drawableArcs = FXCollections.observableArrayList();
+
+        pane = new Pane();
+        configurePane();
+    }
+
     public GraphPane(GraphController graphController) {
         this.graphController = graphController;
         actionType = ActionType.POINTER;
@@ -99,13 +114,13 @@ public class GraphPane {
 
         pane.setClip(clip);
 
-        pane.addEventHandler(MouseEvent.MOUSE_CLICKED, nodeAddingEventHandler);
+        /*pane.addEventHandler(MouseEvent.MOUSE_CLICKED, nodeAddingEventHandler);
         pane.addEventHandler(MouseEvent.MOUSE_CLICKED, arcAddingEventHandler);
         pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeOrArcRemovingEventHandler);
         pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeOrArcColoringEventHandler);
         pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeRenamingEventHandler);
         pane.addEventHandler(KeyEvent.KEY_PRESSED, getNodeDegreeEventHandler);
-        pane.addEventHandler(KeyEvent.KEY_PRESSED, arcDirectionSwapEventHandler);
+        pane.addEventHandler(KeyEvent.KEY_PRESSED, arcDirectionSwapEventHandler);*/
     }
 
     /*
