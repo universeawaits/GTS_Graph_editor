@@ -91,6 +91,8 @@ public class GraphStatusBar {
         diameter.setText(DIAMETER + String.valueOf(graphController.diameter()));
         radius.setText(RADIUS + String.valueOf(graphController.radius()));
         isPlanar.setText("Graph is" + (graphController.isPlanar() ? " " : "n't ") + "planar");
+
+        System.out.println(graphController.getDistanceMatrix());
     }
 
     /*

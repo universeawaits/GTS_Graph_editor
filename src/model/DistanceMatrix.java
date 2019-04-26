@@ -23,6 +23,20 @@ public class DistanceMatrix {
         return distancesMap;
     }
 
+    @Override
+    public String toString() {
+        String toString = "";
+
+        for (Node node : distancesMap.keySet()) {
+            for (Integer distance : distancesMap.get(node).values()) {
+                toString = toString.concat(String.valueOf(distance) + ' ');
+            }
+            toString = toString.concat("\n");
+        }
+
+        return toString;
+    }
+
     /*
         Configs
      */
@@ -41,7 +55,7 @@ public class DistanceMatrix {
      */
 
     // Calculation of distances between the node given and all other nodes in the graph
-    // with modified Bellman–Ford algorithm ///fordirect
+    // with modified Bellman–Ford algorithm
     private Map<Node, Integer> allDistancesFrom(Node begin) {
         Map<Node, Integer> distanceTo = new HashMap<>();
 

@@ -57,7 +57,7 @@ public class GraphTabPane {
             }
         });
 
-        tabPane.addEventHandler(KeyEvent.ANY, e -> {
+        tabPane.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
             try {
                 currentGraphPane().perforrmKeyAction(e);
             } finally {
@@ -83,6 +83,24 @@ public class GraphTabPane {
         });
 
         tabPane.getTabs().add(tab);
+        tabPane.getSelectionModel().select(tab);
+    }
+
+    public void newTab(String name, GraphPane graphPane) {
+        Tab tab = new Tab(name);
+
+        tab.setContent(graphPane.getPane());
+        managingGraphs.put(tab, graphPane);
+
+        tab.setOnClosed(e -> {
+            managingGraphs.remove(tab);
+        });
+
+        tabPane.getTabs().add(tab);
+        tabPane.getSelectionModel().select(tab);
+
+        graphToolBar.updateSource(graphPane);
+        graphStatusBar.updateSource(graphPane.getGraphController());
     }
 
     public GraphPane currentGraphPane() {

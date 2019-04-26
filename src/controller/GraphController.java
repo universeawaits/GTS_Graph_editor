@@ -34,6 +34,14 @@ public class GraphController {
 
     public ObservableList<Arc> getArcs() { return graph.getArcs(); }
 
+    public AdjacencyMatrix getAdjacencyMatrix() {
+        return adjacencyMatrix;
+    }
+
+    public DistanceMatrix getDistanceMatrix() {
+        return distanceMatrix;
+    }
+
     public void addNode(Node node) {
         graph.getNodes().add(node);
     }

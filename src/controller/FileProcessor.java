@@ -39,6 +39,8 @@ public class FileProcessor {
 
         private String name;
         private String identifier;
+        private String centerX;
+        private String centerY;
         private Map<Integer, DrawableNode> identifiers;
 
         private String lastElementName;
@@ -71,30 +73,39 @@ public class FileProcessor {
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            String[] param = { name, identifier };
-
-            for (String parameter : param) {
-                if (parameter == null || parameter.isEmpty()) {
-                    return;
-                }
-            }
-
             if (!isNodesRead) {
-                int identifierInt;
+                if ((name != null)
+                        && (identifier != null)
+                        && (centerX != null)
+                        && (centerY != null)) {
 
-                try {
-                    identifierInt = Integer.parseInt(identifier);
-                } catch (NumberFormatException ex) {
-                    identifierInt = -1; // gives an exception had token
+                    int identifierInt;
+                    double centerXDouble;
+                    double centerYDouble;
+
+                    try {
+                        identifierInt = Integer.parseInt(identifier);
+                        centerXDouble = Double.parseDouble(centerX);
+                        centerYDouble = Double.parseDouble(centerY);
+                    } catch (NumberFormatException ex) {
+                        identifierInt = -1; // gives an exception had token
+                        centerXDouble = -1;
+                        centerYDouble = -1;
+                    }
+
+                    DrawableNode drawableNode = new DrawableNode(new Node(name));
+                    drawableNode.getShape().setCenterX(centerXDouble);
+                    drawableNode.getShape().setCenterY(centerYDouble);
+                    drawableNodes.add(drawableNode);
+                    identifiers.put(identifierInt, drawableNode);
+
+                    name = null;
+                    centerX = null;
+                    centerY = null;
+                    identifier = null;
                 }
-
-                DrawableNode drawableNode = new DrawableNode(new Node(name));
-                drawableNodes.add(drawableNode);
-                identifiers.put(identifierInt, drawableNode);
-
-                name = null;
             } else {
-                if (!("".equals(beginIdentifier) || "".equals(endIdentifier)) || "".equals(isDirected)) {
+                if (beginIdentifier != null && endIdentifier != null && isDirected != null) {
                     int beginIdentifierInt;
                     int endIdentifierInt;
                     boolean isDirectedBoolean = isDirected.equals(XMLConstant.TRUE);
@@ -107,22 +118,23 @@ public class FileProcessor {
                         endIdentifierInt = -1;
                     }
 
-                    drawableArcs.add(new DrawableArc(
-                            new Arc(
-                                    identifiers.get(beginIdentifierInt).getSourceNode(),
-                                    identifiers.get(endIdentifierInt).getSourceNode(),
-                                    isDirectedBoolean),
+                    Arc sourceArc = new Arc(
+                            identifiers.get(beginIdentifierInt).getSourceNode(),
+                            identifiers.get(endIdentifierInt).getSourceNode(),
+                            isDirectedBoolean
+                    );
+                    DrawableArc drawableArc = new DrawableArc(
+                            sourceArc,
                             identifiers.get(beginIdentifierInt),
                             identifiers.get(endIdentifierInt)
-                    ));
+                    );
+                    drawableArcs.add(drawableArc);
 
                     beginIdentifier = null;
                     endIdentifier = null;
                     isDirected = null;
                 }
             }
-
-            identifier = null;
         }
 
         @Override
@@ -131,40 +143,69 @@ public class FileProcessor {
 
             nodeText = nodeText.replace("\n", "").trim();
 
+            if (lastElementName.equals(XMLConstant.NAME)) {
+                name = nodeText;
+                return;
+            }
+
             if (!nodeText.isEmpty()) {
-                if (lastElementName.equals(XMLConstant.NAME)) {
-                    name = nodeText;
-                }
+                switch (lastElementName) {
+                    case XMLConstant.IDENTIFIER: {
+                        if (!isNodesRead) {
+                            identifier = nodeText;
+                        } else {
+                            if (beginIdentifier == null) {
+                                beginIdentifier = nodeText;
+                            } else {
+                                endIdentifier = nodeText;
+                            }
+                        }
 
-                if (lastElementName.equals(XMLConstant.IDENTIFIER)) {
-                    identifier = nodeText;
+                        break;
+                    }
+                    case XMLConstant.CENTER_X: {
+                        centerX = nodeText;
+                        break;
+                    }
+                    case XMLConstant.CENTER_Y: {
+                        centerY = nodeText;
+                        break;
+                    }
+                    case XMLConstant.IS_DIRECTED: {
+                        isDirected = nodeText;
+                        break;
+                    }
                 }
+            }
 
-                if (lastElementName.equals(XMLConstant.ARCS)) {
-                    isNodesRead = true;
-                }
-
-                if (lastElementName.equals(XMLConstant.BEGIN_NODE)) {
-                    beginIdentifier = nodeText;
-                }
-
-                if (lastElementName.equals(XMLConstant.END_NODE)) {
-                    endIdentifier = nodeText;
-                }
+            if (lastElementName.equals(XMLConstant.ARCS)) {
+                isNodesRead = true;
             }
         }
 
         public GraphPane getResultGraphPane() {
+            Graph graph = new Graph();
+
             graphPane.getDrawableNodes().addAll(drawableNodes);
             graphPane.getDrawableArcs().addAll(drawableArcs);
 
             for (DrawableNode drawableNode : drawableNodes) {
+                graph.getNodes().add(drawableNode.getSourceNode());
                 graphPane.getPane().getChildren().add(drawableNode.getShape());
+                drawableNode.getShape().toFront();
             }
 
             for (DrawableArc drawableArc : drawableArcs) {
+                graph.getArcs().add(drawableArc.getSourceArc());
                 graphPane.getPane().getChildren().addAll(drawableArc.getLine(), drawableArc.getArrow()); // mb nullexption
             }
+
+            for (DrawableNode drawableNode : drawableNodes) {
+                drawableNode.getShape().toFront();
+            }
+
+            GraphController graphController = new GraphController(graph);
+            graphPane.setGraphController(graphController);
 
             return graphPane;
         }
@@ -272,7 +313,7 @@ public class FileProcessor {
 
     public Pair<String, GraphPane> read() {
         GraphPane graphPane = new GraphPane();
-        String graphName;
+        String graphName = "";
 
         SAXParserFactory factory = SAXParserFactory.newInstance();
         SAXParser parser;

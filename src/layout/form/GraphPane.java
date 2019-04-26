@@ -81,6 +81,10 @@ public class GraphPane {
         return graphController;
     }
 
+    public void setGraphController(GraphController graphController) {
+        this.graphController = graphController;
+    }
+
     public ActionType getActionType() {
         return actionType;
     }
@@ -114,13 +118,13 @@ public class GraphPane {
 
         pane.setClip(clip);
 
-        /*pane.addEventHandler(MouseEvent.MOUSE_CLICKED, nodeAddingEventHandler);
+        pane.addEventHandler(MouseEvent.MOUSE_CLICKED, nodeAddingEventHandler);
         pane.addEventHandler(MouseEvent.MOUSE_CLICKED, arcAddingEventHandler);
         pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeOrArcRemovingEventHandler);
         pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeOrArcColoringEventHandler);
         pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeRenamingEventHandler);
         pane.addEventHandler(KeyEvent.KEY_PRESSED, getNodeDegreeEventHandler);
-        pane.addEventHandler(KeyEvent.KEY_PRESSED, arcDirectionSwapEventHandler);*/
+        pane.addEventHandler(KeyEvent.KEY_PRESSED, arcDirectionSwapEventHandler);
     }
 
     /*
@@ -232,6 +236,8 @@ public class GraphPane {
                 if ((graphController.getArcs().contains(arc))
                         || (graphController.getArcs().contains(inverseArc))) {
                     isNodesForArcSelected = false;
+                    beginForArc = null;
+                    endForArc = null;
                     return;
                 }
 

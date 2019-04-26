@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import model.Node;
 import model.Path;
 
@@ -62,7 +63,7 @@ public class AppMenu {
         MenuItem closeFile = new MenuItem("Close");
 
         newFile.setOnAction(newGraphEventHandler);
-
+        openFile.setOnAction(openGraphEventHandler);
         saveFile.setOnAction(saveGraphEventHandler);
 
         file.getItems().addAll(newFile, openFile, saveFile, closeFile);
@@ -141,6 +142,16 @@ public class AppMenu {
         return saveFileChooser.showSaveDialog(ownerStage);
     }
 
+    private File createOpenFileDialog() {
+        FileChooser openFileChooser = new FileChooser();
+        openFileChooser.setTitle("Open graph");
+        openFileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Graph file", FILE_FORMAT)
+        );
+
+        return openFileChooser.showOpenDialog(ownerStage);
+    }
+
     /*
         Event handlers
      */
@@ -193,6 +204,16 @@ public class AppMenu {
                     graphTabPane.currentGraphPane(),
                     graphTabPane.getTabPane().getSelectionModel().getSelectedItem().getText()
             );
+        }
+    };
+
+    // Opening of a graph
+    private EventHandler<ActionEvent> openGraphEventHandler = e -> {
+        File selectedFile = createOpenFileDialog();
+
+        if (selectedFile != null) {
+            Pair<String, GraphPane> namedGraphPane = new FileProcessor(selectedFile.getAbsolutePath()).read();
+            graphTabPane.newTab(namedGraphPane.getKey(), namedGraphPane.getValue());
         }
     };
 
