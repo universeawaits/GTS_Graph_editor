@@ -2,6 +2,7 @@ package layout.form;
 
 import controller.FileProcessor;
 import controller.GraphController;
+import controller.GraphProduct;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,7 +18,6 @@ import layout.DrawableNode;
 import model.*;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Random;
 
 import static layout.DrawableNode.CIRCLE_RADIUS;
@@ -119,16 +119,18 @@ public class AppMenu {
     private Menu createOperationMenu() {
         Menu operation = new Menu("Operations");
         MenuItem cartesianProduct = new MenuItem("Cartesian product");
+        MenuItem tensorProduct = new MenuItem("Tensor product");
 
         cartesianProduct.setOnAction(cartesianProductEventHandler);
+        tensorProduct.setOnAction(tensorProductEventHandler);
 
-        operation.getItems().addAll(cartesianProduct);
+        operation.getItems().addAll(cartesianProduct, tensorProduct);
 
         return operation;
     }
 
     /*
-        Others
+     *      Others
      */
 
     private Alert createEmptyDialog(javafx.scene.Node content, String title) {
@@ -320,7 +322,7 @@ public class AppMenu {
             String graphName = gGraphName.getSelectionModel().getSelectedItem()
                     + " □ " + hGraphName.getSelectionModel().getSelectedItem();
 
-            Graph product = GraphCartesianProduct.cartesianProduct(
+            Graph product = GraphProduct.cartesianProduct(
                     gGraphPane.getGraphController().getGraph(),
                     hGraphPane.getGraphController().getGraph()
             );
@@ -363,6 +365,81 @@ public class AppMenu {
         });
 
         cartesianProductDialog.show();
+    };
+
+    // Vector product of two specified graphs
+    private EventHandler<ActionEvent> tensorProductEventHandler = e -> {
+        ComboBox<String> gGraphName = new ComboBox<>();
+        ComboBox<String> hGraphName = new ComboBox<>();
+
+        for (Tab tab : graphTabPane.getTabPane().getTabs()) {
+            gGraphName.getItems().add(tab.getText());
+            hGraphName.getItems().add(tab.getText());
+        }
+
+        GridPane gridPane = new GridPane();
+        gridPane.add(new Label("First graph:"), 0, 0);
+        gridPane.add(new Label("Second graph:"), 1, 0);
+        gridPane.add(gGraphName, 0, 1);
+        gridPane.add(hGraphName, 1, 1);
+        GridPane.setMargin(gGraphName, new Insets(CIRCLE_RADIUS));
+        GridPane.setMargin(hGraphName, new Insets(CIRCLE_RADIUS));
+
+        Alert tensorProductDialog = createEmptyDialog(gridPane, "Cartesian product");
+
+        ButtonType CREATE = new ButtonType("Create");
+        tensorProductDialog.getButtonTypes().add(CREATE);
+
+        ((Button) tensorProductDialog.getDialogPane().lookupButton(CREATE)).setOnAction(actionEvent -> {
+            GraphPane gGraphPane = graphTabPane.getGraphPaneAtTab(gGraphName.getSelectionModel().getSelectedItem());
+            GraphPane hGraphPane = graphTabPane.getGraphPaneAtTab(hGraphName.getSelectionModel().getSelectedItem());
+
+            String graphName = gGraphName.getSelectionModel().getSelectedItem()
+                    + " × " + hGraphName.getSelectionModel().getSelectedItem();
+
+            Graph product = GraphProduct.tensorProduct(
+                    gGraphPane.getGraphController().getGraph(),
+                    hGraphPane.getGraphController().getGraph()
+            );
+
+            GraphController productController = new GraphController(product);
+            GraphPane productGraphPane = new GraphPane(productController);
+
+            Random nodePositionRandom = new Random(System.currentTimeMillis());
+
+            for (Node node : product.getNodes()) {
+                DrawableNode drawableNode = new DrawableNode(node);
+                drawableNode.getShape().setCenterX(
+                        nodePositionRandom.nextInt((int) MAIN_FORM_WIDTH - 100) + 50
+                );
+                drawableNode.getShape().setCenterY(
+                        nodePositionRandom.nextInt((int) MAIN_FORM_HEIGHT - 300) + 50
+                );
+
+                productGraphPane.getPane().getChildren().add(drawableNode.getShape());
+                productGraphPane.getDrawableNodes().add(drawableNode);
+                drawableNode.getShape().toFront();
+            }
+
+            for (DrawableNode begin : productGraphPane.getDrawableNodes()) {
+                for (DrawableNode end : productGraphPane.getDrawableNodes()) {
+                    Arc arc = product.getArc(begin.getSourceNode(), end.getSourceNode());
+                    if (arc != null) {
+                        DrawableArc drawableArc = new DrawableArc(arc, begin, end);
+                        productGraphPane.getPane().getChildren().addAll(drawableArc.getLine());
+                        productGraphPane.getDrawableArcs().add(drawableArc);
+                    }
+                }
+            }
+
+            for (DrawableNode drawableNode : productGraphPane.getDrawableNodes()) {
+                drawableNode.getShape().toFront();
+            }
+
+            graphTabPane.newTab(graphName, productGraphPane);
+        });
+
+        tensorProductDialog.show();
     };
 
     // Finding of hamiltonian cycles

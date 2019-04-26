@@ -71,12 +71,9 @@ public class DrawableArc {
         );
         configureLine();
 
-        if (sourceArc.isDirected()) {
-            arrow = new Polygon();
-            configureArrow();
-        } else {
-            arrow = null;
-        }
+        arrow = new Polygon();
+
+        configureArrow();
     }
 
     public DrawableNode getBegin() {
