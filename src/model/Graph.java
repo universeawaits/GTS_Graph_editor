@@ -22,4 +22,14 @@ public class Graph {
     public ObservableList<Arc> getArcs() {
         return arcs;
     }
+
+    public Arc getArc(Node begin, Node end) {
+        for (Arc arc : arcs) {
+            if (arc.getBegin().equals(begin) && arc.getEnd().equals(end)) {
+                return arc;
+            }
+        }
+
+        return null;
+    }
 }

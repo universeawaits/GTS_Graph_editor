@@ -106,4 +106,14 @@ public class GraphTabPane {
     public GraphPane currentGraphPane() {
         return managingGraphs.get(tabPane.getSelectionModel().getSelectedItem());
     }
+
+    public GraphPane getGraphPaneAtTab(String name) {
+        for (Tab tab : managingGraphs.keySet()) {
+            if (tab.getText().equals(name)) {
+                return managingGraphs.get(tab);
+            }
+        }
+
+        return null;
+    }
 }

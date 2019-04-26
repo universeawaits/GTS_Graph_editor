@@ -197,7 +197,7 @@ public class FileProcessor {
 
             for (DrawableArc drawableArc : drawableArcs) {
                 graph.getArcs().add(drawableArc.getSourceArc());
-                graphPane.getPane().getChildren().addAll(drawableArc.getLine(), drawableArc.getArrow()); // mb nullexption
+                graphPane.getPane().getChildren().addAll(drawableArc.getLine(), drawableArc.getArrow());
             }
 
             for (DrawableNode drawableNode : drawableNodes) {

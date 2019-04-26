@@ -1,6 +1,7 @@
 package layout.form;
 
 import controller.FileProcessor;
+import controller.GraphController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -11,11 +12,13 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-import model.Node;
-import model.Path;
+import layout.DrawableArc;
+import layout.DrawableNode;
+import model.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Random;
 
 import static layout.DrawableNode.CIRCLE_RADIUS;
 import static sample.Main.MAIN_FORM_HEIGHT;
@@ -39,6 +42,7 @@ public class AppMenu {
                 createFileMenu(),
                 createEditMenu(),
                 createStatisticsMenu(),
+                createOperationMenu(),
                 createAlgorithmMenu()
         );
 
@@ -71,7 +75,7 @@ public class AppMenu {
         return file;
     }
 
-    // Creating of the edit menu
+    // Creating of edit menu
     private Menu createEditMenu() {
         Menu edit = new Menu("Edit");
         MenuItem clearPane = new MenuItem("Clear pane");
@@ -83,7 +87,7 @@ public class AppMenu {
         return edit;
     }
 
-    // Creating of the statistics menu
+    // Creating of statistics menu
     private Menu createStatisticsMenu() {
         Menu statistics = new Menu("Statistics");
         MenuItem nodesDegrees = new MenuItem("Node degrees");
@@ -99,9 +103,9 @@ public class AppMenu {
         return statistics;
     }
 
-    // Creating of an algorithms menu
+    // Creating of algorithms menu
     private Menu createAlgorithmMenu() {
-        Menu algorithm = new Menu("Algorithm");
+        Menu algorithm = new Menu("Algorithms");
         MenuItem hamiltonianCycles = new MenuItem("Hamiltonian cycles");
 
         hamiltonianCycles.setOnAction(findHamiltonianCyclesEventHandler);
@@ -109,6 +113,18 @@ public class AppMenu {
         algorithm.getItems().addAll(hamiltonianCycles);
 
         return algorithm;
+    }
+
+    // Creating of operations menu
+    private Menu createOperationMenu() {
+        Menu operation = new Menu("Operations");
+        MenuItem cartesianProduct = new MenuItem("Cartesian product");
+
+        cartesianProduct.setOnAction(cartesianProductEventHandler);
+
+        operation.getItems().addAll(cartesianProduct);
+
+        return operation;
     }
 
     /*
@@ -272,6 +288,81 @@ public class AppMenu {
         } finally {
             return;
         }
+    };
+
+    // Cartesian product of two specified graphs
+    private EventHandler<ActionEvent> cartesianProductEventHandler = e -> {
+        ComboBox<String> gGraphName = new ComboBox<>();
+        ComboBox<String> hGraphName = new ComboBox<>();
+
+        for (Tab tab : graphTabPane.getTabPane().getTabs()) {
+            gGraphName.getItems().add(tab.getText());
+            hGraphName.getItems().add(tab.getText());
+        }
+
+        GridPane gridPane = new GridPane();
+        gridPane.add(new Label("First graph:"), 0, 0);
+        gridPane.add(new Label("Second graph:"), 1, 0);
+        gridPane.add(gGraphName, 0, 1);
+        gridPane.add(hGraphName, 1, 1);
+        GridPane.setMargin(gGraphName, new Insets(CIRCLE_RADIUS));
+        GridPane.setMargin(hGraphName, new Insets(CIRCLE_RADIUS));
+
+        Alert cartesianProductDialog = createEmptyDialog(gridPane, "Cartesian product");
+
+        ButtonType CREATE = new ButtonType("Create");
+        cartesianProductDialog.getButtonTypes().add(CREATE);
+
+        ((Button) cartesianProductDialog.getDialogPane().lookupButton(CREATE)).setOnAction(actionEvent -> {
+            GraphPane gGraphPane = graphTabPane.getGraphPaneAtTab(gGraphName.getSelectionModel().getSelectedItem());
+            GraphPane hGraphPane = graphTabPane.getGraphPaneAtTab(hGraphName.getSelectionModel().getSelectedItem());
+
+            String graphName = gGraphName.getSelectionModel().getSelectedItem()
+                    + " □ " + hGraphName.getSelectionModel().getSelectedItem();
+
+            Graph product = GraphCartesianProduct.cartesianProduct(
+                    gGraphPane.getGraphController().getGraph(),
+                    hGraphPane.getGraphController().getGraph()
+            );
+
+            GraphController productController = new GraphController(product);
+            GraphPane productGraphPane = new GraphPane(productController);
+
+            Random nodePositionRandom = new Random(System.currentTimeMillis());
+
+            for (Node node : product.getNodes()) {
+                DrawableNode drawableNode = new DrawableNode(node);
+                drawableNode.getShape().setCenterX(
+                        nodePositionRandom.nextInt((int) MAIN_FORM_WIDTH - 100) + 50
+                );
+                drawableNode.getShape().setCenterY(
+                        nodePositionRandom.nextInt((int) MAIN_FORM_HEIGHT - 300) + 50
+                );
+
+                productGraphPane.getPane().getChildren().add(drawableNode.getShape());
+                productGraphPane.getDrawableNodes().add(drawableNode);
+                drawableNode.getShape().toFront();
+            }
+
+            for (DrawableNode begin : productGraphPane.getDrawableNodes()) {
+                for (DrawableNode end : productGraphPane.getDrawableNodes()) {
+                    Arc arc = product.getArc(begin.getSourceNode(), end.getSourceNode());
+                    if (arc != null) {
+                        DrawableArc drawableArc = new DrawableArc(arc, begin, end);
+                        productGraphPane.getPane().getChildren().addAll(drawableArc.getLine(), drawableArc.getArrow());
+                        productGraphPane.getDrawableArcs().add(drawableArc);
+                    }
+                }
+            }
+
+            for (DrawableNode drawableNode : productGraphPane.getDrawableNodes()) {
+                drawableNode.getShape().toFront();
+            }
+
+            graphTabPane.newTab(graphName, productGraphPane);
+        });
+
+        cartesianProductDialog.show();
     };
 
     // Finding of hamiltonian cycles
