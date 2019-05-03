@@ -73,6 +73,11 @@ public class DrawableNode {
         return identifier;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return ((DrawableNode) obj).sourceNode.equals(sourceNode);
+    }
+
     /*
         Configs
      */

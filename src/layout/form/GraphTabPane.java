@@ -67,12 +67,10 @@ public class GraphTabPane {
     }
 
 
-    public void newTab(String name) {
-        Tab tab = new Tab(name);
+    public void newTab(Graph newGraph) {
+        Tab tab = new Tab(newGraph.getName());
 
-        Graph graph = new Graph();
-        GraphController graphController = new GraphController(graph);
-
+        GraphController graphController = new GraphController(newGraph);
         GraphPane graphPane = new GraphPane(graphController);
 
         tab.setContent(graphPane.getPane());
@@ -86,8 +84,8 @@ public class GraphTabPane {
         tabPane.getSelectionModel().select(tab);
     }
 
-    public void newTab(String name, GraphPane graphPane) {
-        Tab tab = new Tab(name);
+    public void newTab(GraphPane graphPane) {
+        Tab tab = new Tab(graphPane.getGraphController().getGraph().getName());
 
         tab.setContent(graphPane.getPane());
         managingGraphs.put(tab, graphPane);
@@ -98,9 +96,6 @@ public class GraphTabPane {
 
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().select(tab);
-
-        graphToolBar.updateSource(graphPane);
-        graphStatusBar.updateSource(graphPane.getGraphController());
     }
 
     public GraphPane currentGraphPane() {

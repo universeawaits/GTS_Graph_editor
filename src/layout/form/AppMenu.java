@@ -2,6 +2,7 @@ package layout.form;
 
 import controller.FileProcessor;
 import controller.GraphController;
+import controller.GraphOperation;
 import controller.GraphProduct;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,6 +19,7 @@ import layout.DrawableNode;
 import model.*;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Random;
 
 import static layout.DrawableNode.CIRCLE_RADIUS;
@@ -120,11 +122,15 @@ public class AppMenu {
         Menu operation = new Menu("Operations");
         MenuItem cartesianProduct = new MenuItem("Cartesian product");
         MenuItem tensorProduct = new MenuItem("Tensor product");
+        MenuItem union = new MenuItem("Union");
+        MenuItem intersection = new MenuItem("Intersection");
 
+        union.setOnAction(unionEventHandler);
         cartesianProduct.setOnAction(cartesianProductEventHandler);
         tensorProduct.setOnAction(tensorProductEventHandler);
+        intersection.setOnAction(intersectionEventHandler);
 
-        operation.getItems().addAll(cartesianProduct, tensorProduct);
+        operation.getItems().addAll(cartesianProduct, tensorProduct, union, intersection);
 
         return operation;
     }
@@ -170,6 +176,60 @@ public class AppMenu {
         return openFileChooser.showOpenDialog(ownerStage);
     }
 
+    private GraphPane createGraphPaneFromSource(GraphController graphController) {
+        GraphPane graphPane = new GraphPane(graphController);
+
+        Random nodePositionRandom = new Random(System.currentTimeMillis());
+
+        for (Node node : graphController.getNodes()) {
+            DrawableNode drawableNode = new DrawableNode(node);
+            drawableNode.getShape().setCenterX(
+                    nodePositionRandom.nextInt((int) MAIN_FORM_WIDTH - 100) + 50
+            );
+            drawableNode.getShape().setCenterY(
+                    nodePositionRandom.nextInt((int) MAIN_FORM_HEIGHT - 300) + 50
+            );
+
+            graphPane.getPane().getChildren().add(drawableNode.getShape());
+            graphPane.getDrawableNodes().add(drawableNode);
+            drawableNode.getShape().toFront();
+        }
+
+        for (DrawableNode begin : graphPane.getDrawableNodes()) {
+            for (DrawableNode end : graphPane.getDrawableNodes()) {
+                Arc arc = graphController.getGraph().getArc(begin.getSourceNode(), end.getSourceNode());
+                if (arc != null) {
+                    DrawableArc drawableArc = new DrawableArc(arc, begin, end);
+                    graphPane.getPane().getChildren().addAll(drawableArc.getLine());
+                    graphPane.getDrawableArcs().add(drawableArc);
+                }
+            }
+        }
+
+        for (DrawableNode drawableNode : graphPane.getDrawableNodes()) {
+            drawableNode.getShape().toFront();
+        }
+
+        return graphPane;
+    }
+
+    private boolean isGraphAlreadyExist(String name) {
+        for (Tab tab : graphTabPane.getManagingGraphs().keySet()) {
+            if (tab.getText().equals(name)) {
+                Alert error = createEmptyDialog(new Label("Such graph is already exists"), "Error");
+
+                ButtonType OK = new ButtonType("OK");
+                error.getButtonTypes().add(OK);
+
+                error.showAndWait();
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /*
         Event handlers
      */
@@ -189,25 +249,13 @@ public class AppMenu {
         newGraphDialog.getButtonTypes().add(CREATE);
 
         ((Button) newGraphDialog.getDialogPane().lookupButton(CREATE)).setOnAction(actionEvent -> {
-            String graphName = name.getText();
+            Graph newGraph = new Graph(name.getText());
 
-            for (Tab tab : graphTabPane.getManagingGraphs().keySet()) {
-                if (tab.getText().equals(graphName)) {
-                    Alert error = createEmptyDialog(new Label("Such graph is already exists"), "Error");
-
-                    ButtonType OK = new ButtonType("OK");
-                    error.getButtonTypes().add(OK);
-
-                    ((Button) error.getDialogPane().lookupButton(OK)).setOnAction(aaa -> {
-                        newGraphDialog.show();
-                    });
-
-                    error.show();
-                    return;
-                }
+            if (!isGraphAlreadyExist(newGraph.getName())) {
+                graphTabPane.newTab(newGraph);
+            } else {
+                newGraphDialog.show();
             }
-
-            graphTabPane.newTab(name.getText());
         });
 
         newGraphDialog.show();
@@ -231,7 +279,12 @@ public class AppMenu {
 
         if (selectedFile != null) {
             Pair<String, GraphPane> namedGraphPane = new FileProcessor(selectedFile.getAbsolutePath()).read();
-            graphTabPane.newTab(namedGraphPane.getKey(), namedGraphPane.getValue());
+
+            if (!isGraphAlreadyExist(namedGraphPane.getValue().getGraphController().getGraph().getName())) {
+                graphTabPane.newTab(namedGraphPane.getValue());
+            } else {
+                createOpenFileDialog();
+            }
         }
     };
 
@@ -297,7 +350,7 @@ public class AppMenu {
         ComboBox<String> gGraphName = new ComboBox<>();
         ComboBox<String> hGraphName = new ComboBox<>();
 
-        for (Tab tab : graphTabPane.getTabPane().getTabs()) {
+        for (Tab tab : graphTabPane.getManagingGraphs().keySet()) {
             gGraphName.getItems().add(tab.getText());
             hGraphName.getItems().add(tab.getText());
         }
@@ -322,52 +375,23 @@ public class AppMenu {
             String graphName = gGraphName.getSelectionModel().getSelectedItem()
                     + " □ " + hGraphName.getSelectionModel().getSelectedItem();
 
-            Graph product = GraphProduct.cartesianProduct(
-                    gGraphPane.getGraphController().getGraph(),
-                    hGraphPane.getGraphController().getGraph()
-            );
-
-            GraphController productController = new GraphController(product);
-            GraphPane productGraphPane = new GraphPane(productController);
-
-            Random nodePositionRandom = new Random(System.currentTimeMillis());
-
-            for (Node node : product.getNodes()) {
-                DrawableNode drawableNode = new DrawableNode(node);
-                drawableNode.getShape().setCenterX(
-                        nodePositionRandom.nextInt((int) MAIN_FORM_WIDTH - 100) + 50
+            if (!isGraphAlreadyExist(graphName)) {
+                Graph product = GraphProduct.cartesianProduct(
+                        gGraphPane.getGraphController().getGraph(),
+                        hGraphPane.getGraphController().getGraph()
                 );
-                drawableNode.getShape().setCenterY(
-                        nodePositionRandom.nextInt((int) MAIN_FORM_HEIGHT - 300) + 50
-                );
+                product.setName(graphName);
 
-                productGraphPane.getPane().getChildren().add(drawableNode.getShape());
-                productGraphPane.getDrawableNodes().add(drawableNode);
-                drawableNode.getShape().toFront();
+                graphTabPane.newTab(createGraphPaneFromSource(new GraphController(product)));
+            } else {
+                cartesianProductDialog.show();
             }
-
-            for (DrawableNode begin : productGraphPane.getDrawableNodes()) {
-                for (DrawableNode end : productGraphPane.getDrawableNodes()) {
-                    Arc arc = product.getArc(begin.getSourceNode(), end.getSourceNode());
-                    if (arc != null) {
-                        DrawableArc drawableArc = new DrawableArc(arc, begin, end);
-                        productGraphPane.getPane().getChildren().addAll(drawableArc.getLine(), drawableArc.getArrow());
-                        productGraphPane.getDrawableArcs().add(drawableArc);
-                    }
-                }
-            }
-
-            for (DrawableNode drawableNode : productGraphPane.getDrawableNodes()) {
-                drawableNode.getShape().toFront();
-            }
-
-            graphTabPane.newTab(graphName, productGraphPane);
         });
 
         cartesianProductDialog.show();
     };
 
-    // Vector product of two specified graphs
+    // Tensor product of two specified graphs
     private EventHandler<ActionEvent> tensorProductEventHandler = e -> {
         ComboBox<String> gGraphName = new ComboBox<>();
         ComboBox<String> hGraphName = new ComboBox<>();
@@ -385,7 +409,7 @@ public class AppMenu {
         GridPane.setMargin(gGraphName, new Insets(CIRCLE_RADIUS));
         GridPane.setMargin(hGraphName, new Insets(CIRCLE_RADIUS));
 
-        Alert tensorProductDialog = createEmptyDialog(gridPane, "Cartesian product");
+        Alert tensorProductDialog = createEmptyDialog(gridPane, "Tensor product");
 
         ButtonType CREATE = new ButtonType("Create");
         tensorProductDialog.getButtonTypes().add(CREATE);
@@ -397,49 +421,111 @@ public class AppMenu {
             String graphName = gGraphName.getSelectionModel().getSelectedItem()
                     + " × " + hGraphName.getSelectionModel().getSelectedItem();
 
-            Graph product = GraphProduct.tensorProduct(
-                    gGraphPane.getGraphController().getGraph(),
-                    hGraphPane.getGraphController().getGraph()
-            );
-
-            GraphController productController = new GraphController(product);
-            GraphPane productGraphPane = new GraphPane(productController);
-
-            Random nodePositionRandom = new Random(System.currentTimeMillis());
-
-            for (Node node : product.getNodes()) {
-                DrawableNode drawableNode = new DrawableNode(node);
-                drawableNode.getShape().setCenterX(
-                        nodePositionRandom.nextInt((int) MAIN_FORM_WIDTH - 100) + 50
-                );
-                drawableNode.getShape().setCenterY(
-                        nodePositionRandom.nextInt((int) MAIN_FORM_HEIGHT - 300) + 50
+            if (!isGraphAlreadyExist(graphName)) {
+                Graph product = GraphProduct.tensorProduct(
+                        gGraphPane.getGraphController().getGraph(),
+                        hGraphPane.getGraphController().getGraph()
                 );
 
-                productGraphPane.getPane().getChildren().add(drawableNode.getShape());
-                productGraphPane.getDrawableNodes().add(drawableNode);
-                drawableNode.getShape().toFront();
+                graphTabPane.newTab(createGraphPaneFromSource(new GraphController(product)));
+            } else {
+                tensorProductDialog.show();
             }
-
-            for (DrawableNode begin : productGraphPane.getDrawableNodes()) {
-                for (DrawableNode end : productGraphPane.getDrawableNodes()) {
-                    Arc arc = product.getArc(begin.getSourceNode(), end.getSourceNode());
-                    if (arc != null) {
-                        DrawableArc drawableArc = new DrawableArc(arc, begin, end);
-                        productGraphPane.getPane().getChildren().addAll(drawableArc.getLine());
-                        productGraphPane.getDrawableArcs().add(drawableArc);
-                    }
-                }
-            }
-
-            for (DrawableNode drawableNode : productGraphPane.getDrawableNodes()) {
-                drawableNode.getShape().toFront();
-            }
-
-            graphTabPane.newTab(graphName, productGraphPane);
         });
 
         tensorProductDialog.show();
+    };
+
+    // Union of graphs
+    private EventHandler<ActionEvent> unionEventHandler = e -> {
+        ComboBox<String> gGraphName = new ComboBox<>();
+        ComboBox<String> hGraphName = new ComboBox<>();
+
+        for (Tab tab : graphTabPane.getTabPane().getTabs()) {
+            gGraphName.getItems().add(tab.getText());
+            hGraphName.getItems().add(tab.getText());
+        }
+
+        GridPane gridPane = new GridPane();
+        gridPane.add(new Label("First graph:"), 0, 0);
+        gridPane.add(new Label("Second graph:"), 1, 0);
+        gridPane.add(gGraphName, 0, 1);
+        gridPane.add(hGraphName, 1, 1);
+        GridPane.setMargin(gGraphName, new Insets(CIRCLE_RADIUS));
+        GridPane.setMargin(hGraphName, new Insets(CIRCLE_RADIUS));
+
+        Alert unionDialog = createEmptyDialog(gridPane, "Union");
+
+        ButtonType CREATE = new ButtonType("Create");
+        unionDialog.getButtonTypes().add(CREATE);
+
+        ((Button) unionDialog.getDialogPane().lookupButton(CREATE)).setOnAction(actionEvent -> {
+            GraphPane gGraphPane = graphTabPane.getGraphPaneAtTab(gGraphName.getSelectionModel().getSelectedItem());
+            GraphPane hGraphPane = graphTabPane.getGraphPaneAtTab(hGraphName.getSelectionModel().getSelectedItem());
+
+            String graphName = gGraphName.getSelectionModel().getSelectedItem()
+                    + " ∪ " + hGraphName.getSelectionModel().getSelectedItem();
+
+            if (!isGraphAlreadyExist(graphName)) {
+                Graph union = GraphOperation.union(
+                        gGraphPane.getGraphController().getGraph(),
+                        hGraphPane.getGraphController().getGraph()
+                );
+                union.setName(graphName);
+
+                graphTabPane.newTab(createGraphPaneFromSource(new GraphController(union)));
+            } else {
+                unionDialog.show();
+            }
+        });
+
+        unionDialog.show();
+    };
+
+    // Intersection of graphs
+    private EventHandler<ActionEvent> intersectionEventHandler = e -> {
+        ComboBox<String> gGraphName = new ComboBox<>();
+        ComboBox<String> hGraphName = new ComboBox<>();
+
+        for (Tab tab : graphTabPane.getTabPane().getTabs()) {
+            gGraphName.getItems().add(tab.getText());
+            hGraphName.getItems().add(tab.getText());
+        }
+
+        GridPane gridPane = new GridPane();
+        gridPane.add(new Label("First graph:"), 0, 0);
+        gridPane.add(new Label("Second graph:"), 1, 0);
+        gridPane.add(gGraphName, 0, 1);
+        gridPane.add(hGraphName, 1, 1);
+        GridPane.setMargin(gGraphName, new Insets(CIRCLE_RADIUS));
+        GridPane.setMargin(hGraphName, new Insets(CIRCLE_RADIUS));
+
+        Alert intersectionDialog = createEmptyDialog(gridPane, "Intersection");
+
+        ButtonType CREATE = new ButtonType("Create");
+        intersectionDialog.getButtonTypes().add(CREATE);
+
+        ((Button) intersectionDialog.getDialogPane().lookupButton(CREATE)).setOnAction(actionEvent -> {
+            GraphPane gGraphPane = graphTabPane.getGraphPaneAtTab(gGraphName.getSelectionModel().getSelectedItem());
+            GraphPane hGraphPane = graphTabPane.getGraphPaneAtTab(hGraphName.getSelectionModel().getSelectedItem());
+
+            String graphName = gGraphName.getSelectionModel().getSelectedItem()
+                    + " ▲ " + hGraphName.getSelectionModel().getSelectedItem();
+
+            if (!isGraphAlreadyExist(graphName)) {
+                Graph intersection = GraphOperation.intersection(
+                        gGraphPane.getGraphController().getGraph(),
+                        hGraphPane.getGraphController().getGraph()
+                );
+                intersection.setName(graphName);
+
+                graphTabPane.newTab(createGraphPaneFromSource(new GraphController(intersection)));
+            } else {
+                intersectionDialog.show();
+            }
+        });
+
+        intersectionDialog.show();
     };
 
     // Finding of hamiltonian cycles
