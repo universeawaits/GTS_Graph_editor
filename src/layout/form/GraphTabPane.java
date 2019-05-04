@@ -11,6 +11,7 @@ import java.util.Map;
 import static sample.Main.MAIN_FORM_HEIGHT;
 import static sample.Main.MAIN_FORM_WIDTH;
 
+
 public class GraphTabPane {
     private static final int TAB_TITLE_WIDTH = 100;
 

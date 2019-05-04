@@ -186,9 +186,12 @@ public class PlanarityVerifier {
             return;
         }
 
-        for (Arc arc : arcs)
-        {
+        for (Arc arc : arcs) {
             if (arc.equals(unavailableArc)) {
+                continue;
+            }
+
+            if ((nodeColors.get(arc.getEnd()) == null)) {
                 continue;
             }
 
@@ -199,7 +202,9 @@ public class PlanarityVerifier {
                 nodeColors.replace(arc.getEnd(), 1);
             }
 
-            else if (nodeColors.get(arc.getBegin()) == 1 && arc.getEnd().equals(currentNode)) {
+            else if ((nodeColors.get(arc.getBegin()) != null) &&
+                nodeColors.get(arc.getBegin()) == 1 && arc.getEnd().equals(currentNode)) {
+
                 List<Node> trackingCycleCopy = new ArrayList<>(trackingCycle.getPath());
                 trackingCycleCopy.add(arc.getBegin()); // +1 ???
                 dfsKSubgraph(arc.getBegin(), cycleEndNode, arcs, nodeColors, arc, new Path(trackingCycleCopy), cycles);

@@ -2,7 +2,6 @@ package layout.form;
 
 import controller.FileProcessor;
 import controller.GraphController;
-import controller.GraphOperation;
 import controller.GraphProduct;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,6 +10,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
@@ -19,7 +19,9 @@ import layout.DrawableNode;
 import model.*;
 
 import java.io.File;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static layout.DrawableNode.CIRCLE_RADIUS;
@@ -109,10 +111,15 @@ public class AppMenu {
     private Menu createAlgorithmMenu() {
         Menu algorithm = new Menu("Algorithms");
         MenuItem hamiltonianCycles = new MenuItem("Hamiltonian cycles");
+        //eylerrr has to be added
+        Menu coloring = new Menu("Coloring");
+        MenuItem coloringNodes = new MenuItem("Coloring of nodes");
 
         hamiltonianCycles.setOnAction(findHamiltonianCyclesEventHandler);
+        coloringNodes.setOnAction(coloringNodesEventHandler);
 
-        algorithm.getItems().addAll(hamiltonianCycles);
+        coloring.getItems().add(coloringNodes);
+        algorithm.getItems().addAll(hamiltonianCycles, coloring);
 
         return algorithm;
     }
@@ -122,15 +129,11 @@ public class AppMenu {
         Menu operation = new Menu("Operations");
         MenuItem cartesianProduct = new MenuItem("Cartesian product");
         MenuItem tensorProduct = new MenuItem("Tensor product");
-        MenuItem union = new MenuItem("Union");
-        MenuItem intersection = new MenuItem("Intersection");
 
-        union.setOnAction(unionEventHandler);
         cartesianProduct.setOnAction(cartesianProductEventHandler);
         tensorProduct.setOnAction(tensorProductEventHandler);
-        intersection.setOnAction(intersectionEventHandler);
 
-        operation.getItems().addAll(cartesianProduct, tensorProduct, union, intersection);
+        operation.getItems().addAll(cartesianProduct, tensorProduct);
 
         return operation;
     }
@@ -436,98 +439,6 @@ public class AppMenu {
         tensorProductDialog.show();
     };
 
-    // Union of graphs
-    private EventHandler<ActionEvent> unionEventHandler = e -> {
-        ComboBox<String> gGraphName = new ComboBox<>();
-        ComboBox<String> hGraphName = new ComboBox<>();
-
-        for (Tab tab : graphTabPane.getTabPane().getTabs()) {
-            gGraphName.getItems().add(tab.getText());
-            hGraphName.getItems().add(tab.getText());
-        }
-
-        GridPane gridPane = new GridPane();
-        gridPane.add(new Label("First graph:"), 0, 0);
-        gridPane.add(new Label("Second graph:"), 1, 0);
-        gridPane.add(gGraphName, 0, 1);
-        gridPane.add(hGraphName, 1, 1);
-        GridPane.setMargin(gGraphName, new Insets(CIRCLE_RADIUS));
-        GridPane.setMargin(hGraphName, new Insets(CIRCLE_RADIUS));
-
-        Alert unionDialog = createEmptyDialog(gridPane, "Union");
-
-        ButtonType CREATE = new ButtonType("Create");
-        unionDialog.getButtonTypes().add(CREATE);
-
-        ((Button) unionDialog.getDialogPane().lookupButton(CREATE)).setOnAction(actionEvent -> {
-            GraphPane gGraphPane = graphTabPane.getGraphPaneAtTab(gGraphName.getSelectionModel().getSelectedItem());
-            GraphPane hGraphPane = graphTabPane.getGraphPaneAtTab(hGraphName.getSelectionModel().getSelectedItem());
-
-            String graphName = gGraphName.getSelectionModel().getSelectedItem()
-                    + " ∪ " + hGraphName.getSelectionModel().getSelectedItem();
-
-            if (!isGraphAlreadyExist(graphName)) {
-                Graph union = GraphOperation.union(
-                        gGraphPane.getGraphController().getGraph(),
-                        hGraphPane.getGraphController().getGraph()
-                );
-                union.setName(graphName);
-
-                graphTabPane.newTab(createGraphPaneFromSource(new GraphController(union)));
-            } else {
-                unionDialog.show();
-            }
-        });
-
-        unionDialog.show();
-    };
-
-    // Intersection of graphs
-    private EventHandler<ActionEvent> intersectionEventHandler = e -> {
-        ComboBox<String> gGraphName = new ComboBox<>();
-        ComboBox<String> hGraphName = new ComboBox<>();
-
-        for (Tab tab : graphTabPane.getTabPane().getTabs()) {
-            gGraphName.getItems().add(tab.getText());
-            hGraphName.getItems().add(tab.getText());
-        }
-
-        GridPane gridPane = new GridPane();
-        gridPane.add(new Label("First graph:"), 0, 0);
-        gridPane.add(new Label("Second graph:"), 1, 0);
-        gridPane.add(gGraphName, 0, 1);
-        gridPane.add(hGraphName, 1, 1);
-        GridPane.setMargin(gGraphName, new Insets(CIRCLE_RADIUS));
-        GridPane.setMargin(hGraphName, new Insets(CIRCLE_RADIUS));
-
-        Alert intersectionDialog = createEmptyDialog(gridPane, "Intersection");
-
-        ButtonType CREATE = new ButtonType("Create");
-        intersectionDialog.getButtonTypes().add(CREATE);
-
-        ((Button) intersectionDialog.getDialogPane().lookupButton(CREATE)).setOnAction(actionEvent -> {
-            GraphPane gGraphPane = graphTabPane.getGraphPaneAtTab(gGraphName.getSelectionModel().getSelectedItem());
-            GraphPane hGraphPane = graphTabPane.getGraphPaneAtTab(hGraphName.getSelectionModel().getSelectedItem());
-
-            String graphName = gGraphName.getSelectionModel().getSelectedItem()
-                    + " ▲ " + hGraphName.getSelectionModel().getSelectedItem();
-
-            if (!isGraphAlreadyExist(graphName)) {
-                Graph intersection = GraphOperation.intersection(
-                        gGraphPane.getGraphController().getGraph(),
-                        hGraphPane.getGraphController().getGraph()
-                );
-                intersection.setName(graphName);
-
-                graphTabPane.newTab(createGraphPaneFromSource(new GraphController(intersection)));
-            } else {
-                intersectionDialog.show();
-            }
-        });
-
-        intersectionDialog.show();
-    };
-
     // Finding of hamiltonian cycles
     private EventHandler<ActionEvent> findHamiltonianCyclesEventHandler = e -> {
         ObservableList<String> cycles = FXCollections.observableArrayList();
@@ -550,12 +461,35 @@ public class AppMenu {
         hamiltonianCyclesDialog.show();
     };
 
+    // Coloring the graph nodes
+    private EventHandler<ActionEvent> coloringNodesEventHandler = e -> {
+        Map<Node, String> stringColors = graphTabPane.currentGraphPane().getGraphController().colorizeNodes();
+        Map<String, Color> colors = new HashMap<>();
+
+        Random random = new Random(System.currentTimeMillis());
+
+        for (String stringColor : stringColors.values()) {
+            colors.put(
+                    stringColor,
+                    Color.color(random.nextDouble(),
+                            random.nextDouble(),
+                            random.nextDouble())
+            );
+        }
+
+        List<DrawableNode> drawableNodes = graphTabPane.currentGraphPane().getDrawableNodes();
+
+        for (DrawableNode drawableNode : drawableNodes) {
+            drawableNode.getShape().setFill(colors.get(stringColors.get(drawableNode.getSourceNode())));
+        }
+    };
+
     // Taking graph's adjacency matrix
     private EventHandler<ActionEvent> getAdjacencyMatrixEventHandler = e -> {
         Label matrix;
 
         try {
-            matrix = new Label(graphTabPane.currentGraphPane().getGraphController().adjacencyMatrix().toString());
+            matrix = new Label(graphTabPane.currentGraphPane().getGraphController().adjacencyMatrix().matrixToString());
         } catch (NullPointerException ex) {
             return;
         }

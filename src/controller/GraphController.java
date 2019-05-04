@@ -146,6 +146,15 @@ public class GraphController {
         return centres;
     }
 
+    // Check for graph planarity
+    public boolean isPlanar() {
+        return new PlanarityVerifier(graph).isPlanar();
+    }
+
+    /*
+     *      Other algorithms
+     */
+
     // Finding all of hamiltonian cycles in the graph
     public ObservableList<Path> hamiltonianCycles() {
         ObservableList<Path> hamiltonianCycles = FXCollections.observableArrayList();
@@ -162,9 +171,8 @@ public class GraphController {
         return hamiltonianCycles;
     }
 
-    // Check for graph planarity
-    public boolean isPlanar() {
-        return new PlanarityVerifier(graph).isPlanar();
+    public Map<Node, String> colorizeNodes() {
+        return new Colorer(graph).colorizeNodes();
     }
 
     /*
@@ -190,8 +198,7 @@ public class GraphController {
                                      Map<Node, Boolean> visitedNodes,
                                      ObservableList<Path> hamiltonianCyclesBeginsWithThisNode) {
 
-        if (trackingCycle.getPath().size() == graph.getNodes().size())
-        {
+        if (trackingCycle.getPath().size() == graph.getNodes().size()) {
             if (graph.getArcs().contains(new Arc(trackingCycle.getPath().get(trackingCycle.getPath().size() - 1),
                     trackingCycle.getPath().get(0)))) {
                 Path hamiltonianCycle = new Path(trackingCycle);
@@ -210,18 +217,12 @@ public class GraphController {
         }
 
         for (Node adjacentNode : adjacencyMatrix.adjacentNodesOf(begin)) {
-            // process only unvisited vertices as Hamiltonian
-            // path visits each vertex exactly once
-            if (!visitedNodes.get(adjacentNode))
-            {
+            if (!visitedNodes.get(adjacentNode)) {
                 visitedNodes.replace(adjacentNode, true);
                 trackingCycle.getPath().add(adjacentNode);
 
-                // check if adding vertex w to the path leads
-                // to solution or not
                 dfsHamiltonianCycle(adjacentNode, trackingCycle, visitedNodes, hamiltonianCyclesBeginsWithThisNode);
 
-                // Backtrack
                 visitedNodes.replace(adjacentNode, false);
                 trackingCycle.getPath().remove(trackingCycle.getPath().size() - 1);
             }

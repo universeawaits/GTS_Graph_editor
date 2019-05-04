@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 
 import java.util.List;
 
+
 public class Graph {
     private String name;
 

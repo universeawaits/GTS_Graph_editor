@@ -1,6 +1,5 @@
 package layout;
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.effect.Bloom;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;

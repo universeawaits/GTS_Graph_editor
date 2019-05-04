@@ -13,18 +13,17 @@ public class AdjacencyMatrix {
         graph = new Graph();
 
         adjacencyMatrix = new HashMap<>();
-        configureAdjacentNodesMatrix();
+        configureAdjacencyMatrix();
     }
 
     public AdjacencyMatrix(Graph graph) {
         this.graph = graph;
 
         adjacencyMatrix = new HashMap<>();
-        configureAdjacentNodesMatrix();
+        configureAdjacencyMatrix();
     }
 
-    @Override
-    public String toString() {
+    public String matrixToString() {
         String toString = "";
 
         for (Node node : adjacencyMatrix.keySet()) {
@@ -45,7 +44,7 @@ public class AdjacencyMatrix {
         Configs
      */
 
-    private void configureAdjacentNodesMatrix() {
+    private void configureAdjacencyMatrix() {
         for (Node node : graph.getNodes()) {
             adjacencyMatrix.put(node, setAdjacentNodesFor(node));
         }
