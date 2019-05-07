@@ -2,7 +2,6 @@ package layout.form;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -131,7 +130,7 @@ public class GraphPane {
         Others
      */
 
-    public void perforrmKeyAction(KeyEvent event) {
+    public void performKeyAction(KeyEvent event) {
         switch (actionType) {
             case POINTER: {
                 if (event.getCode().equals(KeyCode.DELETE)) {

@@ -2,7 +2,7 @@ package layout.form;
 
 import controller.FileProcessor;
 import controller.GraphController;
-import controller.GraphProduct;
+import controller.GraphProducer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,10 +19,7 @@ import layout.DrawableNode;
 import model.*;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import static layout.DrawableNode.CIRCLE_RADIUS;
 import static sample.Main.MAIN_FORM_HEIGHT;
@@ -395,10 +392,10 @@ public class AppMenu {
                     + " □ " + hGraphName.getSelectionModel().getSelectedItem();
 
             if (!isGraphAlreadyExist(graphName)) {
-                Graph product = GraphProduct.cartesianProduct(
+                Graph product = new GraphProducer(
                         gGraphPane.getGraphController().getGraph(),
-                        hGraphPane.getGraphController().getGraph()
-                );
+                        hGraphPane.getGraphController().getGraph())
+                        .cartesianProduct();
                 product.setName(graphName);
 
                 graphTabPane.newTab(createGraphPaneFromSource(new GraphController(product)));
@@ -441,10 +438,10 @@ public class AppMenu {
                     + " × " + hGraphName.getSelectionModel().getSelectedItem();
 
             if (!isGraphAlreadyExist(graphName)) {
-                Graph product = GraphProduct.tensorProduct(
+                Graph product = new GraphProducer(
                         gGraphPane.getGraphController().getGraph(),
-                        hGraphPane.getGraphController().getGraph()
-                );
+                        hGraphPane.getGraphController().getGraph())
+                        .tensorProduct();
                 product.setName(graphName);
 
                 graphTabPane.newTab(createGraphPaneFromSource(new GraphController(product)));
@@ -458,7 +455,50 @@ public class AppMenu {
 
     // Making graph complete
     private EventHandler<ActionEvent> makeCompleteEventHandler = e -> {
-        graphTabPane.currentGraphPane().getGraphController().makeComplete();
+        GraphPane currentGraphPane = graphTabPane.currentGraphPane();
+
+        currentGraphPane.getGraphController().makeComplete();
+
+        for (Arc arc : currentGraphPane.getGraphController().getArcs()) {
+            DrawableArc newInverse = new DrawableArc(
+                    new Arc(arc.getEnd(), arc.getBegin(),
+                            false),
+                    new DrawableNode(arc.getEnd()),
+                    new DrawableNode(arc.getBegin())
+            );
+
+            if (currentGraphPane.getDrawableArcs().indexOf(newInverse) != -1) {
+                DrawableArc inverseFound = currentGraphPane.getDrawableArcs()
+                        .get(currentGraphPane.getDrawableArcs().indexOf(newInverse));
+
+                currentGraphPane.getPane().getChildren()
+                        .remove(inverseFound.getArrow()); // kaef
+
+                continue;
+            }
+
+            DrawableNode newBegin = currentGraphPane.getDrawableNodes()
+                    .get(currentGraphPane.getDrawableNodes().indexOf(new DrawableNode(arc.getBegin())));
+            DrawableNode newEnd = currentGraphPane.getDrawableNodes()
+                    .get(currentGraphPane.getDrawableNodes().indexOf(new DrawableNode(arc.getEnd())));
+
+            DrawableArc newPrime = new DrawableArc(
+                    arc,
+                    newBegin,
+                    newEnd
+            );
+
+            if (currentGraphPane.getDrawableArcs().indexOf(newPrime) != -1) {
+                continue;
+            }
+
+            currentGraphPane.getPane().getChildren().add(newPrime.getLine());
+            currentGraphPane.getDrawableArcs().add(newPrime);
+        }
+
+        for (DrawableNode drawableNode : currentGraphPane.getDrawableNodes()) {
+            drawableNode.getShape().toFront();
+        }
     };
 
     // Finding of hamiltonian cycles

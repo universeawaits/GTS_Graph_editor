@@ -182,16 +182,21 @@ public class GraphController {
 
     // Making all nodes adjacent to all nodes
     public void makeComplete() {
-        List<Arc> toAdd = new ArrayList<>();
+        for (Node begin : graph.getNodes()) {
+            for (Node end : graph.getNodes()) {
+                if (begin.equals(end)) {
+                    continue;
+                }
 
-        for (Arc arc : graph.getArcs()) {
-            if (arc.isDirected()) {
-                arc.setDirected(false);
-                toAdd.add(new Arc(arc.getEnd(), arc.getBegin(), false));
+                if (!graph.getArcs().contains(new Arc(begin, end))) {
+                    graph.getArcs().add(new Arc(begin, end));
+                }
             }
         }
 
-        graph.getArcs().addAll(toAdd);
+        for (Arc arc : graph.getArcs()) {
+            arc.setDirected(false);
+        }
     }
 
     /*

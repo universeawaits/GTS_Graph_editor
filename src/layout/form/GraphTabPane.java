@@ -60,7 +60,7 @@ public class GraphTabPane {
 
         tabPane.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
             try {
-                currentGraphPane().perforrmKeyAction(e);
+                currentGraphPane().performKeyAction(e);
             } finally {
                 return;
             }
