@@ -294,10 +294,10 @@ public class AppMenu {
         File selectedFile = createOpenFileDialog();
 
         if (selectedFile != null) {
-            Pair<String, GraphPane> namedGraphPane = new FileProcessor(selectedFile.getAbsolutePath()).read();
+            GraphPane namedGraphPane = new FileProcessor(selectedFile.getAbsolutePath()).read();
 
-            if (!isGraphAlreadyExist(namedGraphPane.getValue().getGraphController().getGraph().getName())) {
-                graphTabPane.newTab(namedGraphPane.getValue());
+            if (!isGraphAlreadyExist(namedGraphPane.getGraphController().getGraph().getName())) {
+                graphTabPane.newTab(namedGraphPane);
             } else {
                 createOpenFileDialog();
             }

@@ -314,7 +314,7 @@ public class FileProcessor {
         }
     }
 
-    public Pair<String, GraphPane> read() {
+    public GraphPane read() {
         GraphPane graphPane = new GraphPane();
         String graphName = "";
 
@@ -336,9 +336,9 @@ public class FileProcessor {
             ex.printStackTrace();
         }
 
-        graphName = saxReaderHandler.getResultGraphName();
         graphPane = saxReaderHandler.getResultGraphPane();
+        graphPane.getGraphController().getGraph().setName(saxReaderHandler.getResultGraphName());
 
-        return new Pair<>(graphName, graphPane);
+        return graphPane;
     }
 }
