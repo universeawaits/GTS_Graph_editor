@@ -147,7 +147,7 @@ public class GraphController {
 
     // Check for graph planarity
     public boolean isPlanar() {
-        return new PlanarityVerifier(graph).verify();
+        return (graph.getNodes().size() < 5 || !isComplete()) && new PlanarityVerifier(graph).verify();
     }
 
     // Check for graph complete
