@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static layout.DrawableNode.CIRCLE_RADIUS;
+
 
 public class FileProcessor {
     private class SAXReaderHandler extends DefaultHandler {
@@ -95,7 +97,7 @@ public class FileProcessor {
 
                     DrawableNode drawableNode = new DrawableNode(new Node(name));
                     drawableNode.getShape().setCenterX(centerXDouble);
-                    drawableNode.getShape().setCenterY(centerYDouble);
+                    drawableNode.getShape().setCenterY(centerYDouble - 5 * CIRCLE_RADIUS);
                     drawableNodes.add(drawableNode);
                     identifiers.put(identifierInt, drawableNode);
 
@@ -191,8 +193,9 @@ public class FileProcessor {
 
             for (DrawableNode drawableNode : drawableNodes) {
                 graph.getNodes().add(drawableNode.getSourceNode());
-                graphPane.getPane().getChildren().add(drawableNode.getShape());
-                drawableNode.getShape().toFront();
+                graphPane.getPane().getChildren().addAll(
+                        drawableNode.getShape(), drawableNode.getName(), drawableNode.getIdentifier()
+                );
             }
 
             for (DrawableArc drawableArc : drawableArcs) {

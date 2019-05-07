@@ -24,7 +24,10 @@ public class GraphProduct {
         for (Node u : gNodes) {
             for (Node v : hNodes) {
                 Pair<Node, Node> uv = new Pair<>(u, v);
-                Node uvMatching = new Node('<' + u.getName() + ", " + v.getName() + '>');
+                Node uvMatching = new Node("<" +
+                        (u.getName().equals("") ? u.getIdentifier() : u.getName())
+                        + ", " +
+                        (v.getName().equals("") ? v.getIdentifier() : v.getName()) + ">");
                 nodePairs.add(uv);
                 nodePairsMatching.put(uv, uvMatching);
                 product.getNodes().add(uvMatching);
@@ -55,7 +58,10 @@ public class GraphProduct {
         for (Node u : gNodes) {
             for (Node v : hNodes) {
                 Pair<Node, Node> uv = new Pair<>(u, v);
-                Node uvMatching = new Node('<' + u.getName() + ", " + v.getName() + '>');
+                Node uvMatching = new Node("<" +
+                        (u.getName().equals("") ? "[" + u.getIdentifier() + "]" : u.getName())
+                        + ", " +
+                        (v.getName().equals("") ? "[" + v.getIdentifier() + "]" : v.getName()) + ">");
                 nodePairs.add(uv);
                 nodePairsMatching.put(uv, uvMatching);
                 product.getNodes().add(uvMatching);

@@ -17,7 +17,7 @@ public class PlanarityVerifier {
     }
 
 
-    public boolean isPlanar() {
+    public boolean verify() {
         Map<Node, Integer> nodeColors = new HashMap<>();
 
         for (Node begin : graph.getNodes()) {

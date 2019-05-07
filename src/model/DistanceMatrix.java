@@ -5,6 +5,7 @@ import javafx.collections.ListChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class DistanceMatrix {
     public static final int INFINITY = 1000000;
 
@@ -38,10 +39,14 @@ public class DistanceMatrix {
     }
 
     /*
-        Configs
+     *      Configs
      */
 
     private void configureDistancesMatrix() {
+        for (Node node : graph.getNodes()) {
+            distancesMap.put(node, allDistancesFrom(node));
+        }
+
         graph.getArcs().addListener((ListChangeListener) changeList -> {
             distancesMap.clear();
             for (Node node : graph.getNodes()) {
@@ -51,7 +56,7 @@ public class DistanceMatrix {
     }
 
     /*
-        Calculations
+     *      Calculations
      */
 
     // Calculation of distances between the node given and all other nodes in the graph

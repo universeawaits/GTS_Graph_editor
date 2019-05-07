@@ -45,9 +45,10 @@ public class AppMenu {
         menuBar.getMenus().addAll(
                 createFileMenu(),
                 createEditMenu(),
-                createStatisticsMenu(),
+                createMetricsMenu(),
                 createOperationMenu(),
-                createAlgorithmMenu()
+                createAlgorithmMenu(),
+                createModificationMenu()
         );
 
         ownerStage = stage;
@@ -91,9 +92,9 @@ public class AppMenu {
         return edit;
     }
 
-    // Creating of statistics menu
-    private Menu createStatisticsMenu() {
-        Menu statistics = new Menu("Statistics");
+    // Creating of metrics menu
+    private Menu createMetricsMenu() {
+        Menu metrics = new Menu("Metrics");
         MenuItem nodesDegrees = new MenuItem("Node degrees");
         MenuItem centers = new MenuItem("Centers");
         MenuItem adjacencyMatrix = new MenuItem("Adjacency matrix");
@@ -102,24 +103,25 @@ public class AppMenu {
         centers.setOnAction(getCentersEventHandler);
         adjacencyMatrix.setOnAction(getAdjacencyMatrixEventHandler);
 
-        statistics.getItems().addAll(nodesDegrees, centers, adjacencyMatrix);
+        metrics.getItems().addAll(nodesDegrees, centers, adjacencyMatrix);
 
-        return statistics;
+        return metrics;
     }
 
     // Creating of algorithms menu
     private Menu createAlgorithmMenu() {
         Menu algorithm = new Menu("Algorithms");
         MenuItem hamiltonianCycles = new MenuItem("Hamiltonian cycles");
-        //eylerrr has to be added
+        MenuItem distanceBetweenNodes = new MenuItem("Distance between nodes");
         Menu coloring = new Menu("Coloring");
         MenuItem coloringNodes = new MenuItem("Coloring of nodes");
 
         hamiltonianCycles.setOnAction(findHamiltonianCyclesEventHandler);
         coloringNodes.setOnAction(coloringNodesEventHandler);
+        distanceBetweenNodes.setOnAction(distanceBetweenNodesEventHandler);
 
         coloring.getItems().add(coloringNodes);
-        algorithm.getItems().addAll(hamiltonianCycles, coloring);
+        algorithm.getItems().addAll(hamiltonianCycles, distanceBetweenNodes, coloring);
 
         return algorithm;
     }
@@ -136,6 +138,18 @@ public class AppMenu {
         operation.getItems().addAll(cartesianProduct, tensorProduct);
 
         return operation;
+    }
+
+    // Creating modification menu
+    private Menu createModificationMenu() {
+        Menu modification = new Menu("Modification");
+        MenuItem makeComplete = new MenuItem("Make complete");
+
+        makeComplete.setOnAction(makeCompleteEventHandler);
+
+        modification.getItems().addAll(makeComplete);
+
+        return modification;
     }
 
     /*
@@ -193,7 +207,9 @@ public class AppMenu {
                     nodePositionRandom.nextInt((int) MAIN_FORM_HEIGHT - 300) + 50
             );
 
-            graphPane.getPane().getChildren().add(drawableNode.getShape());
+            graphPane.getPane().getChildren().addAll(
+                    drawableNode.getShape(), drawableNode.getName(), drawableNode.getIdentifier()
+            );
             graphPane.getDrawableNodes().add(drawableNode);
             drawableNode.getShape().toFront();
         }
@@ -429,6 +445,7 @@ public class AppMenu {
                         gGraphPane.getGraphController().getGraph(),
                         hGraphPane.getGraphController().getGraph()
                 );
+                product.setName(graphName);
 
                 graphTabPane.newTab(createGraphPaneFromSource(new GraphController(product)));
             } else {
@@ -437,6 +454,11 @@ public class AppMenu {
         });
 
         tensorProductDialog.show();
+    };
+
+    // Making graph complete
+    private EventHandler<ActionEvent> makeCompleteEventHandler = e -> {
+        graphTabPane.currentGraphPane().getGraphController().makeComplete();
     };
 
     // Finding of hamiltonian cycles
@@ -482,6 +504,68 @@ public class AppMenu {
         for (DrawableNode drawableNode : drawableNodes) {
             drawableNode.getShape().setFill(colors.get(stringColors.get(drawableNode.getSourceNode())));
         }
+    };
+
+    // Distance between two specified nodes
+    private EventHandler<ActionEvent> distanceBetweenNodesEventHandler = e -> {
+        ComboBox<String> firstNodeName = new ComboBox<>();
+        ComboBox<String> secondNodeName = new ComboBox<>();
+
+        for (DrawableNode drawableNode : graphTabPane.currentGraphPane().getDrawableNodes()) {
+            firstNodeName.getItems().add(drawableNode.getSourceNode().toString());
+            secondNodeName.getItems().add(drawableNode.getSourceNode().toString());
+        }
+
+        GridPane gridPane = new GridPane();
+        gridPane.add(new Label("Source node:"), 0, 0);
+        gridPane.add(new Label("Destination node:"), 1, 0);
+        gridPane.add(firstNodeName, 0, 1);
+        gridPane.add(secondNodeName, 1, 1);
+        GridPane.setMargin(firstNodeName, new Insets(CIRCLE_RADIUS));
+        GridPane.setMargin(secondNodeName, new Insets(CIRCLE_RADIUS));
+
+        Alert distanceDialog = createEmptyDialog(gridPane, "Distance between two nodes");
+
+        ButtonType GET = new ButtonType("Get");
+        distanceDialog.getButtonTypes().add(GET);
+
+        ((Button) distanceDialog.getDialogPane().lookupButton(GET)).setOnAction(actionEvent -> {
+            Node begin = new Node();
+            Node end = new Node();
+
+            for (DrawableNode drawableNode : graphTabPane.currentGraphPane().getDrawableNodes()) {
+                if (drawableNode.getSourceNode().toString().equals(
+                        firstNodeName.getSelectionModel().getSelectedItem())) {
+                    begin = drawableNode.getSourceNode();
+                }
+
+                if (drawableNode.getSourceNode().toString().equals(
+                        secondNodeName.getSelectionModel().getSelectedItem())) {
+                    end = drawableNode.getSourceNode();
+                }
+            }
+
+            Integer distance = graphTabPane.currentGraphPane().getGraphController()
+                    .getDistanceMatrix().getDistancesMap()
+                    .get(begin).get(end);
+
+            Label distanceText = new Label();
+            Alert distanceAsItIs = createEmptyDialog(distanceText, "Distance");
+            distanceAsItIs.getButtonTypes().add(ButtonType.OK);
+
+            if (distance == DistanceMatrix.INFINITY) {
+                distanceText.setText("Node way from " + begin + " to " + end + " found");
+            } else {
+                distanceText.setText("Distance between " + begin + " and " + end + " is " +
+                                graphTabPane.currentGraphPane().getGraphController()
+                                        .getDistanceMatrix().getDistancesMap()
+                                        .get(begin).get(end));
+            }
+
+            distanceAsItIs.show();
+        });
+
+        distanceDialog.show();
     };
 
     // Taking graph's adjacency matrix

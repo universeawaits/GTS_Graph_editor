@@ -4,8 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static model.DistanceMatrix.INFINITY;
 
@@ -148,7 +147,12 @@ public class GraphController {
 
     // Check for graph planarity
     public boolean isPlanar() {
-        return new PlanarityVerifier(graph).isPlanar();
+        return new PlanarityVerifier(graph).verify();
+    }
+
+    // Check for graph complete
+    public boolean isComplete() {
+        return graph.getArcs().size() == graph.getNodes().size() * (graph.getNodes().size() - 1);
     }
 
     /*
@@ -171,12 +175,27 @@ public class GraphController {
         return hamiltonianCycles;
     }
 
+    // Coloring of nodes
     public Map<Node, String> colorizeNodes() {
         return new Colorer(graph).colorizeNodes();
     }
 
+    // Making all nodes adjacent to all nodes
+    public void makeComplete() {
+        List<Arc> toAdd = new ArrayList<>();
+
+        for (Arc arc : graph.getArcs()) {
+            if (arc.isDirected()) {
+                arc.setDirected(false);
+                toAdd.add(new Arc(arc.getEnd(), arc.getBegin(), false));
+            }
+        }
+
+        graph.getArcs().addAll(toAdd);
+    }
+
     /*
-        Utility
+     *      Utility
      */
 
     // Finds all possible Hamiltonian cycles begins with the node given
