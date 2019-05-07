@@ -214,9 +214,27 @@ public class AppMenu {
         for (DrawableNode begin : graphPane.getDrawableNodes()) {
             for (DrawableNode end : graphPane.getDrawableNodes()) {
                 Arc arc = graphController.getGraph().getArc(begin.getSourceNode(), end.getSourceNode());
+
                 if (arc != null) {
+                    DrawableArc newInverse = new DrawableArc(
+                            new Arc(arc.getEnd(), arc.getBegin(),
+                                    false),
+                            new DrawableNode(arc.getEnd()),
+                            new DrawableNode(arc.getBegin())
+                    );
+
+                    if (graphPane.getDrawableArcs().indexOf(newInverse) != -1) {
+                        DrawableArc inverseFound = graphPane.getDrawableArcs()
+                                .get(graphPane.getDrawableArcs().indexOf(newInverse));
+
+                        graphPane.getPane().getChildren()
+                                .remove(inverseFound.getArrow()); // kaef
+
+                        continue;
+                    }
+
                     DrawableArc drawableArc = new DrawableArc(arc, begin, end);
-                    graphPane.getPane().getChildren().addAll(drawableArc.getLine());
+                    graphPane.getPane().getChildren().addAll(drawableArc.getLine(), drawableArc.getArrow());
                     graphPane.getDrawableArcs().add(drawableArc);
                 }
             }
