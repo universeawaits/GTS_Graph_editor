@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/src/controller/GraphController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/GraphController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/GTS_Graph_editor/controller/PlanarityVerifier.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/GTS_Graph_editor/controller/PlanarityVerifier.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controller/PlanarityVerifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controller/PlanarityVerifier.java" afterDir="false" />
     </list>
     <ignored path="JavaFxApplication.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -74,11 +76,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GraphController.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="GraphController.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/controller/GraphController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="274">
-              <caret line="133" column="30" lean-forward="true" selection-start-line="133" selection-start-column="30" selection-end-line="133" selection-end-column="30" />
+            <state relative-caret-position="325">
+              <caret line="150" column="5" lean-forward="true" selection-start-line="150" selection-start-column="5" selection-end-line="150" selection-end-column="5" />
               <folding>
                 <element signature="method#removeNode#0;class#GraphController#0" />
                 <element signature="method#degreeOf#0;class#GraphController#0" />
@@ -99,8 +101,8 @@
       <file leaf-file-name="AppMenu.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/layout/form/AppMenu.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1100">
-              <caret line="223" column="22" lean-forward="true" selection-start-line="223" selection-start-column="22" selection-end-line="223" selection-end-column="22" />
+            <state relative-caret-position="1632">
+              <caret line="223" column="22" selection-start-line="223" selection-start-column="22" selection-end-line="223" selection-end-column="22" />
               <folding>
                 <element signature="method#createFileMenu#0;class#AppMenu#0" />
                 <element signature="method#createEditMenu#0;class#AppMenu#0" />
@@ -112,13 +114,6 @@
                 <element signature="method#createSaveFileDialog#0;class#AppMenu#0" />
                 <element signature="method#createOpenFileDialog#0;class#AppMenu#0" />
                 <element signature="method#isGraphAlreadyExist#0;class#AppMenu#0" />
-                <element signature="e#8034#8846#0" />
-                <element signature="e#8936#9278#0" />
-                <element signature="e#9369#9840#0" />
-                <element signature="e#9947#10747#0" />
-                <element signature="e#10847#11566#0" />
-                <element signature="e#11688#12153#0" />
-                <element signature="e#14337#16258#0" />
               </folding>
             </state>
           </provider>
@@ -127,20 +122,11 @@
       <file leaf-file-name="FileProcessor.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/controller/FileProcessor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="226">
-              <caret line="322" lean-forward="true" selection-start-line="322" selection-end-line="322" />
+            <state relative-caret-position="4930">
+              <caret line="322" selection-start-line="322" selection-end-line="322" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DrawableNode.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/layout/DrawableNode.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="35" column="27" selection-start-line="35" selection-start-column="27" selection-end-line="35" selection-end-column="27" />
             </state>
           </provider>
         </entry>
@@ -148,24 +134,11 @@
       <file leaf-file-name="GraphTabPane.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/layout/form/GraphTabPane.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="87" column="19" lean-forward="true" selection-start-line="87" selection-start-column="19" selection-end-line="87" selection-end-column="19" />
+            <state relative-caret-position="1258">
+              <caret line="87" column="19" selection-start-line="87" selection-start-column="19" selection-end-line="87" selection-end-column="19" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#getGraphPaneAtTab#0;class#GraphTabPane#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DrawableArc.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/layout/DrawableArc.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1445">
-              <caret line="106" column="43" selection-start-line="106" selection-start-column="43" selection-end-line="106" selection-end-column="43" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="method#updateArrowTransform#0;class#DrawableArc#0" />
               </folding>
             </state>
           </provider>
@@ -183,8 +156,8 @@
       <file leaf-file-name="GraphProducer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/controller/GraphProducer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-187">
-              <caret line="39" column="13" lean-forward="true" selection-start-line="39" selection-start-column="13" selection-end-line="39" selection-end-column="13" />
+            <state relative-caret-position="527">
+              <caret line="39" column="13" selection-start-line="39" selection-start-column="13" selection-end-line="39" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -192,17 +165,30 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PlanarityVerifier.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="PlanarityVerifier.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/controller/PlanarityVerifier.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="139" column="32" lean-forward="true" selection-start-line="139" selection-start-column="32" selection-end-line="139" selection-end-column="32" />
+            <state relative-caret-position="255">
+              <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="method#shrinkage#0;class#PlanarityVerifier#0" />
-                <element signature="method#isK5#0;class#PlanarityVerifier#0" />
-                <element signature="method#isK33#0;class#PlanarityVerifier#0" />
-                <element signature="method#dfsKSubgraph#0;class#PlanarityVerifier#0" />
+                <element signature="method#undirectedEquivalentOf#0;class#PlanarityVerifierV2#0" />
+                <element signature="method#permute#0;class#PlanarityVerifierV2#0" />
+                <element signature="method#isK5#0;class#PlanarityVerifierV2#0" />
+                <element signature="method#isK33#0;class#PlanarityVerifierV2#0" />
+                <element signature="method#isPathExist#0;class#PlanarityVerifierV2#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Path.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/model/Path.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="261">
+              <caret line="36" selection-start-line="36" selection-end-line="36" />
+              <folding>
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -247,7 +233,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/layout/CircleShape.java" />
         <option value="$PROJECT_DIR$/src/layout/Shape.java" />
         <option value="$PROJECT_DIR$/src/layout/NodeShape.java" />
         <option value="$PROJECT_DIR$/src/layout/form/Drawable.java" />
@@ -288,7 +273,6 @@
         <option value="$PROJECT_DIR$/src/model/AdjacencyNodesMatrix.java" />
         <option value="$PROJECT_DIR$/src/model/AdjacencyMatrix.java" />
         <option value="$PROJECT_DIR$/src/model/DistanceMatrix.java" />
-        <option value="$PROJECT_DIR$/src/controller/PlanarityVerifier.java" />
         <option value="$PROJECT_DIR$/src/controller/TreeVerifier.java" />
         <option value="$PROJECT_DIR$/src/controller/CompleteVerifier.java" />
         <option value="$PROJECT_DIR$/src/layout/form/GraphStatusBar.java" />
@@ -298,6 +282,8 @@
         <option value="$PROJECT_DIR$/src/controller/FileProcessor.java" />
         <option value="$PROJECT_DIR$/src/layout/form/AppMenu.java" />
         <option value="$PROJECT_DIR$/src/controller/GraphController.java" />
+        <option value="$PROJECT_DIR$/src/controller/PlanarityVerifierV2.java" />
+        <option value="$PROJECT_DIR$/src/controller/PlanarityVerifier.java" />
       </list>
     </option>
   </component>
@@ -328,7 +314,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -376,8 +361,9 @@
           <select />
         </subPane>
       </pane>
-      <pane id="AndroidView" />
+      <pane id="PackagesPane" />
       <pane id="Scope" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -529,12 +515,13 @@
       <workItem from="1556970123320" duration="7691000" />
       <workItem from="1556994409075" duration="5902000" />
       <workItem from="1557182258837" duration="12624000" />
-      <workItem from="1557238366891" duration="3208000" />
+      <workItem from="1557238366891" duration="3877000" />
+      <workItem from="1557418210830" duration="6059000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="411075000" />
+    <option name="totallyTimeSpent" value="417803000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -550,11 +537,11 @@
       <window_info anchor="right" id="Maven Projects" order="3" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.20697168" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.20697168" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.32897604" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.6703755" visible="true" weight="0.20729166" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.6703755" visible="true" weight="0.20729166" />
       <window_info anchor="bottom" id="Statistic" order="7" weight="0.32897604" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -588,7 +575,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="70" />
+      <option name="time" value="71" />
     </breakpoint-manager>
   </component>
   <component name="antWorkspaceConfiguration">
@@ -596,7 +583,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/layout/TriangleNodeImage.java" />
     <entry file="file://$PROJECT_DIR$/src/layout/CircleNodeShape.java" />
     <entry file="file://$PROJECT_DIR$/src/layout/Drawable.java" />
     <entry file="file://$PROJECT_DIR$/src/layout/ShapeFactory.java" />
@@ -783,16 +769,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/model/Path.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="14" selection-start-line="14" selection-end-line="14" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/controller/TreeVerifier.java" />
     <entry file="file://$PROJECT_DIR$/src/controller/CompleteVerifier.java" />
     <entry file="file://$PROJECT_DIR$/src/layout/form/GraphToolBar.java">
@@ -872,24 +848,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/controller/FileProcessor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="226">
-          <caret line="322" lean-forward="true" selection-start-line="322" selection-end-line="322" />
+        <state relative-caret-position="4930">
+          <caret line="322" selection-start-line="322" selection-end-line="322" />
           <folding>
             <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/controller/PlanarityVerifier.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="139" column="32" lean-forward="true" selection-start-line="139" selection-start-column="32" selection-end-line="139" selection-end-column="32" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#shrinkage#0;class#PlanarityVerifier#0" />
-            <element signature="method#isK5#0;class#PlanarityVerifier#0" />
-            <element signature="method#isK33#0;class#PlanarityVerifier#0" />
-            <element signature="method#dfsKSubgraph#0;class#PlanarityVerifier#0" />
           </folding>
         </state>
       </provider>
@@ -903,8 +865,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/controller/GraphProducer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-187">
-          <caret line="39" column="13" lean-forward="true" selection-start-line="39" selection-start-column="13" selection-end-line="39" selection-end-column="13" />
+        <state relative-caret-position="527">
+          <caret line="39" column="13" selection-start-line="39" selection-start-column="13" selection-end-line="39" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -913,8 +875,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/layout/form/GraphTabPane.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="87" column="19" lean-forward="true" selection-start-line="87" selection-start-column="19" selection-end-line="87" selection-end-column="19" />
+        <state relative-caret-position="1258">
+          <caret line="87" column="19" selection-start-line="87" selection-start-column="19" selection-end-line="87" selection-end-column="19" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#getGraphPaneAtTab#0;class#GraphTabPane#0" />
@@ -924,8 +886,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/layout/form/AppMenu.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1100">
-          <caret line="223" column="22" lean-forward="true" selection-start-line="223" selection-start-column="22" selection-end-line="223" selection-end-column="22" />
+        <state relative-caret-position="1632">
+          <caret line="223" column="22" selection-start-line="223" selection-start-column="22" selection-end-line="223" selection-end-column="22" />
           <folding>
             <element signature="method#createFileMenu#0;class#AppMenu#0" />
             <element signature="method#createEditMenu#0;class#AppMenu#0" />
@@ -937,21 +899,35 @@
             <element signature="method#createSaveFileDialog#0;class#AppMenu#0" />
             <element signature="method#createOpenFileDialog#0;class#AppMenu#0" />
             <element signature="method#isGraphAlreadyExist#0;class#AppMenu#0" />
-            <element signature="e#8034#8846#0" />
-            <element signature="e#8936#9278#0" />
-            <element signature="e#9369#9840#0" />
-            <element signature="e#9947#10747#0" />
-            <element signature="e#10847#11566#0" />
-            <element signature="e#11688#12153#0" />
-            <element signature="e#14337#16258#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/model/Path.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="261">
+          <caret line="36" selection-start-line="36" selection-end-line="36" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/controller/PlanarityVerifier.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="49" lean-forward="true" selection-start-line="49" selection-end-line="49" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#shrinkage#0;class#PlanarityVerifier#0" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/controller/GraphController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="274">
-          <caret line="133" column="30" lean-forward="true" selection-start-line="133" selection-start-column="30" selection-end-line="133" selection-end-column="30" />
+        <state relative-caret-position="325">
+          <caret line="150" column="5" lean-forward="true" selection-start-line="150" selection-start-column="5" selection-end-line="150" selection-end-column="5" />
           <folding>
             <element signature="method#removeNode#0;class#GraphController#0" />
             <element signature="method#degreeOf#0;class#GraphController#0" />
@@ -964,6 +940,21 @@
             <element signature="method#makeComplete#0;class#GraphController#0" />
             <element signature="method#findAllHamiltonianCyclesFrom#0;class#GraphController#0" />
             <element signature="method#dfsHamiltonianCycle#0;class#GraphController#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/controller/PlanarityVerifier.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#undirectedEquivalentOf#0;class#PlanarityVerifierV2#0" />
+            <element signature="method#permute#0;class#PlanarityVerifierV2#0" />
+            <element signature="method#isK5#0;class#PlanarityVerifierV2#0" />
+            <element signature="method#isK33#0;class#PlanarityVerifierV2#0" />
+            <element signature="method#isPathExist#0;class#PlanarityVerifierV2#0" />
           </folding>
         </state>
       </provider>

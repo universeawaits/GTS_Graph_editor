@@ -1,48 +1,44 @@
 package controller;
 
-import model.*;
+import model.AdjacencyMatrix;
+import model.Arc;
+import model.Graph;
+import model.Node;
 
 import java.util.*;
 
 
 public class PlanarityVerifier {
+    private static final int COUNT_OF_NODES_K5 = 5;
+    private static final int COUNT_OF_ARCS_IN_UNDIRECTED_K5 = 20;
+    private static final int COUNT_OF_NODES_K33 = 6;
+    private static final int COUNT_OF_ARCS_IN_UNDIRECTED_K33 = 18;
+
     private Graph graph;
     private AdjacencyMatrix adjacencyMatrix;
 
 
     public PlanarityVerifier(Graph graph) {
         this.graph = undirectedEquivalentOf(graph);
-        shrinkage(this.graph);
         this.adjacencyMatrix = new AdjacencyMatrix(this.graph);
     }
 
-
     public boolean verify() {
-        Map<Node, Integer> nodeColors = new HashMap<>();
+        List<Node> someKuratowskiGraph = permute();
 
-        for (Node begin : graph.getNodes()) {
-            nodeColors.clear();
-
-            for (Node node : graph.getNodes()) {
-                nodeColors.put(node, 1);
-            }
-
-            Path cycle = new Path();
-            List<Path> cyclesFromThisNode = new ArrayList<>();
-
-            dfsKSubgraph(begin, begin, graph.getArcs(), nodeColors,
-                    new Arc(new Node(), new Node()), cycle, cyclesFromThisNode);
-
-            if (!cyclesFromThisNode.isEmpty()) {
-                return false;
-            }
+        if (someKuratowskiGraph.size() == COUNT_OF_NODES_K5
+                && graph.getArcs().size() >= COUNT_OF_ARCS_IN_UNDIRECTED_K5) {
+            return false;
+        } else if (someKuratowskiGraph.size() == COUNT_OF_NODES_K33
+                && graph.getArcs().size() >= COUNT_OF_ARCS_IN_UNDIRECTED_K33) {
+            return false;
         }
 
         return true;
     }
 
     /*
-        Utility
+     *      Util
      */
 
     private Graph undirectedEquivalentOf(Graph graph) {
@@ -61,155 +57,126 @@ public class PlanarityVerifier {
         return undirectedGraph;
     }
 
-    private void shrinkage(Graph graphToShrinkage) {
-        List<Node> fourDegreeNodes = new ArrayList<>();
-        List<Arc> arcsToRemove = new ArrayList<>();
-        List<Arc> arcsToRestore = new ArrayList<>();
+    private List<Node> permute() {
+        List<Node> permutation = new ArrayList<>();
 
-        while (true) {
-            fourDegreeNodes.clear();
-            arcsToRemove.clear();
-            arcsToRestore.clear();
+        for (Node one : graph.getNodes()) {
+            permutation.clear();
+            permutation.add(one);
 
-            for (Node node : graphToShrinkage.getNodes()) {
-                int nodeDegree = 0;
-
-                for (Arc arc : graphToShrinkage.getArcs()) {
-                    if (arc.getBegin().equals(node)) {
-                        nodeDegree++;
-                    }
-
-                    if (arc.getEnd().equals(node)) {
-                        nodeDegree++;
-                    }
+            for (Node two : graph.getNodes()) {
+                if (permutation.contains(two)) {
+                    continue;
                 }
+                permutation.add(two);
 
-                if (nodeDegree == 4) {
-                    fourDegreeNodes.add(node);
-                }
-            }
+                for (Node three : graph.getNodes()) {
+                    if (permutation.contains(three)) {
+                        continue;
+                    }
+                    permutation.add(three);
 
-            if (!fourDegreeNodes.isEmpty()) {
-                for (Node node : fourDegreeNodes) {
-                    for (Arc arc : graphToShrinkage.getArcs()) {
-                        if (arc.getBegin().equals(node)) {
-                            arcsToRemove.add(arc);
-                            Node beginForArcToRestore = null;
+                    for (Node four : graph.getNodes()) {
+                        if (permutation.contains(four)) {
+                            continue;
+                        }
+                        permutation.add(four);
 
-                            for (Arc arcToCheck : graphToShrinkage.getArcs()) {
-                                if (arcToCheck.getEnd().equals(node) && !arcToCheck.getBegin().equals(arc.getEnd())) {
-                                    beginForArcToRestore = arcToCheck.getBegin();
+                        for (Node five : graph.getNodes()) {
+                            if (permutation.contains(five)) {
+                                continue;
+                            }
+                            permutation.add(five);
+
+                            if (isK5(permutation)) {
+                                return permutation;
+                            } else {
+                                for (Node six : graph.getNodes()) {
+                                    if (permutation.contains(six)) {
+                                        continue;
+                                    }
+                                    permutation.add(six);
+
+                                    if (isK33(permutation)) {
+                                        return permutation;
+                                    }
+
+                                    permutation.remove(six);
                                 }
                             }
 
-                            if (beginForArcToRestore == null) {
-                                continue;
-                            }
-
-                            arcsToRestore.add(new Arc(beginForArcToRestore, arc.getEnd()));
+                            permutation.remove(five);
                         }
-
-                        if (arc.getEnd().equals(node)) {
-                            arcsToRemove.add(arc);
-                            Node endForArcToRestore = null;
-
-                            for (Arc arcToCheck : graphToShrinkage.getArcs()) {
-                                if (arcToCheck.getBegin().equals(node) && !arcToCheck.getEnd().equals(arc.getBegin())) {
-                                    endForArcToRestore = arcToCheck.getEnd();
-                                }
-                            }
-
-                            if (endForArcToRestore == null) {
-                                continue;
-                            }
-
-                            arcsToRestore.add(new Arc(arc.getBegin(), endForArcToRestore));
-                        }
+                        permutation.remove(four);
                     }
+                    permutation.remove(three);
                 }
-
-                graphToShrinkage.getArcs().removeAll(arcsToRemove);
-                graphToShrinkage.getNodes().removeAll(fourDegreeNodes);
-                graphToShrinkage.getArcs().addAll(arcsToRestore);
-            } else {
-                break;
+                permutation.remove(two);
             }
         }
+
+        return permutation;
     }
 
-    private boolean isK5(Path subgraph) {
+    private boolean isK5(List<Node> permutation) {
         boolean isK5 = true;
 
-        for (int i = 0; i < subgraph.getPath().size() - 1; i++) {
-            for (int j = i + 1; j < subgraph.getPath().size(); j++) {
-                isK5 &= adjacencyMatrix.adjacentNodesOf(
-                        subgraph.getPath().get(i)).contains(subgraph.getPath().get(j));
+        for (Node begin : permutation) {
+            for (Node end : permutation) {
+                if (begin.equals(end)) {
+                    continue;
+                }
+
+                isK5 &= isPathExist(begin, end);
             }
         }
 
         return isK5;
     }
 
-    private boolean isK33(Path subgraph) { // ???????
+    private boolean isK33(List<Node> permutation) {
         boolean isK33 = true;
 
-        for (int i = 0; i < subgraph.getPath().size() - 1; i++) {
-            for (int j = i + 1; j < subgraph.getPath().size(); j += 2) {
-                isK33 &= adjacencyMatrix.adjacentNodesOf(
-                        subgraph.getPath().get(i)).contains(subgraph.getPath().get(j));
+        List<Node> homes = permutation.subList(0, 2);
+        List<Node> wells = permutation.subList(3, 5);
+
+        for (Node home : homes) {
+            for (Node well : wells) {
+
+                isK33 &= isPathExist(home, well);
             }
         }
 
         return isK33;
     }
 
-    private void dfsKSubgraph(Node currentNode, Node cycleEndNode, List<Arc> arcs,
-                              Map<Node, Integer> nodeColors, Arc unavailableArc, Path trackingCycle, List<Path> cycles) {
+    private boolean isPathExist(Node source, Node destination) {
+        Map<Node, Boolean> visitedNodes = new HashMap<>();
 
-        if (!currentNode.equals(cycleEndNode)) {
-            nodeColors.replace(currentNode, 2);
+        for (Node node : graph.getNodes()) {
+            visitedNodes.put(node, false);
         }
 
-        if (trackingCycle.getPath().size() == 5) {
-            if (isK5(trackingCycle)) {
-                cycles.add(trackingCycle);
-            }
+        LinkedList<Node> queue = new LinkedList<>();
 
-            return;
-        }
+        visitedNodes.replace(source, true);
+        queue.add(source);
 
-        if (trackingCycle.getPath().size() == 6) {
-            if (isK33(trackingCycle)) {
-                cycles.add(trackingCycle);
-            }
+        while (queue.size() != 0) {
+            source = queue.poll();
 
-            return;
-        }
+            for (Node adjacent : adjacencyMatrix.adjacentNodesOf(source)) {
+                if (adjacent.equals(destination)) {
+                    return true;
+                }
 
-        for (Arc arc : arcs) {
-            if (arc.equals(unavailableArc)) {
-                continue;
-            }
-
-            if ((nodeColors.get(arc.getEnd()) == null)) {
-                continue;
-            }
-
-            if ((nodeColors.get(arc.getEnd()) == 1) && arc.getBegin().equals(currentNode)) {
-                List<Node> trackingCycleCopy = new ArrayList<>(trackingCycle.getPath());
-                trackingCycleCopy.add(arc.getEnd()); // +1 ???
-                dfsKSubgraph(arc.getEnd(), cycleEndNode, arcs, nodeColors, arc, new Path(trackingCycleCopy), cycles);
-                nodeColors.replace(arc.getEnd(), 1);
-            }
-
-            else if ((nodeColors.get(arc.getBegin()) != null) &&
-                nodeColors.get(arc.getBegin()) == 1 && arc.getEnd().equals(currentNode)) {
-
-                List<Node> trackingCycleCopy = new ArrayList<>(trackingCycle.getPath());
-                trackingCycleCopy.add(arc.getBegin()); // +1 ???
-                dfsKSubgraph(arc.getBegin(), cycleEndNode, arcs, nodeColors, arc, new Path(trackingCycleCopy), cycles);
-                nodeColors.replace(arc.getBegin(), 1);
+                if (!visitedNodes.get(adjacent)) {
+                    visitedNodes.replace(adjacent, true);
+                    queue.add(adjacent);
+                }
             }
         }
+
+        return false;
     }
 }
