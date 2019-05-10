@@ -20,7 +20,6 @@ public class GraphStatusBar {
     private Label arcsCount;
     private Label diameter;
     private Label radius;
-    private Label isPlanar;
     private Label isComplete;
 
 
@@ -51,7 +50,6 @@ public class GraphStatusBar {
         arcsCount = new Label(ARCS_COUNT + 0);
         diameter = new Label(DIAMETER + 0);
         radius = new Label(RADIUS + 0);
-        isPlanar = new Label("Graph is planar");
         isComplete = new Label("Graph isn't complete");
 
         statusBar.getItems().addAll(
@@ -63,8 +61,6 @@ public class GraphStatusBar {
                 new Separator(),
                 radius,
                 new Separator(),
-                isPlanar,
-                new Separator(),
                 isComplete
         );
     }
@@ -75,7 +71,6 @@ public class GraphStatusBar {
             graphController.getArcs().removeListener(arcsCountListener);
             graphController.getArcs().removeListener(diameterListener);
             graphController.getArcs().removeListener(radiusListener);
-            graphController.getArcs().removeListener(isPlanarListener);
             graphController.getArcs().removeListener(isCompleteListener);
             graphController.getNodes().removeListener(isCompleteListener);
         } finally {
@@ -88,7 +83,6 @@ public class GraphStatusBar {
         graphController.getArcs().addListener(arcsCountListener);
         graphController.getArcs().addListener(diameterListener);
         graphController.getArcs().addListener(radiusListener);
-        graphController.getArcs().addListener(isPlanarListener);
         graphController.getArcs().addListener(isCompleteListener);
         graphController.getNodes().addListener(isCompleteListener);
     }
@@ -98,7 +92,6 @@ public class GraphStatusBar {
         arcsCount.setText(ARCS_COUNT + String.valueOf(graphController.getArcs().size()));
         diameter.setText(DIAMETER + String.valueOf(graphController.diameter()));
         radius.setText(RADIUS + String.valueOf(graphController.radius()));
-        isPlanar.setText("Graph is" + (graphController.isPlanar() ? " " : "n't ") + "planar");
         isComplete.setText("Graph is" + (graphController.isComplete() ? " " : "n't ") + "complete");
     }
 
@@ -120,10 +113,6 @@ public class GraphStatusBar {
 
     private ListChangeListener radiusListener = change -> {
         radius.setText(RADIUS + String.valueOf(graphController.radius()));
-    };
-
-    private ListChangeListener isPlanarListener = change -> {
-        isPlanar.setText("Graph is" + (graphController.isPlanar() ? " " : "n't ") + "planar");
     };
 
     private ListChangeListener isCompleteListener = change -> {

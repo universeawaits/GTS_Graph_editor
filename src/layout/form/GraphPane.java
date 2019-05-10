@@ -124,6 +124,7 @@ public class GraphPane {
         pane.addEventHandler(KeyEvent.KEY_PRESSED, nodeRenamingEventHandler);
         pane.addEventHandler(KeyEvent.KEY_PRESSED, getNodeDegreeEventHandler);
         pane.addEventHandler(KeyEvent.KEY_PRESSED, arcDirectionSwapEventHandler);
+        pane.addEventHandler(KeyEvent.KEY_PRESSED, isPlanarEventHandler);
     }
 
     /*
@@ -151,6 +152,10 @@ public class GraphPane {
 
                 if (event.getCode().equals(KeyCode.T)) {
                     arcDirectionSwapEventHandler.handle(event);
+                }
+
+                if (event.getCode().equals(KeyCode.P)) {
+                    isPlanarEventHandler.handle(event);
                 }
             }
         }
@@ -388,5 +393,16 @@ public class GraphPane {
                 }
             }
         }
+    };
+
+    // Check for graph planarity
+    private EventHandler<KeyEvent> isPlanarEventHandler = e -> {
+        Alert planarity = createEmptyDialog(
+                new Label("Graph is" + (graphController.isPlanar() ? " " : "n't ") + "planar"),
+                "Planarity"
+        );
+        planarity.getButtonTypes().add(ButtonType.OK);
+
+        planarity.show();
     };
 }

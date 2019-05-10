@@ -24,6 +24,11 @@ public class PlanarityVerifier {
     }
 
     public boolean verify() {
+        if (graph.getNodes().size() >= COUNT_OF_NODES_K5
+                && graph.getArcs().size() == graph.getNodes().size() * (graph.getNodes().size() - 1)) {
+            return false;
+        }
+
         List<Node> someKuratowskiGraph = permute();
 
         if (someKuratowskiGraph.size() == COUNT_OF_NODES_K5
@@ -88,21 +93,27 @@ public class PlanarityVerifier {
                             }
                             permutation.add(five);
 
+                            for (Node six : graph.getNodes()) {
+                                if (permutation.contains(six)) {
+                                    continue;
+                                }
+                                permutation.add(six);
+
+                                for (int i = 0; i < permutation.size(); i++) {
+                                    for (int j = 0; j < permutation.size(); j++) {
+                                        Collections.swap(permutation, i, j);
+
+                                        if (isK33(permutation)) {
+                                            return permutation;
+                                        }
+                                    }
+                                }
+
+                                permutation.remove(six);
+                            }
+
                             if (isK5(permutation)) {
                                 return permutation;
-                            } else {
-                                for (Node six : graph.getNodes()) {
-                                    if (permutation.contains(six)) {
-                                        continue;
-                                    }
-                                    permutation.add(six);
-
-                                    if (isK33(permutation)) {
-                                        return permutation;
-                                    }
-
-                                    permutation.remove(six);
-                                }
                             }
 
                             permutation.remove(five);
@@ -137,12 +148,11 @@ public class PlanarityVerifier {
     private boolean isK33(List<Node> permutation) {
         boolean isK33 = true;
 
-        List<Node> homes = permutation.subList(0, 2);
-        List<Node> wells = permutation.subList(3, 5);
+        List<Node> homes = permutation.subList(0, COUNT_OF_NODES_K33 / 2);
+        List<Node> wells = permutation.subList(COUNT_OF_NODES_K33 / 2, COUNT_OF_NODES_K33);
 
         for (Node home : homes) {
             for (Node well : wells) {
-
                 isK33 &= isPathExist(home, well);
             }
         }
