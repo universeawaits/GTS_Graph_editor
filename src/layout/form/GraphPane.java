@@ -326,6 +326,7 @@ public class GraphPane {
             if (drawableArc.isFocused()) {
                 colorPicker.setOnAction(actionEvent -> {
                     drawableArc.getLine().setStroke(colorPicker.getValue());
+                    drawableArc.getLoop().setStroke(colorPicker.getValue());
                     drawableArc.getArrow().setStroke(colorPicker.getValue());
                     drawableArc.getArrow().setFill(colorPicker.getValue());
                 });

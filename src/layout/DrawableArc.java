@@ -26,7 +26,6 @@ public class DrawableArc {
     private DrawableNode end;
 
     private boolean isFocused;
-    private boolean isLoop;
 
     private Polygon arrow;
     private Line line;
@@ -74,8 +73,6 @@ public class DrawableArc {
             configureLoop();
 
             line = new Line();
-
-            isLoop = true;
         } else {
             configureArrow();
 
@@ -86,8 +83,6 @@ public class DrawableArc {
             configureLine();
 
             loop = new CubicCurve();
-
-            isLoop = false;
         }
     }
 
