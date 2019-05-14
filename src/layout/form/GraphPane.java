@@ -248,6 +248,11 @@ public class GraphPane {
 
                 graphController.addArc(arc);
 
+                if (arc.getBegin().equals(arc.getEnd())) {
+                    arc.setDirected(false);
+                    graphController.addArc(new Arc(arc.getEnd(), arc.getBegin(), false));
+                }
+
                 DrawableArc arcShape = new DrawableArc(arc, beginForArc, endForArc);
 
                 drawableArcs.add(arcShape);
