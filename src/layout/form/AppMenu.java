@@ -475,6 +475,19 @@ public class AppMenu {
     private EventHandler<ActionEvent> makeCompleteEventHandler = e -> {
         GraphPane currentGraphPane = graphTabPane.currentGraphPane();
 
+        if (currentGraphPane.getGraphController().getGraph().containsLoop()) {
+            List<DrawableArc> drawableArcsToRemove = new ArrayList<>();
+
+            for (DrawableArc loop : currentGraphPane.getDrawableArcs()) {
+                if (loop.getSourceArc().getBegin().equals(loop.getSourceArc().getEnd())) {
+                    drawableArcsToRemove.add(loop);
+                    currentGraphPane.getPane().getChildren().removeAll(loop.getArrow(), loop.getLine(), loop.getLoop());
+                }
+            }
+
+            currentGraphPane.getDrawableArcs().removeAll(drawableArcsToRemove);
+        }
+
         currentGraphPane.getGraphController().makeComplete();
 
         for (Arc arc : currentGraphPane.getGraphController().getArcs()) {

@@ -229,10 +229,11 @@ public class GraphPane {
                 endForArc = null;
                 isNodesForArcSelected = false;
                 actionType = ActionType.POINTER;
+                return;
             }
 
             if ((beginForArc != null)
-                    && (endForArc != null) && (!beginForArc.equals(endForArc))) {
+                    && (endForArc != null)) {
 
                 Arc arc = new Arc(beginForArc.getSourceNode(), endForArc.getSourceNode());
                 Arc inverseArc = new Arc(endForArc.getSourceNode(), beginForArc.getSourceNode());
@@ -250,7 +251,7 @@ public class GraphPane {
                 DrawableArc arcShape = new DrawableArc(arc, beginForArc, endForArc);
 
                 drawableArcs.add(arcShape);
-                pane.getChildren().addAll(arcShape.getLine(), arcShape.getArrow());
+                pane.getChildren().addAll(arcShape.getLine(), arcShape.getArrow(), arcShape.getLoop());
                 beginForArc.getShape().toFront();
                 endForArc.getShape().toFront();
 
@@ -300,7 +301,7 @@ public class GraphPane {
 
                 graphController.removeArc(drawableArc.getSourceArc());
                 drawableArcs.remove(drawableArc);
-                pane.getChildren().removeAll(drawableArc.getLine(), drawableArc.getArrow());
+                pane.getChildren().removeAll(drawableArc.getLine(), drawableArc.getArrow(), drawableArc.getLoop());
                 return;
             }
         }

@@ -2,8 +2,7 @@ package layout;
 
 import javafx.scene.effect.Bloom;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
+import javafx.scene.shape.*;
 import model.Arc;
 
 import java.util.Objects;
@@ -15,6 +14,7 @@ import static layout.DrawableNode.CIRCLE_RADIUS;
 public class DrawableArc {
     private static final Bloom BLOOM = new Bloom(0);
 
+    private static final int LOOP_RADIUS = 60;
     private static final int LINE_WIDTH = 3;
     private static final int ARROW_SIDE = CIRCLE_RADIUS;
     private static final int ARROW_SIDE_TO_HEIGHT_ANGLE = 20;
@@ -26,9 +26,11 @@ public class DrawableArc {
     private DrawableNode end;
 
     private boolean isFocused;
+    private boolean isLoop;
 
     private Polygon arrow;
     private Line line;
+    private CubicCurve loop;
     private Color color;
 
     // Properties for arrow correct rotating and locating
@@ -65,15 +67,28 @@ public class DrawableArc {
                 randomColorComponent.nextDouble()
         );
 
-        line = new Line(
-                begin.getShape().getCenterX(), begin.getShape().getCenterY(),
-                end.getShape().getCenterX(), end.getShape().getCenterY()
-        );
-        configureLine();
-
         arrow = new Polygon();
 
-        configureArrow();
+        if (begin.getSourceNode().equals(end.getSourceNode())) {
+            loop = new CubicCurve();
+            configureLoop();
+
+            line = new Line();
+
+            isLoop = true;
+        } else {
+            configureArrow();
+
+            line = new Line(
+                    begin.getShape().getCenterX(), begin.getShape().getCenterY(),
+                    end.getShape().getCenterX(), end.getShape().getCenterY()
+            );
+            configureLine();
+
+            loop = new CubicCurve();
+
+            isLoop = false;
+        }
     }
 
     public DrawableNode getBegin() {
@@ -90,6 +105,10 @@ public class DrawableArc {
 
     public Line getLine() {
         return line;
+    }
+
+    public CubicCurve getLoop() {
+        return loop;
     }
 
     public Arc getSourceArc() {
@@ -113,7 +132,7 @@ public class DrawableArc {
         Configs
      */
 
-    // Line configs: events handling, coloring
+    // Line configs: bindings, coloring
     private void configureLine() {
         line.setStrokeWidth(LINE_WIDTH);
         line.setStroke(color);
@@ -133,6 +152,36 @@ public class DrawableArc {
         // Remove lightning when mouse exited
         line.setOnMouseExited(e -> {
             line.setEffect(null);
+            arrow.setEffect(null);
+            isFocused = false;
+        });
+    }
+
+    // Loop configs: binding, coloring
+    private void configureLoop() {
+        loop.setStrokeWidth(LINE_WIDTH);
+        loop.setFill(Color.TRANSPARENT);
+        loop.setStroke(color);
+
+        loop.startXProperty().bind(begin.getShape().centerXProperty());
+        loop.startYProperty().bind(begin.getShape().centerYProperty());
+        loop.endXProperty().bind(end.getShape().centerXProperty());
+        loop.endYProperty().bind(end.getShape().centerYProperty());
+        loop.controlX1Property().bind(begin.getShape().centerXProperty().add(-LOOP_RADIUS));
+        loop.controlY1Property().bind(begin.getShape().centerYProperty().add(-LOOP_RADIUS));
+        loop.controlX2Property().bind(end.getShape().centerXProperty().add(-LOOP_RADIUS));
+        loop.controlY2Property().bind(end.getShape().centerYProperty().add(LOOP_RADIUS));
+
+        // Line lightning when mouse entered
+        loop.setOnMouseEntered(e -> {
+            loop.setEffect(BLOOM);
+            arrow.setEffect(BLOOM);
+            isFocused = true;
+        });
+
+        // Remove lightning when mouse exited
+        loop.setOnMouseExited(e -> {
+            loop.setEffect(null);
             arrow.setEffect(null);
             isFocused = false;
         });
@@ -163,6 +212,7 @@ public class DrawableArc {
         arrow.setOnMouseEntered(e -> {
             arrow.setEffect(BLOOM);
             line.setEffect(BLOOM);
+            loop.setEffect(BLOOM);
             isFocused = true;
         });
 
@@ -170,6 +220,7 @@ public class DrawableArc {
         arrow.setOnMouseExited(e -> {
             arrow.setEffect(null);
             line.setEffect(null);
+            loop.setEffect(null);
             isFocused = false;
         });
     }
@@ -179,7 +230,7 @@ public class DrawableArc {
         // cos = |endX - startX| / sqrt((endX - startX)^2 + (endY - startY)^2)
         cos = Math.abs(end.getShape().getCenterX() - begin.getShape().getCenterX())
                 / Math.sqrt(Math.pow(end.getShape().getCenterX() - begin.getShape().getCenterX(), 2)
-                    + Math.pow(end.getShape().getCenterY() - begin.getShape().getCenterY(), 2));
+                + Math.pow(end.getShape().getCenterY() - begin.getShape().getCenterY(), 2));
 
         // sin = sqrt(1 - cos^2)
         sin = Math.sqrt(1 - Math.pow(cos, 2));

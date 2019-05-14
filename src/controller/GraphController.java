@@ -152,7 +152,7 @@ public class GraphController {
 
     // Check for graph complete
     public boolean isComplete() {
-        return graph.getArcs().size() == graph.getNodes().size() * (graph.getNodes().size() - 1);
+        return !graph.containsLoop() && (graph.getArcs().size() == graph.getNodes().size() * (graph.getNodes().size() - 1));
     }
 
     /*
@@ -182,6 +182,8 @@ public class GraphController {
 
     // Making all nodes adjacent to all nodes
     public void makeComplete() {
+        List<Arc> arcsToDelete = new ArrayList<>();
+
         for (Node begin : graph.getNodes()) {
             for (Node end : graph.getNodes()) {
                 if (begin.equals(end)) {
@@ -195,8 +197,15 @@ public class GraphController {
         }
 
         for (Arc arc : graph.getArcs()) {
+            if (arc.getBegin().equals(arc.getEnd())) {
+                arcsToDelete.add(arc);
+                continue;
+            }
+
             arc.setDirected(false);
         }
+
+        graph.getArcs().removeAll(arcsToDelete);
     }
 
     /*

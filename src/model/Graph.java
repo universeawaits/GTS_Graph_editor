@@ -40,6 +40,7 @@ public class Graph {
         this.name = name;
     }
 
+
     public Arc getArc(Node begin, Node end) {
         for (Arc arc : arcs) {
             if (arc.getBegin().equals(begin) && arc.getEnd().equals(end)) {
@@ -58,5 +59,15 @@ public class Graph {
         }
 
         return null;
+    }
+
+    public boolean containsLoop() {
+        for (Arc arc : arcs) {
+            if (arc.getBegin().equals(arc.getEnd())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
