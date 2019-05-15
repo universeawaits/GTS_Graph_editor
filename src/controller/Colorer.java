@@ -12,7 +12,6 @@ public class Colorer {
     private AdjacencyList adjacencyList;
 
     private Map<Node, String> nodesColors;
-    private Map<Arc, String> arcsColors;
 
 
     public Colorer(Graph graph) {
@@ -20,7 +19,6 @@ public class Colorer {
         this.adjacencyList = new AdjacencyList(this.graph);
 
         nodesColors = new HashMap<>();
-        arcsColors = new HashMap<>();
     }
 
     public Map<Node, String> colorizeNodes() {

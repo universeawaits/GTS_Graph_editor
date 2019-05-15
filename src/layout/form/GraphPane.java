@@ -151,7 +151,14 @@ public class GraphPane {
                 }
 
                 if (event.getCode().equals(KeyCode.T)) {
-                    arcDirectionSwapEventHandler.handle(event);
+                    for (DrawableArc drawableArc : drawableArcs) {
+                        if (drawableArc.isFocused()) {
+                            arcDirectionSwapEventHandler.handle(event);
+                            return;
+                        }
+                    }
+
+                    isTreeEventHandler.handle(event);
                 }
 
                 if (event.getCode().equals(KeyCode.P)) {
@@ -411,5 +418,16 @@ public class GraphPane {
         planarity.getButtonTypes().add(ButtonType.OK);
 
         planarity.show();
+    };
+
+    // Check is graph a tree
+    private EventHandler<KeyEvent> isTreeEventHandler = e -> {
+        Alert isTree = createEmptyDialog(
+                new Label("Graph is" + (graphController.isTree() ? " " : "n't ") + "a tree"),
+                "Is tree"
+        );
+        isTree.getButtonTypes().add(ButtonType.OK);
+
+        isTree.show();
     };
 }

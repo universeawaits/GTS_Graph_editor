@@ -155,6 +155,12 @@ public class GraphController {
         return !graph.containsLoop() && (graph.getArcs().size() == graph.getNodes().size() * (graph.getNodes().size() - 1));
     }
 
+    // Check is graph a tree
+    public boolean isTree() {
+        System.out.println(1);
+        return !graph.containsLoop() && new TreeVerifier(graph).verify();
+    }
+
     /*
      *      Other algorithms
      */

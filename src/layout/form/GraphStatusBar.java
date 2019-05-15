@@ -71,6 +71,7 @@ public class GraphStatusBar {
             graphController.getArcs().removeListener(arcsCountListener);
             graphController.getArcs().removeListener(diameterListener);
             graphController.getArcs().removeListener(radiusListener);
+
             graphController.getArcs().removeListener(isCompleteListener);
             graphController.getNodes().removeListener(isCompleteListener);
         } finally {
@@ -83,6 +84,7 @@ public class GraphStatusBar {
         graphController.getArcs().addListener(arcsCountListener);
         graphController.getArcs().addListener(diameterListener);
         graphController.getArcs().addListener(radiusListener);
+
         graphController.getArcs().addListener(isCompleteListener);
         graphController.getNodes().addListener(isCompleteListener);
     }

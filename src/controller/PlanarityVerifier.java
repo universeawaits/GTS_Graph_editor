@@ -1,7 +1,6 @@
 package controller;
 
 import model.AdjacencyMatrix;
-import model.Arc;
 import model.Graph;
 import model.Node;
 
