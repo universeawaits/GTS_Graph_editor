@@ -19,7 +19,7 @@ public class PlanarityVerifier {
 
 
     public PlanarityVerifier(Graph graph) {
-        this.graph = undirectedEquivalentOf(graph);
+        this.graph = graph.getUndirectedEquivalent();
         this.adjacencyMatrix = new AdjacencyMatrix(this.graph);
     }
 
@@ -46,7 +46,7 @@ public class PlanarityVerifier {
      *      Util
      */
 
-    private Graph undirectedEquivalentOf(Graph graph) {
+    /*private Graph undirectedEquivalentOf(Graph graph) {
         Graph undirectedGraph = new Graph();
 
         undirectedGraph.getNodes().addAll(graph.getNodes());
@@ -60,7 +60,7 @@ public class PlanarityVerifier {
         }
 
         return undirectedGraph;
-    }
+    }*/
 
     private List<Node> permute() {
         List<Node> permutation = new ArrayList<>();

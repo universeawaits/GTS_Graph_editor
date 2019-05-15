@@ -4,20 +4,20 @@ import model.*;
 
 import java.util.*;
 
+
 public class Colorer {
     private static final int NO_COLOR = -1;
 
     private Graph graph;
     private AdjacencyList adjacencyList;
-    private IncidenceList incidenceList;
 
     private Map<Node, String> nodesColors;
     private Map<Arc, String> arcsColors;
 
+
     public Colorer(Graph graph) {
-        this.graph = undirectedEquivalentOf(graph);
+        this.graph = graph.getUndirectedEquivalent();
         this.adjacencyList = new AdjacencyList(this.graph);
-        this.incidenceList = new IncidenceList(this.graph);
 
         nodesColors = new HashMap<>();
         arcsColors = new HashMap<>();
@@ -72,25 +72,5 @@ public class Colorer {
         }
 
         return nodesColors;
-    }
-
-    /*
-     *      Utility
-     */
-
-    private Graph undirectedEquivalentOf(Graph graph) {
-        Graph undirectedGraph = new Graph();
-
-        undirectedGraph.getNodes().addAll(graph.getNodes());
-
-        for (Arc arc : graph.getArcs()) {
-            undirectedGraph.getArcs().add(arc);
-
-            if (arc.isDirected()) {
-                undirectedGraph.getArcs().add(new Arc(arc.getEnd(), arc.getBegin()));
-            }
-        }
-
-        return undirectedGraph;
     }
 }

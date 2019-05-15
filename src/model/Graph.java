@@ -70,4 +70,24 @@ public class Graph {
 
         return false;
     }
+
+    /*
+     *      Mods??
+     */
+
+    public Graph getUndirectedEquivalent() {
+        Graph undirectedGraph = new Graph();
+
+        undirectedGraph.getNodes().addAll(nodes);
+
+        for (Arc arc : arcs) {
+            undirectedGraph.getArcs().add(arc);
+
+            if (arc.isDirected()) {
+                undirectedGraph.getArcs().add(new Arc(arc.getEnd(), arc.getBegin()));
+            }
+        }
+
+        return undirectedGraph;
+    }
 }
