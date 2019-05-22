@@ -18,6 +18,9 @@ import model.Arc;
 import model.Node;
 import controller.GraphController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static layout.DrawableNode.CIRCLE_RADIUS;
 import static sample.Main.MAIN_FORM_HEIGHT;
 import static sample.Main.MAIN_FORM_WIDTH;
@@ -128,7 +131,7 @@ public class GraphPane {
     }
 
     /*
-        Others
+     *      Others
      */
 
     public void performKeyAction(KeyEvent event) {
@@ -177,7 +180,7 @@ public class GraphPane {
         return alert;
     }
 
-    public DrawableNode getFocusedNode() {
+    public DrawableNode focusedNode() {
         for (DrawableNode drawableNode : drawableNodes) {
             if (drawableNode.isFocused()) {
                 return drawableNode;
@@ -185,6 +188,21 @@ public class GraphPane {
         }
 
         return null;
+    }
+
+    public void removeLoops() {
+        if (graphController.getGraph().containsLoop()) {
+            List<DrawableArc> drawableArcsToRemove = new ArrayList<>();
+
+            for (DrawableArc loop : drawableArcs) {
+                if (loop.getSourceArc().getBegin().equals(loop.getSourceArc().getEnd())) {
+                    drawableArcsToRemove.add(loop);
+                    pane.getChildren().removeAll(loop.getArrow(), loop.getLine(), loop.getLoop());
+                }
+            }
+
+            drawableArcs.removeAll(drawableArcsToRemove);
+        }
     }
 
     /*
@@ -380,9 +398,9 @@ public class GraphPane {
 
     // Taking focused node's degree with D key pressed
     private EventHandler<KeyEvent> getNodeDegreeEventHandler = e -> {
-        if (getFocusedNode() != null) {
+        if (focusedNode() != null) {
             Label nodeDegree = new Label("Node degree: "
-                    + graphController.degreeOf(getFocusedNode().getSourceNode()));
+                    + graphController.degreeOf(focusedNode().getSourceNode()));
 
             Alert nodeDegreeDialog = createEmptyDialog(nodeDegree, "Node degree");
             nodeDegreeDialog.getButtonTypes().add(ButtonType.OK);

@@ -15,7 +15,7 @@ public class Colorer {
 
 
     public Colorer(Graph graph) {
-        this.graph = graph.getUndirectedEquivalent();
+        this.graph = graph.undirectedEquivalent();
         this.adjacencyList = new AdjacencyList(this.graph);
 
         nodesColors = new HashMap<>();

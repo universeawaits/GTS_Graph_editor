@@ -474,20 +474,7 @@ public class AppMenu {
     // Making graph complete
     private EventHandler<ActionEvent> makeCompleteEventHandler = e -> {
         GraphPane currentGraphPane = graphTabPane.currentGraphPane();
-
-        if (currentGraphPane.getGraphController().getGraph().containsLoop()) {
-            List<DrawableArc> drawableArcsToRemove = new ArrayList<>();
-
-            for (DrawableArc loop : currentGraphPane.getDrawableArcs()) {
-                if (loop.getSourceArc().getBegin().equals(loop.getSourceArc().getEnd())) {
-                    drawableArcsToRemove.add(loop);
-                    currentGraphPane.getPane().getChildren().removeAll(loop.getArrow(), loop.getLine(), loop.getLoop());
-                }
-            }
-
-            currentGraphPane.getDrawableArcs().removeAll(drawableArcsToRemove);
-        }
-
+        currentGraphPane.removeLoops();
         currentGraphPane.getGraphController().makeComplete();
 
         for (Arc arc : currentGraphPane.getGraphController().getArcs()) {
@@ -530,6 +517,14 @@ public class AppMenu {
         for (DrawableNode drawableNode : currentGraphPane.getDrawableNodes()) {
             drawableNode.getShape().toFront();
         }
+    };
+
+    // Conversion to a tree
+    private EventHandler<ActionEvent> treeConversionEventHandler = e -> {
+        GraphPane currentGraphPane = graphTabPane.currentGraphPane();
+        currentGraphPane.removeLoops();
+
+        currentGraphPane.getGraphController().makeComplete();
     };
 
     // Finding of hamiltonian cycles

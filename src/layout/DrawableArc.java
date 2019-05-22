@@ -14,7 +14,7 @@ import static layout.DrawableNode.CIRCLE_RADIUS;
 public class DrawableArc {
     private static final Bloom BLOOM = new Bloom(0);
 
-    private static final int LOOP_RADIUS = 60;
+    private static final int LOOP_RADIUS = 50;
     private static final int LINE_WIDTH = 3;
     private static final int ARROW_SIDE = CIRCLE_RADIUS;
     private static final int ARROW_SIDE_TO_HEIGHT_ANGLE = 20;

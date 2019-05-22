@@ -3,6 +3,7 @@ package model;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -40,6 +41,9 @@ public class Graph {
         this.name = name;
     }
 
+    /*
+     *      Searchers
+     */
 
     public Arc getArc(Node begin, Node end) {
         for (Arc arc : arcs) {
@@ -61,6 +65,22 @@ public class Graph {
         return null;
     }
 
+    public List<Arc> loops() {
+        List<Arc> loops = new ArrayList<>();
+
+        for (Arc arc : arcs) {
+            if (arc.getBegin().equals(arc.getEnd())) {
+                loops.add(arc);
+            }
+        }
+
+        return loops;
+    }
+
+    /*
+     *      'Contains' methods
+     */
+
     public boolean containsLoop() {
         for (Arc arc : arcs) {
             if (arc.getBegin().equals(arc.getEnd())) {
@@ -75,7 +95,7 @@ public class Graph {
      *      Mods??
      */
 
-    public Graph getUndirectedEquivalent() {
+    public Graph undirectedEquivalent() {
         Graph undirectedGraph = new Graph();
 
         undirectedGraph.getNodes().addAll(nodes);

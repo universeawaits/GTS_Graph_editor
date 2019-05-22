@@ -1,4 +1,4 @@
-package controller;
+package controller.verifier;
 
 import model.AdjacencyMatrix;
 import model.Graph;
@@ -14,7 +14,7 @@ public class TreeVerifier {
 
 
     public TreeVerifier(Graph graph) {
-        this.graph = graph.getUndirectedEquivalent();
+        this.graph = graph.undirectedEquivalent();
         adjacencyMatrix = new AdjacencyMatrix(this.graph);
     }
 

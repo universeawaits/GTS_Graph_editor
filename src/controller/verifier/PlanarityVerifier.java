@@ -1,4 +1,4 @@
-package controller;
+package controller.verifier;
 
 import model.AdjacencyMatrix;
 import model.Graph;
@@ -18,7 +18,7 @@ public class PlanarityVerifier {
 
 
     public PlanarityVerifier(Graph graph) {
-        this.graph = graph.getUndirectedEquivalent();
+        this.graph = graph.undirectedEquivalent();
         this.adjacencyMatrix = new AdjacencyMatrix(this.graph);
     }
 

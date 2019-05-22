@@ -1,5 +1,7 @@
 package controller;
 
+import controller.verifier.PlanarityVerifier;
+import controller.verifier.TreeVerifier;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.*;
@@ -157,7 +159,6 @@ public class GraphController {
 
     // Check is graph a tree
     public boolean isTree() {
-        System.out.println(1);
         return !graph.containsLoop() && new TreeVerifier(graph).verify();
     }
 
