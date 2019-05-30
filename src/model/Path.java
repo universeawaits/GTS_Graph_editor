@@ -13,11 +13,6 @@ public class Path {
         path = new ArrayList<>();
     }
 
-    public Path(List<Node> path) {
-        this();
-        this.path.addAll(path);
-    }
-
     public Path(Path path) {
         this();
         this.path.addAll(path.path);

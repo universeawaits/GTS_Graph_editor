@@ -30,8 +30,6 @@ public class AdjacencyList {
             }
         }
 
-        //adjacencyLists.put(node, adjacents);
-
         return adjacents;
     }
 
@@ -62,15 +60,5 @@ public class AdjacencyList {
 
     public Map<Node, List<Node>> getAdjacencyLists() {
         return adjacencyLists;
-    }
-
-    public String listsToString() {
-        String toString = "";
-
-        for (Node node : adjacencyLists.keySet()) {
-            toString = toString.concat(node + " " + adjacencyLists.get(node).toString() + "\n");
-        }
-
-        return toString;
     }
 }
