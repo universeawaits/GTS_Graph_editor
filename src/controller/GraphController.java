@@ -1,6 +1,8 @@
 package controller;
 
 import controller.converter.TreeConverter;
+import controller.finder.HamiltonianCyclesFinder;
+import controller.finder.Pathfinder;
 import controller.verifier.PlanarityVerifier;
 import controller.verifier.TreeVerifier;
 import javafx.collections.FXCollections;
@@ -171,18 +173,7 @@ public class GraphController {
 
     // Finding all of hamiltonian cycles in the graph
     public ObservableList<Path> hamiltonianCycles() {
-        ObservableList<Path> hamiltonianCycles = FXCollections.observableArrayList();
-
-        for (Node begin : graph.getNodes()) {
-            ObservableList<Path> cycles = findAllHamiltonianCyclesFrom(begin);
-            for (Path cycleFromThisNode : cycles) {
-                if (!hamiltonianCycles.contains(cycleFromThisNode)) {
-                    hamiltonianCycles.add(cycleFromThisNode);
-                }
-            }
-        }
-
-        return hamiltonianCycles;
+        return new HamiltonianCyclesFinder(adjacencyMatrix).find();
     }
 
     // Finding all of paths between two specified nodes
@@ -231,59 +222,5 @@ public class GraphController {
     // Making graph tree-like
     public void makeTree() {
         new TreeConverter(graph).convert();
-    }
-
-    /*
-     *      Utility
-     */
-
-    // Finds all possible Hamiltonian cycles begins with the node given
-    private ObservableList<Path> findAllHamiltonianCyclesFrom(Node begin) {
-        Map<Node, Boolean> visitedNodes = new HashMap<>();
-        ObservableList<Path> hamiltonianCyclesBeginsWithThisNode = FXCollections.observableArrayList();
-        Path trackingCycle = new Path();
-
-        for (Node node : graph.getNodes()) {
-            visitedNodes.put(node, false);
-        }
-
-        dfsHamiltonianCycle(begin, trackingCycle, visitedNodes, hamiltonianCyclesBeginsWithThisNode);
-
-        return hamiltonianCyclesBeginsWithThisNode;
-    }
-
-    private void dfsHamiltonianCycle(Node begin, Path trackingCycle,
-                                     Map<Node, Boolean> visitedNodes,
-                                     ObservableList<Path> hamiltonianCyclesBeginsWithThisNode) {
-
-        if (trackingCycle.getPath().size() == graph.getNodes().size()) {
-            if (graph.getArcs().contains(new Arc(trackingCycle.getPath().get(trackingCycle.getPath().size() - 1),
-                    trackingCycle.getPath().get(0)))) {
-                Path hamiltonianCycle = new Path(trackingCycle);
-                hamiltonianCycle.getPath().add(trackingCycle.getPath().get(0));
-
-                for (Path cycle : hamiltonianCyclesBeginsWithThisNode) {
-                    if (hamiltonianCycle.getPath().contains(cycle.getPath())) {
-                        return;
-                    }
-                }
-
-                hamiltonianCyclesBeginsWithThisNode.add(hamiltonianCycle);
-
-                return;
-            }
-        }
-
-        for (Node adjacentNode : adjacencyMatrix.adjacentNodesOf(begin)) {
-            if (!visitedNodes.get(adjacentNode)) {
-                visitedNodes.replace(adjacentNode, true);
-                trackingCycle.getPath().add(adjacentNode);
-
-                dfsHamiltonianCycle(adjacentNode, trackingCycle, visitedNodes, hamiltonianCyclesBeginsWithThisNode);
-
-                visitedNodes.replace(adjacentNode, false);
-                trackingCycle.getPath().remove(trackingCycle.getPath().size() - 1);
-            }
-        }
     }
 }
