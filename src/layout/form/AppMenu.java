@@ -58,7 +58,7 @@ public class AppMenu {
         Menu edit = createEditMenu();
         Menu metrics = createMetricsMenu();
         Menu operation = createOperationMenu();
-        Menu algo = createAlgorithmMenu();
+        Menu algorithms = createAlgorithmMenu();
         Menu mod = createModificationMenu();
 
         menuBar.getMenus().addAll(
@@ -66,7 +66,7 @@ public class AppMenu {
                 edit,
                 metrics,
                 operation,
-                algo,
+                algorithms,
                 mod
         );
 
@@ -143,19 +143,25 @@ public class AppMenu {
     // Creating of algorithms menu
     private Menu createAlgorithmMenu() {
         Menu algorithm = new Menu("Algorithms");
+
+        Menu cycles = new Menu("Cycles");
         MenuItem hamiltonianCycles = new MenuItem("Hamiltonian cycles");
+        MenuItem eulerCycles = new MenuItem("Euler cycles");
+
         MenuItem distanceBetweenNodes = new MenuItem("Distance between nodes");
         MenuItem pathsBetweenNodes = new MenuItem("Paths between nodes");
         Menu coloring = new Menu("Coloring");
         MenuItem coloringNodes = new MenuItem("Coloring of nodes");
 
         hamiltonianCycles.setOnAction(findHamiltonianCyclesEventHandler);
+        eulerCycles.setOnAction(findEulerCyclesEventHandler);
         coloringNodes.setOnAction(coloringNodesEventHandler);
         distanceBetweenNodes.setOnAction(distanceBetweenNodesEventHandler);
         pathsBetweenNodes.setOnAction(findAllPathsBetweenTwoNodes);
 
+        cycles.getItems().addAll(hamiltonianCycles, eulerCycles);
         coloring.getItems().add(coloringNodes);
-        algorithm.getItems().addAll(hamiltonianCycles, distanceBetweenNodes, pathsBetweenNodes, coloring);
+        algorithm.getItems().addAll(cycles, distanceBetweenNodes, pathsBetweenNodes, coloring);
 
         return algorithm;
     }
@@ -568,6 +574,24 @@ public class AppMenu {
         listView.setEditable(false);
 
         Alert hamiltonianCyclesDialog = createEmptyDialog(listView, "Hamiltonian cycles");
+        hamiltonianCyclesDialog.getButtonTypes().add(ButtonType.OK);
+        hamiltonianCyclesDialog.show();
+    };
+
+    // Finding of euler cycles
+    private EventHandler<ActionEvent> findEulerCyclesEventHandler = e -> {
+        ObservableList<String> cycles = FXCollections.observableArrayList();
+
+        for (Path cycle : graphTabPane.currentGraphPane().getGraphController().eulerCycles()) {
+            cycles.add(cycle.toString());
+        }
+
+        ListView<String> listView = new ListView<>();
+        listView.getItems().addAll(cycles);
+        listView.setPrefSize(MAIN_FORM_WIDTH / 3,MAIN_FORM_HEIGHT / 5);
+        listView.setEditable(false);
+
+        Alert hamiltonianCyclesDialog = createEmptyDialog(listView, "Euler cycles");
         hamiltonianCyclesDialog.getButtonTypes().add(ButtonType.OK);
         hamiltonianCyclesDialog.show();
     };

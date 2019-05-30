@@ -26,7 +26,7 @@ public class HamiltonianCyclesFinder {
     // Finding all of hamiltonian cycles in the graph
     public ObservableList<Path> find() {
         for (Node begin : adjacencyMatrix.getGraph().getNodes()) {
-            ObservableList<Path> cycles = findAllHamiltonianCyclesFrom(begin);
+            ObservableList<Path> cycles = hamiltonianCyclesFrom(begin);
             for (Path cycleFromThisNode : cycles) {
                 if (!hamiltonianCycles.contains(cycleFromThisNode)) {
                     hamiltonianCycles.add(cycleFromThisNode);
@@ -42,20 +42,19 @@ public class HamiltonianCyclesFinder {
      */
 
     // Finds all possible Hamiltonian cycles begins with the node given
-    private ObservableList<Path> findAllHamiltonianCyclesFrom(Node begin) {
+    private ObservableList<Path> hamiltonianCyclesFrom(Node begin) {
         ObservableList<Path> hamiltonianCyclesBeginsWithThisNode = FXCollections.observableArrayList();
         Path trackingCycle = new Path();
 
         for (Node node : adjacencyMatrix.getGraph().getNodes()) {
             visitedNodes.put(node, false);
         }
-
         dfsHamiltonianCycle(begin, trackingCycle, hamiltonianCyclesBeginsWithThisNode);
 
         return hamiltonianCyclesBeginsWithThisNode;
     }
 
-    private void dfsHamiltonianCycle(Node begin, Path trackingCycle,
+    private void dfsHamiltonianCycle(Node currentNode, Path trackingCycle,
                                      ObservableList<Path> hamiltonianCyclesBeginsWithThisNode) {
 
         if (trackingCycle.getPath().size() == adjacencyMatrix.getGraph().getNodes().size()) {
@@ -70,14 +69,13 @@ public class HamiltonianCyclesFinder {
                         return;
                     }
                 }
-
                 hamiltonianCyclesBeginsWithThisNode.add(hamiltonianCycle);
 
                 return;
             }
         }
 
-        for (Node adjacentNode : adjacencyMatrix.adjacentNodesOf(begin)) {
+        for (Node adjacentNode : adjacencyMatrix.adjacentNodesOf(currentNode)) {
             if (!visitedNodes.get(adjacentNode)) {
                 visitedNodes.replace(adjacentNode, true);
                 trackingCycle.getPath().add(adjacentNode);

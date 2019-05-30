@@ -1,6 +1,7 @@
 package controller;
 
 import controller.converter.TreeConverter;
+import controller.finder.EulerCyclesFinder;
 import controller.finder.HamiltonianCyclesFinder;
 import controller.finder.Pathfinder;
 import controller.verifier.PlanarityVerifier;
@@ -174,6 +175,11 @@ public class GraphController {
     // Finding all of hamiltonian cycles in the graph
     public ObservableList<Path> hamiltonianCycles() {
         return new HamiltonianCyclesFinder(adjacencyMatrix).find();
+    }
+
+    // Finding all of euler cycles in the graph
+    public ObservableList<Path> eulerCycles() {
+        return new EulerCyclesFinder(adjacencyMatrix).find();
     }
 
     // Finding all of paths between two specified nodes
