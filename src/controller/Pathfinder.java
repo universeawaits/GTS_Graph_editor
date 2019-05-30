@@ -13,28 +13,31 @@ import java.util.Map;
 
 public class Pathfinder {
     private AdjacencyMatrix adjacencyMatrix;
+    private Map<Node, Boolean> visitedNodes;
+    private ObservableList<Path> paths;
 
 
     public Pathfinder(AdjacencyMatrix adjacencyMatrix) {
         this.adjacencyMatrix = adjacencyMatrix;
+        visitedNodes = new HashMap<>();
+        paths = FXCollections.observableArrayList();
     }
 
     public ObservableList<Path> pathsBetween(Node begin, Node end) {
-        ObservableList<Path> paths = FXCollections.observableArrayList();
-        Map<Node, Boolean> visitedNodes = new HashMap<>();
-
+        paths.clear();
+        visitedNodes.clear();
         for (Node node : adjacencyMatrix.getGraph().getNodes()) {
             visitedNodes.put(node, false);
         }
         Path startPath = new Path();
         startPath.getPath().add(begin);
 
-        dfsPathsBetweenNodes(begin, end, visitedNodes, paths, startPath);
+        dfsPathsBetweenNodes(begin, end, startPath);
 
         return paths;
     }
 
-    private void dfsPathsBetweenNodes(Node currentNode, Node end, Map<Node, Boolean> visitedNodes, ObservableList<Path> paths, Path currentPath) {
+    private void dfsPathsBetweenNodes(Node currentNode, Node end, Path currentPath) {
         visitedNodes.replace(currentNode, true);
 
         if (currentNode.equals(end)) {
@@ -46,7 +49,7 @@ public class Pathfinder {
         for (Node adjacent : adjacencyMatrix.adjacentNodesOf(currentNode)) {
             if (!visitedNodes.get(adjacent)) {
                 currentPath.getPath().add(adjacent);
-                dfsPathsBetweenNodes(adjacent, end, visitedNodes, paths, currentPath);
+                dfsPathsBetweenNodes(adjacent, end, currentPath);
 
                 currentPath.getPath().remove(adjacent);
             }
