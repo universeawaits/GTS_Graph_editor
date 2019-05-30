@@ -1,5 +1,6 @@
 package controller;
 
+import controller.converter.TreeConverter;
 import controller.verifier.PlanarityVerifier;
 import controller.verifier.TreeVerifier;
 import javafx.collections.FXCollections;
@@ -15,12 +16,14 @@ public class GraphController {
     private Graph graph;
     private DistanceMatrix distanceMatrix;
     private AdjacencyMatrix adjacencyMatrix;
+    private Pathfinder pathfinder;
 
 
     public GraphController(Graph graph) {
         this.graph = graph;
         distanceMatrix = new DistanceMatrix(graph);
         adjacencyMatrix = new AdjacencyMatrix(graph);
+        pathfinder = new Pathfinder(adjacencyMatrix);
     }
 
     public Graph getGraph() {
@@ -70,7 +73,7 @@ public class GraphController {
     }
 
     /*
-        Metrics
+     *      Metrics
      */
 
     // Calculation of a node degree
@@ -182,6 +185,11 @@ public class GraphController {
         return hamiltonianCycles;
     }
 
+    //
+    public ObservableList<Path> pathsBetweenNodes(Node begin, Node end) {
+        return pathfinder.pathsBetween(begin, end);
+    }
+
     // Coloring of nodes
     public Map<Node, String> colorizeNodes() {
         return new Colorer(graph).colorizeNodes();
@@ -213,6 +221,11 @@ public class GraphController {
         }
 
         graph.getArcs().removeAll(arcsToDelete);
+    }
+
+    // Making graph tree-like
+    public void makeTree() {
+        new TreeConverter(graph).convert();
     }
 
     /*

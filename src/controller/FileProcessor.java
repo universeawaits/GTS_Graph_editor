@@ -2,7 +2,6 @@ package controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.util.Pair;
 import layout.DrawableArc;
 import layout.DrawableNode;
 import layout.form.GraphPane;

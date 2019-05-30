@@ -7,7 +7,7 @@ import model.Node;
 import java.util.*;
 
 
-public class PlanarityVerifier {
+public class PlanarityVerifier implements Verifier {
     private static final int COUNT_OF_NODES_K5 = 5;
     private static final int COUNT_OF_ARCS_IN_UNDIRECTED_K5 = 20;
     private static final int COUNT_OF_NODES_K33 = 6;
@@ -44,22 +44,6 @@ public class PlanarityVerifier {
     /*
      *      Util
      */
-
-    /*private Graph undirectedEquivalentOf(Graph graph) {
-        Graph undirectedGraph = new Graph();
-
-        undirectedGraph.getNodes().addAll(graph.getNodes());
-
-        for (Arc arc : graph.getArcs()) {
-            undirectedGraph.getArcs().add(arc);
-
-            if (arc.isDirected()) {
-                undirectedGraph.getArcs().add(new Arc(arc.getEnd(), arc.getBegin()));
-            }
-        }
-
-        return undirectedGraph;
-    }*/
 
     private List<Node> permute() {
         List<Node> permutation = new ArrayList<>();
@@ -166,13 +150,13 @@ public class PlanarityVerifier {
             visitedNodes.put(node, false);
         }
 
-        LinkedList<Node> queue = new LinkedList<>();
+        LinkedList<Node> trackingPath = new LinkedList<>();
 
         visitedNodes.replace(source, true);
-        queue.add(source);
+        trackingPath.add(source);
 
-        while (queue.size() != 0) {
-            source = queue.poll();
+        while (trackingPath.size() != 0) {
+            source = trackingPath.poll();
 
             for (Node adjacent : adjacencyMatrix.adjacentNodesOf(source)) {
                 if (adjacent.equals(destination)) {
@@ -181,7 +165,7 @@ public class PlanarityVerifier {
 
                 if (!visitedNodes.get(adjacent)) {
                     visitedNodes.replace(adjacent, true);
-                    queue.add(adjacent);
+                    trackingPath.add(adjacent);
                 }
             }
         }

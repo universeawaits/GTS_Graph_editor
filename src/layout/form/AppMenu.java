@@ -13,7 +13,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 import layout.DrawableArc;
 import layout.DrawableNode;
 import model.*;
@@ -110,15 +109,17 @@ public class AppMenu {
         Menu algorithm = new Menu("Algorithms");
         MenuItem hamiltonianCycles = new MenuItem("Hamiltonian cycles");
         MenuItem distanceBetweenNodes = new MenuItem("Distance between nodes");
+        MenuItem pathsBetweenNodes = new MenuItem("Paths between nodes");
         Menu coloring = new Menu("Coloring");
         MenuItem coloringNodes = new MenuItem("Coloring of nodes");
 
         hamiltonianCycles.setOnAction(findHamiltonianCyclesEventHandler);
         coloringNodes.setOnAction(coloringNodesEventHandler);
         distanceBetweenNodes.setOnAction(distanceBetweenNodesEventHandler);
+        pathsBetweenNodes.setOnAction(findAllPathsBetweenTwoNodes);
 
         coloring.getItems().add(coloringNodes);
-        algorithm.getItems().addAll(hamiltonianCycles, distanceBetweenNodes, coloring);
+        algorithm.getItems().addAll(hamiltonianCycles, distanceBetweenNodes, pathsBetweenNodes, coloring);
 
         return algorithm;
     }
@@ -519,12 +520,14 @@ public class AppMenu {
         }
     };
 
-    // Conversion to a tree
+    // TODO: Conversion to a tree
     private EventHandler<ActionEvent> treeConversionEventHandler = e -> {
         GraphPane currentGraphPane = graphTabPane.currentGraphPane();
         currentGraphPane.removeLoops();
 
-        currentGraphPane.getGraphController().makeComplete();
+        if (!currentGraphPane.getGraphController().isTree()) {
+            currentGraphPane.getGraphController().makeTree();
+        }
     };
 
     // Finding of hamiltonian cycles
@@ -620,7 +623,7 @@ public class AppMenu {
             distanceAsItIs.getButtonTypes().add(ButtonType.OK);
 
             if (distance == DistanceMatrix.INFINITY) {
-                distanceText.setText("Node way from " + begin + " to " + end + " found");
+                distanceText.setText("The way from " + begin + " to " + end + " wasn't found");
             } else {
                 distanceText.setText("Distance between " + begin + " and " + end + " is " +
                                 graphTabPane.currentGraphPane().getGraphController()
@@ -629,6 +632,69 @@ public class AppMenu {
             }
 
             distanceAsItIs.show();
+        });
+
+        distanceDialog.show();
+    };
+
+    // All possible ways from one node to another
+    private EventHandler<ActionEvent> findAllPathsBetweenTwoNodes = e -> {
+        ComboBox<String> firstNodeName = new ComboBox<>();
+        ComboBox<String> secondNodeName = new ComboBox<>();
+
+        for (DrawableNode drawableNode : graphTabPane.currentGraphPane().getDrawableNodes()) {
+            firstNodeName.getItems().add(drawableNode.getSourceNode().toString());
+            secondNodeName.getItems().add(drawableNode.getSourceNode().toString());
+        }
+
+        GridPane gridPane = new GridPane();
+        gridPane.add(new Label("Source node:"), 0, 0);
+        gridPane.add(new Label("Destination node:"), 1, 0);
+        gridPane.add(firstNodeName, 0, 1);
+        gridPane.add(secondNodeName, 1, 1);
+        GridPane.setMargin(firstNodeName, new Insets(CIRCLE_RADIUS));
+        GridPane.setMargin(secondNodeName, new Insets(CIRCLE_RADIUS));
+
+        Alert distanceDialog = createEmptyDialog(gridPane, "Find all paths between two nodes");
+
+        ButtonType GET = new ButtonType("Get");
+        distanceDialog.getButtonTypes().add(GET);
+
+        ((Button) distanceDialog.getDialogPane().lookupButton(GET)).setOnAction(actionEvent -> {
+            Node begin = new Node();
+            Node end = new Node();
+
+            for (DrawableNode drawableNode : graphTabPane.currentGraphPane().getDrawableNodes()) {
+                if (drawableNode.getSourceNode().toString().equals(
+                        firstNodeName.getSelectionModel().getSelectedItem())) {
+                    begin = drawableNode.getSourceNode();
+                }
+
+                if (drawableNode.getSourceNode().toString().equals(
+                        secondNodeName.getSelectionModel().getSelectedItem())) {
+                    end = drawableNode.getSourceNode();
+                }
+            }
+
+            ObservableList<Path> paths = graphTabPane.currentGraphPane().getGraphController().pathsBetweenNodes(begin, end);
+            ObservableList<String> cycles = FXCollections.observableArrayList();
+
+            try {
+                for (Path cycle : paths) {
+                    cycles.add(cycle.toString());
+                }
+            } catch (NullPointerException ex) {
+                return;
+            }
+
+            ListView<String> listView = new ListView<>();
+            listView.getItems().addAll(cycles);
+            listView.setPrefSize(MAIN_FORM_WIDTH / 3, MAIN_FORM_HEIGHT / 5);
+            listView.setEditable(false);
+
+            Alert hamiltonianCyclesDialog = createEmptyDialog(listView, "Paths");
+            hamiltonianCyclesDialog.getButtonTypes().add(ButtonType.OK);
+            hamiltonianCyclesDialog.show();
         });
 
         distanceDialog.show();

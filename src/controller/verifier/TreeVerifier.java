@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class TreeVerifier {
+public class TreeVerifier implements Verifier {
     private Graph graph;
     private AdjacencyMatrix adjacencyMatrix;
 

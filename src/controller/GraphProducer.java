@@ -64,7 +64,7 @@ public class GraphProducer { // holy fuck what the name
     }
 
     /*
-     *      Util
+     *      Utility
      */
 
     private void initNodesMatching(Graph product) {
