@@ -9,6 +9,8 @@ import model.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import static model.DistanceMatrix.INFINITY;
+
 
 public class Pathfinder {
     private AdjacencyMatrix adjacencyMatrix;
@@ -35,6 +37,29 @@ public class Pathfinder {
 
         return paths;
     }
+
+    public ObservableList<Path> shortestPaths() {
+        ObservableList<Path> shortestPaths = FXCollections.observableArrayList();
+        int minPathLength = INFINITY;
+
+        for (Path path : paths) {
+            if (path.getPath().size() < minPathLength) {
+                minPathLength = path.getPath().size();
+            }
+        }
+
+        for (Path path : paths) {
+            if (path.getPath().size() == minPathLength) {
+                shortestPaths.add(path);
+            }
+        }
+
+        return shortestPaths;
+    }
+
+    /*
+     *      Utility
+     */
 
     private void dfsPathsBetweenNodes(Node currentNode, Node end, Path currentPath) {
         visitedNodes.replace(currentNode, true);

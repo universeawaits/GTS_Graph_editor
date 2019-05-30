@@ -185,9 +185,14 @@ public class GraphController {
         return hamiltonianCycles;
     }
 
-    //
+    // Finding all of paths between two specified nodes
     public ObservableList<Path> pathsBetweenNodes(Node begin, Node end) {
         return pathfinder.pathsBetween(begin, end);
+    }
+
+    // Taking all of the shortest paths between two nodes
+    public ObservableList<Path> shortestPaths() {
+        return pathfinder.shortestPaths();
     }
 
     // Coloring of nodes

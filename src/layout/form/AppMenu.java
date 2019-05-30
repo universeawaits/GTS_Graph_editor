@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -677,24 +678,41 @@ public class AppMenu {
             }
 
             ObservableList<Path> paths = graphTabPane.currentGraphPane().getGraphController().pathsBetweenNodes(begin, end);
-            ObservableList<String> cycles = FXCollections.observableArrayList();
+            ObservableList<String> pathsString = FXCollections.observableArrayList();
+            ObservableList<String> shortestPathsString = FXCollections.observableArrayList();
 
             try {
-                for (Path cycle : paths) {
-                    cycles.add(cycle.toString());
+                for (Path path : paths) {
+                    pathsString.add(path.toString());
+                }
+
+                for (Path shortestPath : graphTabPane.currentGraphPane().getGraphController().shortestPaths()) {
+                    shortestPathsString.add(shortestPath.toString());
                 }
             } catch (NullPointerException ex) {
                 return;
             }
 
-            ListView<String> listView = new ListView<>();
-            listView.getItems().addAll(cycles);
-            listView.setPrefSize(MAIN_FORM_WIDTH / 3, MAIN_FORM_HEIGHT / 5);
-            listView.setEditable(false);
+            ListView<String> allPathsListView = new ListView<>();
+            allPathsListView.getItems().addAll(pathsString);
+            allPathsListView.setPrefSize(MAIN_FORM_WIDTH / 6, MAIN_FORM_HEIGHT / 8);
+            allPathsListView.setEditable(false);
 
-            Alert hamiltonianCyclesDialog = createEmptyDialog(listView, "Paths");
-            hamiltonianCyclesDialog.getButtonTypes().add(ButtonType.OK);
-            hamiltonianCyclesDialog.show();
+            ListView<String> shortestPathsListView = new ListView<>();
+            shortestPathsListView.getItems().addAll(shortestPathsString);
+            shortestPathsListView.setPrefSize(MAIN_FORM_WIDTH / 6, MAIN_FORM_HEIGHT / 8);
+            shortestPathsListView.setEditable(false);
+
+            GridPane gridPane1 = new GridPane();
+            gridPane1.add(new Label("All paths"), 0, 0);
+            gridPane1.add(new Label("Shortest paths"), 1, 0);
+            gridPane1.add(allPathsListView, 0, 1);
+            gridPane1.add(shortestPathsListView, 1, 1);
+            gridPane1.setAlignment(Pos.CENTER);
+
+            Alert pathsDialog = createEmptyDialog(gridPane1, "Paths");
+            pathsDialog.getButtonTypes().add(ButtonType.OK);
+            pathsDialog.show();
         });
 
         distanceDialog.show();
