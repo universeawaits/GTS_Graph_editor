@@ -13,16 +13,18 @@ import java.util.Map;
 
 public class HamiltonianCyclesFinder {
     private AdjacencyMatrix adjacencyMatrix;
+    private Map<Node, Boolean> visitedNodes;
+    private ObservableList<Path> hamiltonianCycles;
 
 
     public HamiltonianCyclesFinder(AdjacencyMatrix adjacencyMatrix) {
         this.adjacencyMatrix = adjacencyMatrix;
+        visitedNodes = new HashMap<>();
+        hamiltonianCycles = FXCollections.observableArrayList();
     }
 
     // Finding all of hamiltonian cycles in the graph
     public ObservableList<Path> find() {
-        ObservableList<Path> hamiltonianCycles = FXCollections.observableArrayList();
-
         for (Node begin : adjacencyMatrix.getGraph().getNodes()) {
             ObservableList<Path> cycles = findAllHamiltonianCyclesFrom(begin);
             for (Path cycleFromThisNode : cycles) {
@@ -41,7 +43,6 @@ public class HamiltonianCyclesFinder {
 
     // Finds all possible Hamiltonian cycles begins with the node given
     private ObservableList<Path> findAllHamiltonianCyclesFrom(Node begin) {
-        Map<Node, Boolean> visitedNodes = new HashMap<>();
         ObservableList<Path> hamiltonianCyclesBeginsWithThisNode = FXCollections.observableArrayList();
         Path trackingCycle = new Path();
 
@@ -49,13 +50,12 @@ public class HamiltonianCyclesFinder {
             visitedNodes.put(node, false);
         }
 
-        dfsHamiltonianCycle(begin, trackingCycle, visitedNodes, hamiltonianCyclesBeginsWithThisNode);
+        dfsHamiltonianCycle(begin, trackingCycle, hamiltonianCyclesBeginsWithThisNode);
 
         return hamiltonianCyclesBeginsWithThisNode;
     }
 
     private void dfsHamiltonianCycle(Node begin, Path trackingCycle,
-                                     Map<Node, Boolean> visitedNodes,
                                      ObservableList<Path> hamiltonianCyclesBeginsWithThisNode) {
 
         if (trackingCycle.getPath().size() == adjacencyMatrix.getGraph().getNodes().size()) {
@@ -82,7 +82,7 @@ public class HamiltonianCyclesFinder {
                 visitedNodes.replace(adjacentNode, true);
                 trackingCycle.getPath().add(adjacentNode);
 
-                dfsHamiltonianCycle(adjacentNode, trackingCycle, visitedNodes, hamiltonianCyclesBeginsWithThisNode);
+                dfsHamiltonianCycle(adjacentNode, trackingCycle, hamiltonianCyclesBeginsWithThisNode);
 
                 visitedNodes.replace(adjacentNode, false);
                 trackingCycle.getPath().remove(trackingCycle.getPath().size() - 1);
