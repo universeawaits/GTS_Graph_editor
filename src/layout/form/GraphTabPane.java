@@ -1,8 +1,7 @@
 package layout.form;
 
 import controller.GraphController;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import model.Graph;
 import java.util.HashMap;

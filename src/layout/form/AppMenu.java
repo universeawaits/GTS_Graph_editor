@@ -4,6 +4,7 @@ import controller.FileProcessor;
 import controller.GraphController;
 import controller.GraphProducer;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -39,14 +40,7 @@ public class AppMenu {
         this.graphTabPane = graphTabPane;
 
         menuBar = new MenuBar();
-        menuBar.getMenus().addAll(
-                createFileMenu(),
-                createEditMenu(),
-                createMetricsMenu(),
-                createOperationMenu(),
-                createAlgorithmMenu(),
-                createModificationMenu()
-        );
+        configureMenuBar();
 
         ownerStage = stage;
     }
@@ -55,9 +49,50 @@ public class AppMenu {
         return menuBar;
     }
 
+    /*
+     *      Configs
+     */
+
+    private void configureMenuBar() {
+        Menu file = createFileMenu();
+        Menu edit = createEditMenu();
+        Menu metrics = createMetricsMenu();
+        Menu operation = createOperationMenu();
+        Menu algo = createAlgorithmMenu();
+        Menu mod = createModificationMenu();
+
+        menuBar.getMenus().addAll(
+                file,
+                edit,
+                metrics,
+                operation,
+                algo,
+                mod
+        );
+
+        for (Menu menu : menuBar.getMenus()) {
+            menu.setDisable(true);
+        }
+
+        file.setDisable(false);
+
+        graphTabPane.getTabPane().getTabs().addListener((ListChangeListener) change -> {
+            if (change.getList().size() == 0) {
+                for (Menu menu : menuBar.getMenus()) {
+                    menu.setDisable(true);
+                }
+
+                file.setDisable(false);
+            } else {
+                for (Menu menu : menuBar.getMenus()) {
+                    menu.setDisable(false);
+                }
+            }
+        });
+    }
 
     /*
-        Menus creating
+     *      Menus creating
      */
 
     // Creating of the file menu
@@ -267,7 +302,7 @@ public class AppMenu {
     }
 
     /*
-        Event handlers
+     *      Event handlers
      */
 
     // Creating of a new graph
@@ -328,12 +363,8 @@ public class AppMenu {
     private EventHandler<ActionEvent> getNodeDegreeEventHandler = e -> {
         ObservableList<String> nodesDegrees = FXCollections.observableArrayList();
 
-        try {
-            for (Node node : graphTabPane.currentGraphPane().getGraphController().getNodes()) {
-               nodesDegrees.add(node + ": " + graphTabPane.currentGraphPane().getGraphController().degreeOf(node));
-            }
-        } catch (NullPointerException ex) {
-            return;
+        for (Node node : graphTabPane.currentGraphPane().getGraphController().getNodes()) {
+           nodesDegrees.add(node + ": " + graphTabPane.currentGraphPane().getGraphController().degreeOf(node));
         }
 
         ListView<String> listView = new ListView<>();
@@ -350,12 +381,8 @@ public class AppMenu {
     private EventHandler<ActionEvent> getCentersEventHandler = e -> {
         ObservableList<String> graphCenters = FXCollections.observableArrayList();
 
-        try {
-            for (Node node : graphTabPane.currentGraphPane().getGraphController().centers()) {
-                graphCenters.add(node.toString());
-            }
-        } catch (NullPointerException ex) {
-            return;
+        for (Node node : graphTabPane.currentGraphPane().getGraphController().centers()) {
+            graphCenters.add(node.toString());
         }
 
         ListView<String> listView = new ListView<>();
@@ -370,15 +397,11 @@ public class AppMenu {
 
     // Clearing the graph pane with the source graph
     private EventHandler<ActionEvent> graphClearingEventHandler = e -> {
-        try {
-            graphTabPane.currentGraphPane().getPane().getChildren().clear();
-            graphTabPane.currentGraphPane().getDrawableArcs().clear();
-            graphTabPane.currentGraphPane().getDrawableNodes().clear();
-            graphTabPane.currentGraphPane().getGraphController().getArcs().clear();
-            graphTabPane.currentGraphPane().getGraphController().getNodes().clear();
-        } finally {
-            return;
-        }
+        graphTabPane.currentGraphPane().getPane().getChildren().clear();
+        graphTabPane.currentGraphPane().getDrawableArcs().clear();
+        graphTabPane.currentGraphPane().getDrawableNodes().clear();
+        graphTabPane.currentGraphPane().getGraphController().getArcs().clear();
+        graphTabPane.currentGraphPane().getGraphController().getNodes().clear();
     };
 
     // Cartesian product of two specified graphs
@@ -535,12 +558,8 @@ public class AppMenu {
     private EventHandler<ActionEvent> findHamiltonianCyclesEventHandler = e -> {
         ObservableList<String> cycles = FXCollections.observableArrayList();
 
-        try {
-            for (Path cycle : graphTabPane.currentGraphPane().getGraphController().hamiltonianCycles()) {
-                cycles.add(cycle.toString());
-            }
-        } catch (NullPointerException ex){
-            return;
+        for (Path cycle : graphTabPane.currentGraphPane().getGraphController().hamiltonianCycles()) {
+            cycles.add(cycle.toString());
         }
 
         ListView<String> listView = new ListView<>();
@@ -720,13 +739,8 @@ public class AppMenu {
 
     // Taking graph's adjacency matrix
     private EventHandler<ActionEvent> getAdjacencyMatrixEventHandler = e -> {
-        Label matrix;
-
-        try {
-            matrix = new Label(graphTabPane.currentGraphPane().getGraphController().adjacencyMatrix().matrixToString());
-        } catch (NullPointerException ex) {
-            return;
-        }
+        Label matrix = new Label(graphTabPane.currentGraphPane().getGraphController()
+                .adjacencyMatrix().matrixToString());
 
         if (matrix.getText().equals("")) {
             matrix.setText("The graph is empty");
