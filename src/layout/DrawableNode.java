@@ -112,10 +112,9 @@ public class DrawableNode {
 
     // Name configs: binding, formatting
     private void configureName() {
-        name.setFont(Font.font(FONT_FAMILY, FontPosture.ITALIC, 3 * CIRCLE_RADIUS / 2));
+        //name.setFont(Font.font(FONT_FAMILY, FontPosture.ITALIC, 3 * CIRCLE_RADIUS / 2));
         name.setText(sourceNode.getName());
-        name.setFill(Color.BLACK);
-        name.setStrokeWidth(FORT_WIDTH);
+        //name.setStrokeWidth(FORT_WIDTH);
 
         name.xProperty().bind(shape.centerXProperty().add(3 * CIRCLE_RADIUS / 2));
         name.yProperty().bind(shape.centerYProperty().add(-CIRCLE_RADIUS));
@@ -123,10 +122,10 @@ public class DrawableNode {
 
     // Identifier configs: binding, formatting
     private void configureIdentifier() {
-        identifier.setFont(Font.font(FONT_FAMILY, FontPosture.ITALIC, 3 * CIRCLE_RADIUS / 2));
+        //identifier.setFont(Font.font(FONT_FAMILY, FontPosture.ITALIC, 3 * CIRCLE_RADIUS / 2));
         identifier.setText(String.valueOf("[" + sourceNode.getIdentifier()) + "]");
-        identifier.setFill(Color.GRAY);
-        identifier.setStrokeWidth(FORT_WIDTH);
+        //identifier.setFill(Color.GRAY);
+        //identifier.setStrokeWidth(FORT_WIDTH);
 
         identifier.xProperty().bind(name.xProperty());
         identifier.yProperty().bind(name.yProperty().add(3 * CIRCLE_RADIUS));

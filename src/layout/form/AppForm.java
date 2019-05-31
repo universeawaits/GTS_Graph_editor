@@ -24,6 +24,22 @@ public class AppForm {
         configureVBox();
     }
 
+    public AppMenu getAppMenu() {
+        return appMenu;
+    }
+
+    public GraphTabPane getGraphTabPane() {
+        return graphTabPane;
+    }
+
+    public GraphToolBar getGraphToolBar() {
+        return graphToolBar;
+    }
+
+    public GraphStatusBar getGraphStatusBar() {
+        return graphStatusBar;
+    }
+
     public VBox getVBox() {
         return vBox;
     }

@@ -60,6 +60,7 @@ public class AppMenu {
         Menu operation = createOperationMenu();
         Menu algorithms = createAlgorithmMenu();
         Menu mod = createModificationMenu();
+        Menu windiw = createWindowMenu();
 
         menuBar.getMenus().addAll(
                 file,
@@ -67,28 +68,35 @@ public class AppMenu {
                 metrics,
                 operation,
                 algorithms,
-                mod
+                mod,
+                windiw
         );
 
-        for (Menu menu : menuBar.getMenus()) {
-            menu.setDisable(true);
-        }
-
+        disableAllMenus();
         file.setDisable(false);
+        windiw.setDisable(false);
 
         graphTabPane.getTabPane().getTabs().addListener((ListChangeListener) change -> {
             if (change.getList().size() == 0) {
-                for (Menu menu : menuBar.getMenus()) {
-                    menu.setDisable(true);
-                }
-
+                disableAllMenus();
                 file.setDisable(false);
+                windiw.setDisable(false);
             } else {
-                for (Menu menu : menuBar.getMenus()) {
-                    menu.setDisable(false);
-                }
+                enableAllMenus();
             }
         });
+    }
+
+    private void disableAllMenus() {
+        for (Menu menu : menuBar.getMenus()) {
+            menu.setDisable(true);
+        }
+    }
+
+    private void enableAllMenus() {
+        for (Menu menu : menuBar.getMenus()) {
+            menu.setDisable(false);
+        }
     }
 
     /*
@@ -190,6 +198,28 @@ public class AppMenu {
         modification.getItems().addAll(makeComplete);
 
         return modification;
+    }
+
+    private Menu createWindowMenu() {
+        Menu window = new Menu("Window");
+        Menu colorTheme = new Menu("Color theme");
+        MenuItem dark = new MenuItem("Dark");
+        MenuItem light = new MenuItem("Light");
+
+        dark.setOnAction(e -> {
+            ownerStage.getScene().getStylesheets().clear();
+            ownerStage.getScene().getStylesheets().add("layout/form/style/dark-theme.css");
+        });
+
+        light.setOnAction(e -> {
+            ownerStage.getScene().getStylesheets().clear();
+            ownerStage.getScene().getStylesheets().add("layout/form/style/light-theme.css");
+        });
+
+        colorTheme.getItems().addAll(dark, light);
+        window.getItems().add(colorTheme);
+
+        return window;
     }
 
     /*
